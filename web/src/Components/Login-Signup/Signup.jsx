@@ -88,10 +88,8 @@ const SignUp = () => {
       </div>
       <div className="submit-container">
         <button type="submit" onClick={() => navigate("/")}>Back</button>
-        <button type="submit">Sign Up</button>
-      </div>
-      <div className="to-signup">Do not have an account? <button type="submit">Sign Up</button></div>
-      
+        <button type="submit"onClick={() => navigate("/Home")}>Sign Up</button>
+      </div>      
     </div>
   );
 };

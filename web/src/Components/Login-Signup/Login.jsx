@@ -1,6 +1,8 @@
 import { useState } from "react";
 import'./Login.css'
 import { useNavigate } from "react-router-dom";
+import logo from '../Assets/logo.png';
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +17,7 @@ const Login = () => {
   return (
     <div className='container'>
       <div className="header">
+        <img src={logo} alt="Logo" className="logo" />
         <div className="text">Log In</div>
         <div className="underline"></div>
       </div>

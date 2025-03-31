@@ -1,0 +1,97 @@
+ .container{
+     display: flex;
+     flex-direction: column;
+     margin: auto;
+     margin-top: 200px;
+     padding-bottom: 30px;
+     width: 600px;
+ }
+
+ .header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 30px;
+ }
+
+ .text{
+     color: #ADC2DA;
+     font-size: 48px;
+     font-weight: 700;
+ }
+
+ .underline{
+    width: 61px;
+    height: 6px;
+    background-color: #ADC2DA;
+    border-radius: 9px;
+ }
+
+ .inputs{
+  margin-top: 55px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;  
+ }
+ .input{
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 380px;
+    height: 50px;
+    background: #D3DDE9;
+    border-radius: 6px;
+ }
+
+ .input input{
+    height: 50px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #D3DDE9;
+    font-size: 19px;
+
+ }
+
+ .to-signup{
+    padding-left: 113px;
+    color: black;
+    font-size: 18px;
+ }
+
+ .to-signup span{
+    color: #D3DDE9;
+    cursor: pointer;
+ }
+
+ .to-signup button{
+    border: transparent;
+    border-radius: 30px;
+    height: 30px;
+    width: 75px;
+    background-color: whitesmoke;
+ }
+
+ .submit-container{
+    display: flex;
+    gap: 30px;
+    margin: 25px auto;
+ }
+ .submit-container button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 50px;
+    color: white;
+    background:#D3DDE9;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    border:none;
+    outline: none;
+ }

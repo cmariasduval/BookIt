@@ -1,13 +1,10 @@
 package com.example.bookit.entities;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.List;
 
-public class book {
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +16,17 @@ public class book {
     private String publisher;
     private String ISBN;
 
-    @ElementCollection
-    private List<String> genres;
+    @ManyToMany
+    @JoinTable(
+            name = "book_genre",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<genre> genres;
 
-    public book() {}
+    public Book() {}
 
-    public book(String title, String author, String publisher, String ISBN, List<String> genres) {
+    public Book(String title, String author, String publisher, String ISBN, List<genre> genres) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -72,11 +74,11 @@ public class book {
         this.ISBN = ISBN;
     }
 
-    public List<String> getGenres() {
+    public List<genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<String> genres) {
+    public void setGenres(List<genre> genres) {
         this.genres = genres;
     }
 

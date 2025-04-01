@@ -1,11 +1,8 @@
 package com.example.bookit.entities;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -17,8 +14,15 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String fullname;
+    private String fullName;
     private LocalDate birthdate;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_genre",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
     private List<genre> interests;
 
     public User(){}
@@ -27,9 +31,9 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.fullname = fullname;
+        this.fullName = fullName;
         this.birthdate = birthdate;
-        this.interests = new ArrayList<>();
+        this.interests = interests;
     }
 
     public Long getId() {
@@ -62,6 +66,30 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public List<genre> getInterests(){
+        return interests;
+    }
+
+    public void setInterests(List<genre> interests){
+        this.interests = interests;
     }
 
 }

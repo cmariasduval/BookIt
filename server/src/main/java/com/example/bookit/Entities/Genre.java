@@ -1,8 +1,8 @@
-package com.example.bookit.entities;
+package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 
-public class genre {
+public class Genre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -10,7 +10,7 @@ public class genre {
 
     private String genreType;
 
-    public genre(String genreType) {
+    public Genre(String genreType) {
         this.genreType = genreType;
 
     }

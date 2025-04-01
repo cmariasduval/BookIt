@@ -1,4 +1,4 @@
-package com.example.bookit.entities;
+package com.example.bookit.Entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -7,7 +7,7 @@ import jakarta.persistence.ManyToOne;
 
 import java.awt.print.Book;
 
-public class bookCopy {
+public class BookCopy {
 
     @Id
     @GeneratedValue
@@ -19,7 +19,7 @@ public class bookCopy {
     @JoinColumn(name = "bood_id", nullable = false)
     private Book book;
 
-    public bookCopy() {
+    public BookCopy() {
         this.copyId = copyId;
 
     }

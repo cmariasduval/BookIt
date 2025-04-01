@@ -1,4 +1,4 @@
-package com.example.bookit.entities;
+package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 

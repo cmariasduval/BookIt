@@ -1,4 +1,4 @@
-package com.example.bookit.entities;
+package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 
@@ -22,16 +22,16 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<genre> genres;
+    private List<genre> Genres;
 
     public Book() {}
 
-    public Book(String title, String author, String publisher, String ISBN, List<genre> genres) {
+    public Book(String title, String author, String publisher, String ISBN, List<genre> Genres) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.ISBN = ISBN;
-        this.genres = genres;
+        this.Genres = Genres;
     }
 
     public Long getId() {
@@ -75,11 +75,11 @@ public class Book {
     }
 
     public List<genre> getGenres() {
-        return genres;
+        return Genres;
     }
 
-    public void setGenres(List<genre> genres) {
-        this.genres = genres;
+    public void setGenres(List<genre> Genres) {
+        this.Genres = Genres;
     }
 
 }

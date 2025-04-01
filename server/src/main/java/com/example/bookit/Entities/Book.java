@@ -22,11 +22,11 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<genre> Genres;
+    private List<Genre> Genres;
 
     public Book() {}
 
-    public Book(String title, String author, String publisher, String ISBN, List<genre> Genres) {
+    public Book(String title, String author, String publisher, String ISBN, List<Genre> Genres) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -74,11 +74,11 @@ public class Book {
         this.ISBN = ISBN;
     }
 
-    public List<genre> getGenres() {
+    public List<Genre> getGenres() {
         return Genres;
     }
 
-    public void setGenres(List<genre> Genres) {
+    public void setGenres(List<Genre> Genres) {
         this.Genres = Genres;
     }
 

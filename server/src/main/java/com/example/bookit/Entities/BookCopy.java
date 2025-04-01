@@ -21,6 +21,11 @@ public class BookCopy {
 
     public BookCopy() {
         this.copyId = copyId;
-
     }
+
+    public
+
+
+
+
 }

@@ -23,11 +23,11 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<genre> interests;
+    private List<Genre> interests;
 
     public User(){}
 
-    public User(String username, String password, String email) {
+    public User(String username, String password, String email, String fullName, LocalDate birthdate, List<Genre> interests) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -84,11 +84,11 @@ public class User {
         this.birthdate = birthdate;
     }
 
-    public List<genre> getInterests(){
+    public List<Genre> getInterests(){
         return interests;
     }
 
-    public void setInterests(List<genre> interests){
+    public void setInterests(List<Genre> interests){
         this.interests = interests;
     }
 

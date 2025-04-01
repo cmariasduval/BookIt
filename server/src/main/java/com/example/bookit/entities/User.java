@@ -4,7 +4,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-public class user {
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,13 +17,19 @@ public class user {
     private String username;
     private String password;
     private String email;
+    private String fullname;
+    private LocalDate birthdate;
+    private List<genre> interests;
 
-    public user(){}
+    public User(){}
 
-    public user(String username, String password, String email) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.fullname = fullname;
+        this.birthdate = birthdate;
+        this.interests = new ArrayList<>();
     }
 
     public Long getId() {
@@ -53,8 +63,5 @@ public class user {
     public void setPassword(String password) {
         this.password = password;
     }
-
-
-
 
 }

@@ -5,17 +5,29 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    private String username;
-    private String password;
-    private String email;
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "full_name", nullable = false)
     private String fullName;
-    private LocalDate birthdate;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "birthDate" , nullable = false)
+    private LocalDate birthDate;
 
     @ManyToMany
     @JoinTable(
@@ -27,20 +39,20 @@ public class User {
 
     public User(){}
 
-    public User(String username, String password, String email, String fullName, LocalDate birthdate, List<Genre> interests) {
+    public User(String username, String password, String email, String fullName, LocalDate birthDate, List<Genre> interests) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.fullName = fullName;
-        this.birthdate = birthdate;
+        this.birthDate = birthDate;
         this.interests = interests;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -77,11 +89,11 @@ public class User {
     }
 
     public LocalDate getBirthdate() {
-        return birthdate;
+        return birthDate;
     }
 
     public void setBirthdate(LocalDate birthdate) {
-        this.birthdate = birthdate;
+        this.birthDate = birthdate;
     }
 
     public List<Genre> getInterests(){

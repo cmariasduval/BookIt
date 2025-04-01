@@ -1,6 +1,6 @@
 package com.example.bookit.Controllers;
 
-import com.example.bookit.Model.User.User;
+import com.example.bookit.Entities.User;
 import com.example.bookit.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public User signup(@RequestBody User user){
-        return userService.registerUser(user.getEmail(), user.getPassword(), user.getFullName(), user.getBirthDate(), user.getInterests(), user.getUsername());
+        return userService.registerUser(user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getBirthdate(), user.getInterests());
     }
 
     @PostMapping("/login")

@@ -1,6 +1,6 @@
 package com.example.bookit.Repository;
 
-import com.example.bookit.Model.User.User;
+import com.example.bookit.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -8,7 +8,7 @@
 }
 
 .inputs{
-    margin-top: 55px;
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     gap: 25px;  
@@ -30,13 +30,46 @@
     background: transparent;
     border: none;
     outline: none;
-    color: #D3DDE9;
     font-size: 19px;
+    color: black;
  }
+
+
 
 .input-title{
     display: flex;
     flex-direction: column;
     gap: 25px;
     margin-left: 112px;
+    margin-bottom: -20px;
+}
+
+.interests-buttons{
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 8px; 
+    margin-top: 10px;
+    margin-left: 65px;
+}
+
+.interests-buttons button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 30px;
+    width: 150px;
+  }
+  
+  .interests-buttons button.selected { 
+    color: black;
+    border-color: #749FD1 ;
+    border-width: 3px;
+  }
+
+.submit-container{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 50px;
 }

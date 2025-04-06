@@ -23,7 +23,7 @@ public class BookCopy {
         this.copyId = copyId;
     }
 
-    public
+
 
 
 

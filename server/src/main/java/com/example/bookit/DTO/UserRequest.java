@@ -1,15 +1,24 @@
 package com.example.bookit.DTO;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class UserRequest {
+    private String username;
     private String email;
     private String password;
     private String fullName;
     private LocalDate birthDate;
-    private String interests;
+    private List<String> interests;
 
     // Getters y setters
+
+
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {this.username = username;}
+
     public String getEmail() {
         return email;
     }
@@ -42,11 +51,11 @@ public class UserRequest {
         this.birthDate = birthDate;
     }
 
-    public String getInterests() {
+    public List<String> getInterests() {
         return interests;
     }
 
-    public void setInterests(String interests) {
+    public void setInterests(List<String> interests) {
         this.interests = interests;
     }
 }

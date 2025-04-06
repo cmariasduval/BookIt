@@ -2,6 +2,7 @@ package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 
+@Entity
 public class Genre {
 
     @Id
@@ -14,6 +15,8 @@ public class Genre {
         this.genreType = genreType;
 
     }
+
+    public Genre() {}
 
     public String getGenreType() {
         return genreType;

@@ -45,7 +45,6 @@ public class BookCopy {
     public void setCopyId(String copyId){
         this.copyId = copyId;
     }
-
     public Book getBook(){
         return book;
     }

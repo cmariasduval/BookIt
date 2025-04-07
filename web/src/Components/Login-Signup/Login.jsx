@@ -1,19 +1,39 @@
 import { useState } from "react";
-import'./Login.css'
+import './Login.css';
 import { useNavigate } from "react-router-dom";
 import logo from '../Assets/logo.png';
-
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login:", { email, password });
+
+    try {
+      const response = await fetch("http://localhost:8080/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (response.ok) {
+        // ✅ Login exitoso
+        alert("Inicio de sesión exitoso");
+        navigate("/Home");
+      } else {
+        const errorMsg = await response.text();
+        alert(`Error: ${errorMsg}`);
+      }
+    } catch (error) {
+      console.error("Error en el login:", error);
+      alert("Hubo un problema al intentar iniciar sesión.");
+    }
   };
-  
+
   return (
     <div className='container'>
       <div className="header">
@@ -21,35 +41,35 @@ const Login = () => {
         <div className="text">Log In</div>
         <div className="underline"></div>
       </div>
-      <div className="inputs">
-        <div className="input">
-          <img/>
-          <form onSubmit={handleSubmit}>
+      <form onSubmit={handleLogin}>
+        <div className="inputs">
+          <div className="input">
             <input 
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
-          </form>
-        </div>
-        <div className="input">
-          <img/>
-          <form onSubmit={handleSubmit}>
+          </div>
+          <div className="input">
             <input 
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
-          </form>
+          </div>
         </div>
+        <div className="submit-container">
+          <button type="submit">Log In</button>
+        </div>
+      </form>
+      <div className="to-signup">
+        Do not have an account?{" "}
+        <button type="button" onClick={() => navigate("/SignUp")}>Sign Up</button>
       </div>
-      <div className="submit-container">
-        <button type="submit" onClick={() => navigate("/Home")}>Log In</button>
-      </div>
-      <div className="to-signup">Do not have an account? <button type="submit" onClick={() => navigate("/SignUp")}>Sign Up</button></div>
-      
     </div>
   );
 };

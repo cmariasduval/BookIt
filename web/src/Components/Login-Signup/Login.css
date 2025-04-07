@@ -56,6 +56,10 @@
 
  }
 
+ .input form input{
+   color: black;
+ }
+
  .to-signup{
     padding-left: 113px;
     color: black;
@@ -94,6 +98,7 @@
     cursor: pointer;
     border:none;
     outline: none;
+    margin-left: 75px;
  }
 
  .logo{

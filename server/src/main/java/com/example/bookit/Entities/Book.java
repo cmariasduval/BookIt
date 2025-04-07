@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
 public class Book {
 
     @Id
@@ -11,10 +12,18 @@ public class Book {
     private Long id;
 
 
+    @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "author", nullable = false)
     private String author;
+
+    @Column(name = "publisher", nullable = false)
     private String publisher;
+
+    @Column(name = "ISBN", nullable = false)
     private String ISBN;
+
 
     @ManyToMany
     @JoinTable(
@@ -24,14 +33,17 @@ public class Book {
     )
     private List<Genre> Genres;
 
+    private String imageUrl;
+
     public Book() {}
 
-    public Book(String title, String author, String publisher, String ISBN, List<Genre> Genres) {
+    public Book(String title, String author, String publisher, String ISBN, List<Genre> Genres, String imageUrl) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.ISBN = ISBN;
         this.Genres = Genres;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -80,6 +92,14 @@ public class Book {
 
     public void setGenres(List<Genre> Genres) {
         this.Genres = Genres;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
 }

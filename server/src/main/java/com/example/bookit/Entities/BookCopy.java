@@ -1,6 +1,7 @@
 package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ManyToAny;
 
 import java.awt.print.Book;
 
@@ -16,13 +17,17 @@ public class BookCopy {
     @Column(name = "Copy ID", nullable = false)
     private String copyId;
 
-    @ManyToOne
+    @ManyToAny
     @JoinColumn(name = "bood_id", nullable = false)
     private Book book;
 
     public BookCopy(String copyId, Book book) {
         this.copyId = copyId;
         this.book = book;
+    }
+
+    public BookCopy() {
+
     }
 
     public int getId(){

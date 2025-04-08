@@ -1,41 +1,41 @@
- .container{
-     display: flex;
-     flex-direction: column;
-     margin: auto;
-     margin-top: 200px;
-     padding-bottom: 30px;
-     width: 600px;
- }
+.container{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 200px;
+    padding-bottom: 30px;
+    width: 600px;
+}
 
- .header{
+.header{
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 9px;
     width: 100%;
     margin-top: 20px;
- }
+}
 
- .text{
-     color: #ADC2DA;
-     font-size: 48px;
-     font-weight: 700;
- }
+.text{
+    color: #ADC2DA;
+    font-size: 48px;
+    font-weight: 700;
+}
 
- .underline{
+.underline{
     width: 61px;
     height: 6px;
     background-color: #ADC2DA;
     border-radius: 9px;
- }
+}
 
- .inputs{
-  margin-top: 55px;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;  
- }
- .input{
+.inputs{
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+.input{
     display: flex;
     align-items: center;
     margin: auto;
@@ -43,9 +43,9 @@
     height: 50px;
     background: #D3DDE9;
     border-radius: 6px;
- }
+}
 
- .input input{
+.input input{
     height: 50px;
     width: 400px;
     background: transparent;
@@ -54,37 +54,37 @@
     color: #D3DDE9;
     font-size: 19px;
 
- }
+}
 
- .input form input{
-   color: black;
- }
+.input form input{
+    color: black;
+}
 
- .to-signup{
+.to-signup{
     padding-left: 113px;
     color: black;
     font-size: 18px;
- }
+}
 
- .to-signup span{
+.to-signup span{
     color: #D3DDE9;
     cursor: pointer;
- }
+}
 
- .to-signup button{
+.to-signup button{
     border: transparent;
     border-radius: 30px;
     height: 30px;
     width: 75px;
     background-color: gainsboro;
- }
+}
 
- .submit-container{
+.submit-container{
     display: flex;
     gap: 30px;
     margin: 25px auto;
- }
- .submit-container button{
+}
+.submit-container button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -99,11 +99,11 @@
     border:none;
     outline: none;
     margin-left: 75px;
- }
+}
 
- .logo{
-   width: 200px;
-   height: auto;
-   display: block;
-   margin: 0 auto 0;
- }
+.logo{
+    width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto 0;
+}

@@ -1,7 +1,7 @@
 /* Contenedor general */
 .home-container {
-    padding: 24px;
-    background-color: #f4f4f4;
+    padding: 70px;
+    background-color: white;
     min-height: 100vh;
     font-family: sans-serif;
     box-sizing: border-box;
@@ -29,7 +29,7 @@
 .search-input {
     padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 25px;
 }
 
 .user-icon {
@@ -41,35 +41,57 @@
 .top-section {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 8px;
     margin-bottom: 40px;
 }
 
-.goal-card, .whats-new, .stats {
+
+
+.whats-new {
+    min-width: 160px;
     background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    width: fit-content;
+    height: fit-content;
+}
+.goal-card{
+    background-color: #B4D1F2;
     border-radius: 12px;
     padding: 20px;
     flex: 1;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+}
+.stats{
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1;
 }
 
 .goal-card {
     max-width: 150px;
     text-align: center;
+    color: black;
 }
 
 .goal-number {
     font-size: 36px;
     font-weight: bold;
-    color: #3559E0;
+    color: #282c34;
 }
 
 /* What's new */
 .whats-new {
-    display: flex;
-    justify-content: space-between;
+    display: inline-flex; /* O 'flex' con width/height auto */
+    justify-content: center; /* o start, según lo que quieras */
     align-items: center;
-    gap: 16px;
+    gap: 80px;
+    background-color: #F0F0F0;
+    width: fit-content; /* 👈 se ajusta al contenido horizontalmente */
+    height: fit-content;
 }
 
 .whats-text .label {
@@ -97,10 +119,11 @@
     justify-content: space-between;
     gap: 16px;
     max-width: 120px;
+    background-color: white;
 }
 
 .stat-box {
-    background-color: #f9f9f9;
+    background-color: #F0F0F0;
     border-radius: 8px;
     padding: 12px;
     text-align: center;

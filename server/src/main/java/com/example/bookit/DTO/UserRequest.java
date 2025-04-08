@@ -1,5 +1,7 @@
 package com.example.bookit.DTO;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -8,6 +10,8 @@ public class UserRequest {
     private String email;
     private String password;
     private String fullName;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthDate;
     private List<String> interests;
 

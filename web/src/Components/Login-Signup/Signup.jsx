@@ -8,6 +8,8 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [interests, setInterests] = useState([]);
+  const [fullName, setFullName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const navigate = useNavigate();
 
   const allInterests = [
@@ -43,7 +45,7 @@ const SignUp = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, username, interests }),
+        body: JSON.stringify({ email, password, username, interests, fullName, birthDate }),
       });
 
       if (response.ok) {
@@ -96,7 +98,8 @@ const SignUp = () => {
             <input
               type="text"
               placeholder="Name"
-              // Agregar lógica si querés usar el nombre
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
             />
           </div>
           <div className="input-title">E-mail</div>
@@ -113,9 +116,10 @@ const SignUp = () => {
           <div className="input">
             <img />
             <input
-              type="text"
-              placeholder="mm/dd/yyyy"
-              // Agregar lógica si querés usar la fecha
+              type="date"
+              placeholder="yyyy-mm-dd"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
             />
           </div>
           <div className="input-title">Main Interests</div>

@@ -3,6 +3,8 @@ package com.example.bookit.Entities;
 import jakarta.persistence.*;
 import com.example.bookit.Entities.User;
 
+import java.util.List;
+
 @Entity
 public class Folder {
 
@@ -18,6 +20,10 @@ public class Folder {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToMany(mappedBy = "folders")
+    private List<SavedBook> savedBooks;
+
 
     public Folder() {
     }
@@ -45,6 +51,14 @@ public class Folder {
 
     public User getUser() {
         return user;
+    }
+
+    public List<SavedBook> getSavedBooks() {
+        return savedBooks;
+    }
+
+    public void setSavedBooks(List<SavedBook> savedBooks) {
+        this.savedBooks = savedBooks;
     }
 
 }

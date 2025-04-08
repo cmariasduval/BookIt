@@ -88,11 +88,11 @@ public class User {
         this.fullName = fullName;
     }
 
-    public LocalDate getBirthdate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthdate(LocalDate birthdate) {
+    public void setBirthDate(LocalDate birthdate) {
         this.birthDate = birthdate;
     }
 

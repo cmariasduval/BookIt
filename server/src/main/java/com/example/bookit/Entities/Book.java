@@ -2,6 +2,7 @@ package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,6 +33,9 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private List<Genre> Genres;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<BookCopy> copies = new ArrayList<>();
 
     private String imageUrl;
 
@@ -100,6 +104,17 @@ public class Book {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public List<BookCopy> getCopies() { return copies; }
+
+    public void addCopy(BookCopy copy) {
+        copies.add(copy);
+        copy.setBook(this);
+    }
+    public void removeCopy(BookCopy copy) {
+        copies.remove(copy);
+        copy.setBook(null);
     }
 
 }

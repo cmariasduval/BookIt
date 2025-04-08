@@ -34,7 +34,11 @@ public class SavedBook {
     private Book book;
 
     @ManyToMany
-    @JoinColumn(name = "folder_name", nullable = false)
+    @JoinTable(
+            name = "savedbook_folder",
+            joinColumns = @JoinColumn(name = "saved_book_id"),
+            inverseJoinColumns = @JoinColumn(name = "folder_id")
+    )
     private List<Folder> folders;
 
     public SavedBook() {}

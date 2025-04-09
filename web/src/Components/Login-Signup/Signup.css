@@ -67,9 +67,26 @@
     border-width: 3px;
   }
 
-.submit-container{
-    margin-top: 30px;
+.signup-submit-container{
     display: flex;
-    flex-direction: row;
-    margin-left: 50px;
+    margin: 25px auto;
+    justify-content: center;
+    gap: 25px;
+}
+
+.signup-submit-container button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 50px;
+    color: white;
+    background:#D3DDE9;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    border:none;
+    outline: none;
+    margin-left: 10px;
 }

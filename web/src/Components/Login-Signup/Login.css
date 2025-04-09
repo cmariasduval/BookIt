@@ -79,12 +79,14 @@
     background-color: gainsboro;
 }
 
-.submit-container{
+.login-submit-container{
     display: flex;
     gap: 30px;
     margin: 25px auto;
+    justify-content: center;
+    align-items: center;
 }
-.submit-container button{
+.login-submit-container button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,7 +100,6 @@
     cursor: pointer;
     border:none;
     outline: none;
-    margin-left: 75px;
 }
 
 .logo{

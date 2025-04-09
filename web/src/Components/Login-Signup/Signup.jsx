@@ -140,7 +140,7 @@ const SignUp = () => {
           </div>
         </div>
 
-        <div className="submit-container">
+        <div className="signup-submit-container">
           <button type="button" onClick={() => navigate("/")}>Back</button>
           <button type="submit">Sign Up</button>
         </div>

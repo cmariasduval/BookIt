@@ -6,9 +6,19 @@ const Home = () => {
         <div className="home-container">
             {/* Header */}
             <div className="home-header">
-                <div className="logo">BookIt</div>
+                <div className="left-header">
+                    <img className="menu-icon" src="/menu-icon.png" alt="Menu" />
+                    <div className="logo">BookIt</div>
+                </div>
+
+                <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Search books..."
+                />
+
                 <div className="header-actions">
-                    <input className="search-input" type="text" placeholder="Search..." />
+                    <img className="user-icon" src="/bell-icon.png" alt="Notifications" />
                     <img className="user-icon" src="/user-icon.png" alt="User" />
                 </div>
             </div>

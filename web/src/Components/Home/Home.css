@@ -7,165 +7,191 @@
     box-sizing: border-box;
 }
 
+
 /* Header */
 .home-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 32px;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: white;
+}
+
+.left-header {
+    display: flex;
+    align-items: center;
+}
+
+.menu-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
 .logo {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
+}
+
+.search-input {
+    flex: 1;
+    margin: 0 20px;
+    padding: 0.5rem;
 }
 
 .header-actions {
     display: flex;
-    gap: 12px;
     align-items: center;
-}
-
-.search-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 25px;
+    gap: 15px;
 }
 
 .user-icon {
     width: 28px;
     height: 28px;
+    cursor: pointer;
 }
 
-/* Sección superior (goal + what's new + stats) */
-.top-section {
+/* Goal Card */
+.goal-card {
+    background-color: #B4D1F2;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.goal-header {
     display: flex;
     justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 40px;
-}
-
-
-
-.whats-new {
-    min-width: 160px;
-    background-color: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    width: fit-content;
-    height: fit-content;
-}
-.goal-card{
-    background-color: #B4D1F2;
-    border-radius: 12px;
-    padding: 20px;
-    flex: 1;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-
-}
-.stats{
-    background-color: white;
-    border-radius: 12px;
-    padding: 20px;
-    flex: 1;
-}
-
-.goal-card {
-    max-width: 150px;
-    text-align: center;
-    color: black;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .goal-number {
-    font-size: 36px;
-    font-weight: bold;
-    color: #282c34;
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 10px;
 }
 
-/* What's new */
+.goal-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.goal-increase {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.goal-increase:hover {
+    background-color: #45a049;
+}
+
+.goal-edit {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.goal-edit:hover {
+    background-color: #1e88e5;
+}
+
+/* Top Section */
+.top-section {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
 .whats-new {
-    display: inline-flex; /* O 'flex' con width/height auto */
-    justify-content: center; /* o start, según lo que quieras */
+    display: flex;
     align-items: center;
-    gap: 80px;
-    background-color: #F0F0F0;
-    width: fit-content; /* 👈 se ajusta al contenido horizontalmente */
-    height: fit-content;
+    gap: 15px;
+    background-color: #f8f8f8;
+    border-radius: 12px;
 }
 
-.whats-text .label {
-    font-size: 14px;
-    color: #666;
-}
-
-.book-title {
-    font-weight: 600;
-    margin-top: 4px;
-    color: #333;
+.whats-text {
+    font-size: 16px;
 }
 
 .whats-image {
-    width: 80px;
-    height: 110px;
+    width: 120px;
+    height: 180px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 5px;
 }
 
-/* Stats */
 .stats {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 16px;
-    max-width: 120px;
-    background-color: white;
+    gap: 15px;
 }
 
 .stat-box {
-    background-color: #F0F0F0;
+    background-color: #fff;
+    padding: 1rem;
     border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-}
-
-.stat-number {
-    font-weight: bold;
-    font-size: 16px;
-    margin-top: 4px;
-}
-
-/* Libros reservados */
-.reserved-books h2 {
-    font-size: 20px;
-    margin-bottom: 16px;
-}
-
-.books-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.book-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 120px;
     text-align: center;
 }
 
+.stat-number {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+/* Reserved Books */
+.reserved-books {
+    margin-top: 2rem;
+}
+
+.reserved-books h2 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+}
+
+.book-card {
+    position: relative;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .book-img {
     width: 100%;
-    height: 170px;
+    height: 180px;
     object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .reserved-badge {
-    display: inline-block;
-    margin-top: 6px;
-    font-size: 12px;
-    background-color: #E53935;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f44336;
     color: white;
-    padding: 2px 6px;
-    border-radius: 12px;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
 }

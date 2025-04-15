@@ -35,15 +35,15 @@ const Login = () => {
   };
 
   return (
-    <div className='container'>
+    <div className='login-container'>
       <div className="header">
         <img src={logo} alt="Logo" className="logo" />
         <div className="text">Log In</div>
         <div className="underline"></div>
       </div>
       <form onSubmit={handleLogin}>
-        <div className="inputs">
-          <div className="input">
+        <div className="login-inputs">
+          <div className="login-input">
             <input 
               type="email"
               placeholder="Email"
@@ -52,7 +52,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className="input">
+          <div className="login-input">
             <input 
               type="password"
               placeholder="Password"
@@ -62,14 +62,13 @@ const Login = () => {
             />
           </div>
         </div>
+        <div className="to-signup">Do not have an account?{" "}
+          <button type="button" onClick={() => navigate("/SignUp")}>Sign Up</button>
+        </div>
         <div className="login-submit-container">
           <button type="submit">Log In</button>
         </div>
       </form>
-      <div className="to-signup">
-        Do not have an account?{" "}
-        <button type="button" onClick={() => navigate("/SignUp")}>Sign Up</button>
-      </div>
     </div>
   );
 };

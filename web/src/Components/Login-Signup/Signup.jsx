@@ -50,7 +50,7 @@ const SignUp = () => {
 
       if (response.ok) {
         alert("Registro exitoso");
-        navigate("/Home");
+        navigate("/");
       } else {
         const errorMsg = await response.text();
         alert(`Error: ${errorMsg}`);

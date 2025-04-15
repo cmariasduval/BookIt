@@ -1,7 +1,6 @@
 package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,7 +9,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "id")
     private Integer id;
 
@@ -29,7 +27,15 @@ public class User {
     @Column(name = "birthDate" , nullable = false)
     private LocalDate birthDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)  // Definido una sola vez
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
+
+    @ManyToMany(fetch = FetchType.EAGER)  // Relación con los géneros
     @JoinTable(
             name = "user_genre",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -37,16 +43,19 @@ public class User {
     )
     private List<Genre> interests;
 
-    public User(){}
+    public User() {}
 
-    public User(String username, String password, String email, String fullName, LocalDate birthDate, List<Genre> interests) {
+    public User(String username, String password, String email, String fullName, LocalDate birthDate, List<Genre> interests, List<Role> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.fullName = fullName;
         this.birthDate = birthDate;
         this.interests = interests;
+        this.roles = roles;  // Asegúrate de incluir los roles aquí
     }
+
+    // Getters y setters
 
     public int getId() {
         return id;
@@ -92,15 +101,23 @@ public class User {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthdate) {
-        this.birthDate = birthdate;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public List<Genre> getInterests(){
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<Genre> getInterests() {
         return interests;
     }
 
-    public void setInterests(List<Genre> interests){
+    public void setInterests(List<Genre> interests) {
         this.interests = interests;
     }
 

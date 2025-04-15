@@ -6,13 +6,15 @@ import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:3000")  // Permite que el frontend acceda al backend
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -28,12 +30,13 @@ public class UserController {
     public ResponseEntity<?> signup(@RequestBody UserRequest userRequest) {
         try {
             User newUser = userService.registerUser(
-                    userRequest.getUsername(), // Esto es el username
+                    userRequest.getUsername(),
                     userRequest.getPassword(),
                     userRequest.getEmail(),
                     userRequest.getFullName(),
                     userRequest.getBirthDate(),
-                    userRequest.getInterests()
+                    userRequest.getInterests(),
+                    userRequest.getRole()
             );
             return ResponseEntity.ok(newUser);
         } catch (Exception e) {
@@ -41,14 +44,13 @@ public class UserController {
         }
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
             User loggedInUser = userService.loginUser(user.getEmail(), user.getPassword());
-            return ResponseEntity.ok(loggedInUser);  // Devuelve el usuario si el login es exitoso
+            return ResponseEntity.ok(loggedInUser);
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());  // Devuelve error si el login falla
+            return ResponseEntity.status(401).body(e.getMessage());
         }
     }
 
@@ -57,4 +59,18 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        String username = getAuthenticatedUser();
+        return ResponseEntity.ok("Usuario autenticado: " + username);
+    }
+
+    private String getAuthenticatedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.bookit.DTO;
 
+import com.example.bookit.Entities.Role;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ public class UserRequest {
     private String email;
     private String password;
     private String fullName;
+    private List<Role> role;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthDate;
@@ -61,6 +63,10 @@ public class UserRequest {
 
     public void setInterests(List<String> interests) {
         this.interests = interests;
+    }
+
+    public List<Role> getRole() {
+        return role;
     }
 }
 

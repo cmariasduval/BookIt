@@ -39,6 +39,10 @@ public class Book {
 
     private String imageUrl;
 
+    @ManyToOne
+    @JoinColumn(name = "uploaded_by")  // Nombre de la columna en la base de datos
+    private User uploadedBy;
+
     public Book() {}
 
     public Book(String title, String author, String publisher, String ISBN, List<Genre> Genres, String imageUrl) {
@@ -115,6 +119,14 @@ public class Book {
     public void removeCopy(BookCopy copy) {
         copies.remove(copy);
         copy.setBook(null);
+    }
+
+    public User getUploadedBy() {
+        return uploadedBy;
+    }
+
+    public void setUploadedBy(User uploadedBy) {
+        this.uploadedBy = uploadedBy;
     }
 
 }

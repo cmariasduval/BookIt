@@ -4,26 +4,16 @@ import "./Home.css";
 const Home = () => {
     return (
         <div className="home-container">
-            {/* Header */}
-            <div className="home-header">
-                <div className="left-header">
-                    <img className="menu-icon" src="/menu-icon.png" alt="Menu" />
-                    <div className="logo">BookIt</div>
-                </div>
-
-                <input
-                    className="search-input"
-                    type="text"
-                    placeholder="Search books..."
-                />
-
-                <div className="header-actions">
-                    <img className="user-icon" src="/bell-icon.png" alt="Notifications" />
-                    <img className="user-icon" src="/user-icon.png" alt="User" />
-                </div>
+            <div className="folders-container">
+                <a href="your">Your books</a>
+                <ul>
+                    <li>Read</li>
+                    <li>Wishlist</li>
+                </ul>
             </div>
 
-            {/* Top Section */}
+            <div className="right-section">
+                {/* Top Section */}
             <div className="top-section">
                 {/* Goal */}
                 <div className="goal-card">
@@ -52,6 +42,8 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            </div>
+            
 
             {/* Reserved Books */}
             <div className="reserved-books">

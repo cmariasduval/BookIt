@@ -5,51 +5,42 @@
     min-height: 100vh;
     font-family: sans-serif;
     box-sizing: border-box;
-}
-
-
-/* Header */
-.home-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    gap: 20px;
+}
+
+.folders-container {
+    width: 25%; /* Aproximadamente 1/4 del ancho */
+    display: flex;
+    flex-direction: column; /* Los elementos dentro serán verticales */
+    background-color: #f4f4f4;
     padding: 1rem;
-    background-color: white;
+    border-radius: 8px;
 }
 
-.left-header {
-    display: flex;
-    align-items: center;
-}
-
-.menu-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-.logo {
-    font-size: 24px;
+.folders-container a {
+    text-decoration: none;
     font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
 }
 
-.search-input {
-    flex: 1;
-    margin: 0 20px;
-    padding: 0.5rem;
+.folders-container ul {
+    list-style-type: none;
+    padding-left: 0;
 }
 
-.header-actions {
+.folders-container li {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.right-section {
     display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-icon {
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
+    flex-direction: column; /* Coloca los dos containers de la derecha en una columna */
+    width: 70%; /* Aproximadamente 3/4 del ancho */
+    gap: 20px; /* Espacio entre los contenedores */
 }
 
 /* Goal Card */

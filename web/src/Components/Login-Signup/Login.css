@@ -1,10 +1,13 @@
-.container{
+.login-container{
     display: flex;
     flex-direction: column;
     margin: auto;
     margin-top: 200px;
     padding-bottom: 30px;
     width: 600px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header{
@@ -17,7 +20,7 @@
 }
 
 .text{
-    color: #ADC2DA;
+    color: #3191FF;
     font-size: 48px;
     font-weight: 700;
 }
@@ -25,38 +28,39 @@
 .underline{
     width: 61px;
     height: 6px;
-    background-color: #ADC2DA;
+    background-color: #3191FF;
     border-radius: 9px;
 }
 
-.inputs{
+.login-inputs{
     margin-top: 55px;
     display: flex;
     flex-direction: column;
     gap: 25px;
 }
-.input{
+
+.login-input{
     display: flex;
     align-items: center;
     margin: auto;
     width: 380px;
     height: 50px;
-    background: #D3DDE9;
-    border-radius: 6px;
+    color: whitesmoke;
+    background-color: whitesmoke;
+    border-radius: 7px;
 }
 
-.input input{
+.login-input input{
     height: 50px;
     width: 400px;
-    background: transparent;
     border: none;
-    outline: none;
-    color: #D3DDE9;
     font-size: 19px;
-
+    background: whitesmoke; /* Fondo blanco */
+    margin-left: 10px;
+    outline: none;
 }
 
-.input form input{
+.login-input form input{
     color: black;
 }
 
@@ -64,11 +68,7 @@
     padding-left: 113px;
     color: black;
     font-size: 18px;
-}
-
-.to-signup span{
-    color: #D3DDE9;
-    cursor: pointer;
+    margin-top: 10px;
 }
 
 .to-signup button{
@@ -76,7 +76,15 @@
     border-radius: 30px;
     height: 30px;
     width: 75px;
-    background-color: gainsboro;
+    background-color: white;
+    font-weight: bold;
+    color: #3191FF;
+    font-size: 90%;
+    cursor: pointer;
+}
+
+.to-signup button:hover{
+    text-decoration: underline;
 }
 
 .login-submit-container{
@@ -90,16 +98,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 150px;
+    width: 380px;
     height: 50px;
     color: white;
-    background:#D3DDE9;
-    border-radius: 50px;
+    background:#3191FF;
+    border-radius: 7px;
     font-size: 19px;
     font-weight: 700;
     cursor: pointer;
     border:none;
     outline: none;
+}
+
+.login-submit-container button:hover {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    background-color: #086EE3;
 }
 
 .logo{
@@ -108,3 +122,14 @@
     display: block;
     margin: 0 auto 0;
 }
+
+.divider{
+    width: 70%;
+    height: 1px;
+    margin-left: 90px;
+    background-color: #ccc;
+    border-radius: 9px;
+}
+
+
+  

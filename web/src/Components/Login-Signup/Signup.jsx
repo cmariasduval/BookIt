@@ -1,6 +1,9 @@
 import { useState } from "react";
 import './Signup.css';
 import { useNavigate } from "react-router-dom";
+import logo from '../Assets/logo.png';
+import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -62,11 +65,16 @@ const SignUp = () => {
   };
 
   return (
-    <div className='container'>
+    <div className='signup-container'>
+      <div className="signup-header">
+        <img src={logo} alt="Logo" className="logo" />
+        <div className="signup-text">Sign Up</div>
+        <div className="signup-underline"></div>
+      </div>
       <form onSubmit={handleSubmit}>
-        <div className="inputs">
-          <div className="input">
-            <img />
+        <div className="signup-inputs">
+          <div className="signup-input">
+            <FaUser className="signup-input-icon" style={{marginRight: "6px", cursor: "pointer"}} />
             <input
               type="text"
               placeholder="Create Username"
@@ -74,8 +82,8 @@ const SignUp = () => {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="input">
-            <img />
+          <div className="signup-input">
+            <FaLock className="signup-input-icon" style={{marginRight: "6px", cursor: "pointer"}} />
             <input
               type="password"
               placeholder="New Password"
@@ -83,8 +91,8 @@ const SignUp = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="input">
-            <img />
+          <div className="signup-input">
+            <FaLock className="signup-input-icon" style={{marginRight: "6px", cursor: "pointer"}} />
             <input
               type="password"
               placeholder="Confirm Password"
@@ -92,19 +100,9 @@ const SignUp = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          <div className="input-title">Name</div>
-          <div className="input">
-            <img />
-            <input
-              type="text"
-              placeholder="Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-          </div>
           <div className="input-title">E-mail</div>
-          <div className="input">
-            <img />
+          <div className="signup-input">
+            <FaEnvelope className="signup-input-icon" style={{marginRight: "6px", cursor: "pointer"}} />
             <input
               type="email"
               placeholder="Email"
@@ -113,7 +111,7 @@ const SignUp = () => {
             />
           </div>
           <div className="input-title">Birth Date</div>
-          <div className="input">
+          <div className="signup-input">
             <img />
             <input
               type="date"

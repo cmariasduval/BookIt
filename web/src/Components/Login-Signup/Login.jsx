@@ -69,6 +69,7 @@ const Login = () => {
           <button type="submit">Log In</button>
         </div>
       </form>
+      <div className="divider"></div>
     </div>
   );
 };

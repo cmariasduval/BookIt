@@ -1,48 +1,78 @@
 import React from "react";
 import "./Home.css";
-import AddBook from "./AddBook"
+
 
 const Home = () => {
-    return (
-        <div className="home-container">
-            <div className="top-section">
-                <div className="goal">
-                    <h2>Monthly Goal</h2>
-                    <p>5</p> 
-                </div>
-                <div className="whats-new">
-                    <div className="whats-new-text">
-                        <h2>The Midnight Library</h2>
-                        <p>Discover a world between life and death. Buy now!</p>
-                    </div>
-                    <div className="whats-new-image">
-                        <img src="https://images-na.ssl-images-amazon.com/images/I/81FryD8NwJL.jpg" alt="The Midnight Library" />
-                    </div>
-                </div>
-                <div className="infractions">
-                    <div className="debt-box">
-                        <span>Debt: $100</span> {/* Aquí pondrás el valor dinámico más adelante */}
-                    </div>
-                    <div className="infractions-box">
-                        <span>Infractions: 3</span> {/* Aquí pondrás el valor dinámico más adelante */}
-                    </div>
-                </div>
-            </div>
-            <div className="lower-section">
-                <div className="folders">
-                    <ul className="folders-list">
-                        <a href="your-books">Your Books</a>
-                        <li>Read</li>
-                        <li>Borrowed</li>
-                        <li>Wishlist</li>
-                    </ul>
-                </div>
-                <div className="reserved">
-                    my reserved books
-                </div>
-            </div>
+  const recommendedBooks = [
+    "the-psychology-of-money.jpg",
+    "company-of-one.jpg",
+    "how-innovation-works.jpg",
+    "the-picture-of-dorian-gray.jpg",
+  ];
+
+  const bookCategories = [
+    { img: "money.jpg", label: "Money / Investing" },
+    { img: "design.jpg", label: "Design" },
+    { img: "business.jpg", label: "Business" },
+    { img: "self.jpg", label: "Self Improvement" },
+  ];
+
+  return (
+    <div className="home-container">
+      {/* Header con título y buscador */}
+      <div className="home-header">
+        <h1 className="home-title">Discover</h1>
+        <div className="home-search-bar">
+          <select className="home-category-select">
+            <option>All Categories</option>
+            <option>Fantasy</option>
+            <option>Romance</option>
+            <option>Sci-Fi</option>
+            <option>Mystery</option>
+            <option>Non-Fiction</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Search book"
+            className="home-search-input"
+          />
         </div>
-    );
+      </div>
+
+      {/* Carrusel de recomendaciones */}
+      <div className="home-section">
+        <h2 className="home-section-title">Recommendations</h2>
+        <div className="home-carousel">
+          {recommendedBooks.map((img, index) => (
+            <img
+              key={index}
+              src={`/assets/books/${img}`}
+              alt="book"
+              className="home-book-card"
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Categorías */}
+      <div className="home-section">
+        <h2 className="home-section-title">Book Category</h2>
+        <button>View All</button>
+        <div className="home-category-list">
+          {bookCategories.map(({ img, label }, index) => (
+            <div key={index} className="home-category-card">
+              <img
+                src={`/assets/categories/${img}`}
+                alt={label}
+                className="home-category-image"
+              />
+              <span className="home-category-label">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Home;

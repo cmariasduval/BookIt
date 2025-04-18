@@ -3,18 +3,25 @@ import Login from "./Components/Login-Signup/Login";
 import Signup from "./Components/Login-Signup/Signup";
 import Home from "./Components/Home/Home"
 import Layout from "./Components/Layout/Layout";
+import Library from "./Components/Home/Library"
+import Favorites from "./Components/Home/Favorites"
+import Profile from "./Components/Home/Profile"
+
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Paginas sin navbar */}
+        {/* Paginas sin sidebar */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Paginas con navbar */}
+        {/* Paginas con sidebar */}
         <Route element={<Layout/>}>
           <Route path="/home" element = {<Home />} />
+          <Route path="/library" element = {<Library />} />
+          <Route path="/favorites" element = {<Favorites />} />
+          <Route path="/profile" element = {<Profile />} />
         </Route>
           
 

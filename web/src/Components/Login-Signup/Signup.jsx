@@ -112,10 +112,8 @@ const SignUp = () => {
           </div>
           <div className="input-title">Birth Date</div>
           <div className="signup-input">
-            <img />
             <input
               type="date"
-              placeholder="yyyy-mm-dd"
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
             />
@@ -139,8 +137,10 @@ const SignUp = () => {
         </div>
 
         <div className="signup-submit-container">
-          <button type="button" onClick={() => navigate("/")}>Back</button>
-          <button type="submit">Sign Up</button>
+          <button type="submit">Create Account</button>
+        </div>
+        <div className="to-login">Already have an account?{" "}
+          <button type="button" onClick={() => navigate("/")}>Log in</button>
         </div>
       </form>
     </div>

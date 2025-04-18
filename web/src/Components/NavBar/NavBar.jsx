@@ -1,10 +1,12 @@
 import './NavBar.css' 
+import { useNavigate } from "react-router-dom";
 import { IoNotifications } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from 'react';
 import bookit from '../Assets/bookit.png'
 
 export default function NavBar() {
+    const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -17,21 +19,21 @@ export default function NavBar() {
 
 
     return <nav className="nav">
-        <a href="/" className="bookit">BookIt</a>
+        <img src={bookit} alt="bookit" className='bookit' />
         <input
             className="search-input"
             type="text"
             placeholder="Search books..."
         />
-        <ul>
-            <li className='active'>
-            <a href="/notifications">
-                <IoNotifications style={{marginRight: "6px"}} />
-            </a>
+        <ul className='bar-icons'>
+            <li className='notifications'>
+                <div className='notifications-div'>
+                    <IoNotifications style={{marginRight: "6px"}} />
+                </div>
             </li>
             <li className='dropdown' onClick={closeDropdown}>
                 <div className='dropdown-toggle' onClick={toggleDropdown}>
-                    <FaUserCircle style={{marginRight: "6px", cursor: "pointer"}} />
+                    <FaUserCircle style={{cursor: "pointer"}} />
                 </div>
                 {isDropdownOpen && (
                     <div className='dropdown-menu'>

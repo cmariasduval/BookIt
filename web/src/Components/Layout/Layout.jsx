@@ -1,15 +1,19 @@
 import React from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import NavBar from "../NavBar/NavBar"; // o "./navbar" según cómo esté escrito realmente
+import Sidebar from "../Sidebar/Sidebar";
+import "./Layout.css";
 
 const Layout = () => {
   const location = useLocation();
   const hideNavbar = location.pathname === "/" || location.pathname === "/signup";
 
   return (
-    <div className="layout">
-      {!hideNavbar && <NavBar />}
-      <main>
+    <div className="layout-container">
+      {/* Solo mostramos el fondo si hay sidebar */}
+      {!hideNavbar && <div className="background-decorator" />}
+
+      {!hideNavbar && <Sidebar />}
+      <main className={hideNavbar ? "main-no-sidebar" : "main-with-sidebar"}>
         <Outlet />
       </main>
     </div>

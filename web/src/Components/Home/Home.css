@@ -1,154 +1,112 @@
-/* Hace que el contenedor ocupe toda la página */
-.home-container{
-    display: flex;
-    flex-direction: column;
-    margin: auto;
-    padding-bottom: 30px;
-    width: 1300px;
-    background-color: white;
-    border-radius: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    height: 1200px;
-}
-  
-  /* Parte superior con 3 columnas */
-  .top-section {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem;
-    height: 40%; /* o ajustalo como prefieras */
-  }
-
-  .goal {
-    background-color: #f1f1f1;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .goal h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #333;
-  }
-  
-  .goal p {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #3191ff;
-    margin-top: 10px;
-  }
-
-  .whats-new {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fefefe;
-    padding: 20px;
-    border-radius: 10px;
-    gap: 20px;
-    flex: 1;
-  }
-  
-  .whats-new-text {
-    flex: 1;
-  }
-  
-  .whats-new-text h2 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: #2c3e50;
-  }
-  
-  .whats-new-text p {
-    font-size: 1rem;
-    color: #555;
-    margin-top: 8px;
-  }
-  
-  .whats-new-image {
-    width: 120px;
-    height: auto;
-    flex-shrink: 0;
-  }
-  
-  .whats-new-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-
-  .infractions {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Espacio entre las dos cajitas */
-    width: 100%; /* O ajusta según tus necesidades */
+.home-container {
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+  background-color: transparent;
+  min-height: 100vh;
 }
 
-.debt-box,
-.infractions-box {
-    background-color: #f8f8f8; /* Color de fondo de las cajitas */
-    border-radius: 8px;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.home-header {
+  display: flex;
+  justify-content:baseline;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 100px;
 }
 
-.debt-box {
-    background-color: #FFDDC1; /* Un color suave para la caja de la deuda */
+.home-title {
+  font-size: 50px;
+  font-weight: 600;
+  color: #2d2d2d;
+  font-family: 'Merriweather', serif;
 }
 
-.infractions-box {
-    background-color: #D1E7DD; /* Un color suave para la caja de infracciones */
+.home-search-bar {
+  display: flex;
+  gap: 10px;
 }
 
-  
-  /* Parte inferior con 2 columnas */
-  .lower-section {
-    display: flex;
-    flex: 1;
-    gap: 1rem;
-    padding: 1rem;
-  }
-  
-  .folders {
-    flex: 0.25; /* 25% del espacio */
-    background-color: #e0e0e0;
-    border-radius: 8px;
-    padding: 1rem;
-  }
-  
-  .folders-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .folders-list a,
-  .folders-list li {
-    display: block;
-    padding: 0.5rem 0;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  .reserved {
-    flex: 0.75; /* 75% del espacio */
-    background-color: #e8f0ff;
-    border-radius: 8px;
-    padding: 1rem;
-  }
-  
+.home-category-select,
+.home-search-input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  font-size: 14px;
+  outline: none;
+}
+
+.home-search-input {
+  width: 380px;
+  height: 25px;
+}
+
+.home-search-button {
+  padding: 10px 20px;
+  background-color: #264653;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.home-search-button:hover {
+  background-color: #1f3a3d;
+}
+
+.home-section {
+  margin-bottom: 48px;
+}
+
+.home-section-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.home-carousel {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.home-book-card {
+  height: 240px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.home-book-card:hover {
+  transform: scale(1.05);
+}
+
+.home-category-list {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.home-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.home-category-image {
+  height: 140px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.home-category-label {
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  color: #555;
+}

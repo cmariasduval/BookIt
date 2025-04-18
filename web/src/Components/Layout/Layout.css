@@ -1,0 +1,42 @@
+.layout-container {
+    display: flex;
+    position: relative; /* Esto es clave para posicionar hijos absolutos */
+    min-height: 100vh;
+  }
+  
+  /* Cuando hay sidebar */
+  .main-with-sidebar {
+    margin-left: 240px; /* Este número debe coincidir con el ancho de tu sidebar */
+    padding: 1rem;
+    width: calc(100% - 240px);
+  }
+  
+  /* Cuando NO hay sidebar (por ejemplo en login/signup) */
+  .main-no-sidebar {
+    width: 100%;
+    padding: 1rem;
+  }
+
+.background-decorator {
+  position: absolute; /* importante que no sea fixed si querés que se mantenga dentro del Layout */
+  top: -200px;
+  right: -180px;
+  width: 1200px;
+  height: 700px;
+  background-color: palegoldenrod;
+  border-radius: 40%;
+  z-index: 0; /* detrás del contenido */
+  pointer-events: none;
+}
+  
+.main-with-sidebar {
+  flex-grow: 1;
+  padding: 20px;
+  position: relative;
+  z-index: 1; /* asegúrate que esté encima del fondo decorativo */
+}
+
+.main-no-sidebar {
+  flex-grow: 1;
+  padding: 20px;
+}

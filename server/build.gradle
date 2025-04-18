@@ -1,39 +1,42 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.4'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'org.hsqldb:hsqldb:2.7.2'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-}
+    // Dependencia principal para Spring Boot y JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // Para usar JPA con Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Para construir aplicaciones web con Spring Boot
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'org.hsqldb:hsqldb:2.7.2'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Dependencia de HSQLDB
+    implementation 'org.hsqldb:hsqldb:2.7.2'  // Para usar la base de datos HSQLDB
 
+    // Dependencia para el soporte de validaciones en JPA
+    implementation 'org.springframework.boot:spring-boot-starter-validation'  // Para realizar validaciones en las entidades
+
+    // Dependencias para pruebas
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Starter para pruebas
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // Lanzador de pruebas JUnit
+
+    // Dependencia adicional para seguridad, si la necesitas en algún momento
+    implementation 'org.springframework.boot:spring-boot-starter-security'  // Para usar Spring Security (opcional)
+
+    // Dependencias para pruebas de seguridad, si vas a agregar autenticación
+    testImplementation 'org.springframework.security:spring-security-test'  // Para pruebas relacionadas con seguridad
 }
 
 tasks.named('test') {

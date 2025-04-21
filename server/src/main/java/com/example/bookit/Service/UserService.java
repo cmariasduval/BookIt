@@ -1,5 +1,6 @@
 package com.example.bookit.Service;
 
+import com.example.bookit.Config.JwtUtil;
 import com.example.bookit.Entities.Genre;
 import com.example.bookit.Entities.Role;
 import com.example.bookit.Entities.User;
@@ -20,6 +21,9 @@ public class UserService {
     @Autowired
     private GenreRepository genreRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     public User registerUser(String username, String password, String email, String fullName, LocalDate birthdate, List<String> interestNames, List<Role> role){
         if (userRepository.findByEmail(email).isPresent()){
             throw new RuntimeException("El mail ya esta registrado");
@@ -34,11 +38,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User loginUser(String email, String password){
+    public String loginUser(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
-        if(user.isPresent() && user.get().getPassword().equals(password)){
-            return user.get();
+        if (user.isPresent() && user.get().getPassword().equals(password)) {
+            // Aquí generamos el token después de la autenticación exitosa
+            return jwtUtil.generateToken(user.get().getUsername());
         }
         throw new RuntimeException("Credenciales incorrectas");
     }
+
 }

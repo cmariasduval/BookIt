@@ -2,7 +2,7 @@ import { useState } from "react";
 import './Login.css';
 import { useNavigate } from "react-router-dom";
 import logo from '../Assets/logo.png';
-import useAuth from "../../useAuth";
+import useAuth from "../../useAuth";  // Usamos el hook para manejar el token
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,8 +26,10 @@ const Login = () => {
         const data = await response.json();
         // ✅ Login exitoso
         alert("Inicio de sesión exitoso");
+        console.log("Token recibido:", data.token);
         saveToken(data.token); // Guardamos el token usando el hook
-        navigate("/Home");
+        navigate("/Home");  // Navegamos a la página de inicio
+        console.log("Respuesta del login:", data);
       } else {
         const errorMsg = await response.text();
         alert(`Error: ${errorMsg}`);

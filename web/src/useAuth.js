@@ -6,6 +6,7 @@ const useAuth = () => {
   useEffect(() => {
     // Al cargar el componente, verificamos si existe un token en el localStorage
     const token = localStorage.getItem('authToken');
+    console.log("Token cargado desde localStorage:", token);
     if (token) {
       setAuthToken(token);
     }

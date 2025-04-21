@@ -1,21 +1,38 @@
 import React from "react";
 import "./Home.css";
+import bookthief from '../Assets/books/bookthief.png';
+import emma from '../Assets/books/emma.png';
+import annafrank from '../Assets/books/annafrank.png';
+import belljar from '../Assets/books/belljar.png';
+import hungergames from '../Assets/books/hungergames.png';
+import mazerunner from '../Assets/books/mazerunner.png';
+import rebecca from '../Assets/books/rebecca.png';
+import { FaBrain } from "react-icons/fa";
+import { GiGreekTemple } from "react-icons/gi";
+import { FaHeart } from "react-icons/fa";
+import { GiMaterialsScience } from "react-icons/gi";
+import { FaRegNewspaper } from "react-icons/fa6";
+import { GiGhost } from "react-icons/gi";
+import { RiKnifeBloodLine } from "react-icons/ri";
+import { MdCastle } from "react-icons/md";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 
 const Home = () => {
-  const recommendedBooks = [
-    "the-psychology-of-money.jpg",
-    "company-of-one.jpg",
-    "how-innovation-works.jpg",
-    "the-picture-of-dorian-gray.jpg",
-  ];
+  const recommendedBooks = [bookthief, annafrank, belljar, emma, rebecca, mazerunner, hungergames];
 
   const bookCategories = [
-    { img: "money.jpg", label: "Money / Investing" },
-    { img: "design.jpg", label: "Design" },
-    { img: "business.jpg", label: "Business" },
-    { img: "self.jpg", label: "Self Improvement" },
+    { icon: <FaBrain />, label: "Psychology" },
+    { icon: <GiGreekTemple />, label: "History" },
+    { icon: <FaHeart />, label: "Romance" },
+    { icon: <GiMaterialsScience />, label: "Science Fiction" },
+    { icon: <FaRegNewspaper />, label: "Non-Fiction" },
+    { icon: <GiGhost />, label: "Horror" },
+    { icon: <RiKnifeBloodLine />, label: "Thriller" },
+    { icon: <MdCastle />, label: "Fantasy" },
+    { icon: <FaMagnifyingGlass />, label: "Mystery" },
   ];
+  
 
   return (
     <div className="home-container">
@@ -46,7 +63,7 @@ const Home = () => {
           {recommendedBooks.map((img, index) => (
             <img
               key={index}
-              src={`/assets/books/${img}`}
+              src={img}
               alt="book"
               className="home-book-card"
             />
@@ -56,19 +73,18 @@ const Home = () => {
 
       {/* Categorías */}
       <div className="home-section">
-        <h2 className="home-section-title">Book Category</h2>
-        <button>View All</button>
+        <div className="home-section-header">
+          <h2 className="home-section-title">Book Category</h2>
+          <button className="home-view-all-btn">View All</button>
+        </div>
         <div className="home-category-list">
-          {bookCategories.map(({ img, label }, index) => (
+          {bookCategories.map(({ icon, label }, index) => (
             <div key={index} className="home-category-card">
-              <img
-                src={`/assets/categories/${img}`}
-                alt={label}
-                className="home-category-image"
-              />
+              <div className="home-category-icon">{icon}</div>
               <span className="home-category-label">{label}</span>
             </div>
           ))}
+
         </div>
       </div>
     </div>

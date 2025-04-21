@@ -37,6 +37,9 @@ dependencies {
 
     // Dependencias para pruebas de seguridad, si vas a agregar autenticación
     testImplementation 'org.springframework.security:spring-security-test'  // Para pruebas relacionadas con seguridad
+
+    implementation 'io.jsonwebtoken:jjwt:0.9.1' //JWT Authentication
+
 }
 
 tasks.named('test') {

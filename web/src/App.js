@@ -6,7 +6,6 @@ import Layout from "./Components/Layout/Layout";
 import Library from "./Components/Home/Library";
 import Favorites from "./Components/Home/Favorites";
 import Profile from "./Components/Home/Profile";
-import PrivateRoute from "./PrivateRoute";  // Importamos PrivateRoute
 
 function App() {
   return (
@@ -16,32 +15,12 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Paginas con sidebar */}
+        {/* Paginas con sidebar (Acceso libre sin token) */}
         <Route element={<Layout />}>
-          <Route
-            path="/home"
-            element={
-              <PrivateRoute element={<Home />} />
-            }
-          />
-          <Route
-            path="/library"
-            element={
-              <PrivateRoute element={<Library />} />
-            }
-          />
-          <Route
-            path="/favorites"
-            element={
-              <PrivateRoute element={<Favorites />} />
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute element={<Profile />} />
-            }
-          />
+          <Route path="/home" element={<Home />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </Router>

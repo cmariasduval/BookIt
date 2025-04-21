@@ -79,13 +79,10 @@
   transition: transform 0.2s ease;
 }
 
-.home-book-card:hover {
-  transform: scale(1.05);
-}
 
 .home-category-list {
   display: flex;
-  gap: 24px;
+  gap: 40px;
   overflow-x: auto;
   padding-bottom: 8px;
 }
@@ -95,14 +92,17 @@
   flex-direction: column;
   align-items: center;
   min-width: 120px;
+  background-color: white;
+  border-radius: 100px;
+
 }
 
-.home-category-image {
-  height: 140px;
-  border-radius: 10px;
-  margin-bottom: 8px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+.home-category-icon {
+  font-size: 7rem;
+  color: 			#837050;
+  margin-bottom: -1rem;
 }
+
 
 .home-category-label {
   font-size: 14px;
@@ -110,3 +110,27 @@
   text-align: center;
   color: #555;
 }
+
+.home-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.home-view-all-btn {
+  background-color: palegoldenrod; /* o el color principal de tu página */
+  color: black;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home-view-all-btn:hover {
+  background-color: palegoldenrod; /* tono más oscuro al pasar el mouse */
+}
+

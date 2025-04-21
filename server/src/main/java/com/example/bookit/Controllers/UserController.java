@@ -1,5 +1,6 @@
 package com.example.bookit.Controllers;
 
+import com.example.bookit.DTO.AuthResponse;
 import com.example.bookit.DTO.UserRequest;
 import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.UserRepository;
@@ -47,12 +48,13 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
-            User loggedInUser = userService.loginUser(user.getEmail(), user.getPassword());
-            return ResponseEntity.ok(loggedInUser);
+            String token = userService.loginUser(user.getEmail(), user.getPassword());
+            return ResponseEntity.ok(new AuthResponse(token)); // Devolver el token en la respuesta
         } catch (Exception e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }
     }
+
 
     @GetMapping("/all")
     public List<User> getAllUsers() {

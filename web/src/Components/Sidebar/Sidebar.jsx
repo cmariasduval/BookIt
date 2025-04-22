@@ -1,20 +1,24 @@
-import { NavLink, useNavigate } from "react-router-dom"; // Importar NavLink y useNavigate
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaSearch, FaHeart, FaBars, FaUser } from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
 import { MdLogout } from "react-icons/md";
 import bookit from "../Assets/bookit.png";
 import './Sidebar.css';
 import React, { useState } from 'react';
+import AddBookModal from "../Modals/AddBookModal";
 
 const Sidebar = () => {
     const navigate = useNavigate();
+    const [showAddBookModal, setShowAddBookModal] = useState(false);
+
+    // Verificamos si el usuario es admin desde localStorage
+    const user = JSON.parse(localStorage.getItem("user"));
+    const isAdmin = user?.role === "admin";
 
     const handleLogout = () => {
         localStorage.removeItem("user");
         navigate("/");
     };
-
-
 
     return (
         <div className="sidebar-container">
@@ -74,7 +78,20 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
 
-                        {/* Botón de Log Out, que solo abre el modal */}
+                        {/* Botón Add Book visible solo para admins */}
+                        {isAdmin && (
+                            <li>
+                                <button
+                                    className="sidebar-link"
+                                    onClick={() => setShowAddBookModal(true)}
+                                >
+                                    <ImBooks size={24} />
+                                    <span className="add-book-item">Add Book</span>
+                                </button>
+                            </li>
+                        )}
+
+                        {/* Botón de Log Out */}
                         <li onClick={handleLogout}>
                             <NavLink
                                 to="/"
@@ -95,6 +112,11 @@ const Sidebar = () => {
                     </div>
                 </nav>
             </div>
+
+
+            {showAddBookModal && (
+                <AddBookModal onClose={() => setShowAddBookModal(false)} />
+            )}
         </div>
     );
 };

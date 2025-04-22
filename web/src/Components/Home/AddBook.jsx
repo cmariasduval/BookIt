@@ -26,7 +26,7 @@ const AddBook = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8080/api/books', {
+            const response = await fetch('http://localhost:8080/books/', {
                 method: 'POST', // Método para enviar los datos
                 headers: {
                     'Content-Type': 'application/json', // Enviar los datos como JSON

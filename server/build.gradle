@@ -38,7 +38,11 @@ dependencies {
     // Dependencias para pruebas de seguridad, si vas a agregar autenticación
     testImplementation 'org.springframework.security:spring-security-test'  // Para pruebas relacionadas con seguridad
 
-    implementation 'io.jsonwebtoken:jjwt:0.9.1' //JWT Authentication
+    // implementation 'io.jsonwebtoken:jjwt:0.9.1' //JWT Authentication
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5' //JWT Authentication
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 
 }
 

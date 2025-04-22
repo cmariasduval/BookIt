@@ -1,8 +1,10 @@
 package com.example.bookit.Controllers;
 import com.example.bookit.Entities.Book;
+import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/books")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BookController {
 
     @Autowired
@@ -18,16 +21,23 @@ public class BookController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addBook(@RequestBody Book book) {
-        // Obtener el usuario autenticado
-        String username = getAuthenticatedUser();
+    @PostMapping("/")
+    public ResponseEntity<?> uploadBook(@RequestBody Book book) {
+        String username = this.getAuthenticatedUser();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Aquí, podrías agregar lógica adicional para verificar si el usuario tiene permisos para agregar libros
+        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("Admin"));
 
-        // Guardar el libro en la base de datos
+        // Verificar si el usuario tiene el rol "ADMIN"
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only admin can upload books.");
+        }
+
+        book.setUploadedBy(user);
         bookRepository.save(book);
-        return ResponseEntity.ok("Book added successfully.");
+
+        return ResponseEntity.ok("Book uploaded by " + user.getUsername());
     }
 
     // Método auxiliar para obtener el nombre del usuario autenticado

@@ -8,10 +8,13 @@ const AddBookModal = ({ onClose }) => {
                 <h2>Add a New Book</h2>
                 {/* Aquí podrías agregar un formulario para agregar un libro */}
                 <form>
-                    <input type="text" placeholder="Book Title" />
-                    <input type="text" placeholder="Author" />
-                    <button type="submit">Add Book</button>
+                    <input type="text" placeholder="Book Title"/>
+                    <input type="text" placeholder="Author"/>
+                    <input type="text" placeholder="ISBN"/>
+                    <input type="text" placeholder="Editorial"/>
+                    <input type="text" placeholder="Image URL"/>
                 </form>
+                <button type="submit"> Add Book</button>
                 <button onClick={onClose}>Close</button>
             </div>
         </div>

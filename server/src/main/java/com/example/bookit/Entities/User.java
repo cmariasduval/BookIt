@@ -35,7 +35,7 @@ public class User {
     )
     private List<Role> roles;
 
-    @ManyToMany(fetch = FetchType.EAGER)  // Relación con los géneros
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_genre",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -52,10 +52,10 @@ public class User {
         this.fullName = fullName;
         this.birthDate = birthDate;
         this.interests = interests;
-        this.roles = roles;  // Asegúrate de incluir los roles aquí
+        this.roles = roles;
     }
 
-    // Getters y setters
+
 
     public int getId() {
         return id;

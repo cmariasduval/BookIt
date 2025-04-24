@@ -1,14 +1,14 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaHeart, FaBars, FaUser } from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
 import { MdLogout } from "react-icons/md";
 import bookit from "../Assets/bookit.png";
 import './Sidebar.css';
 import React, { useState } from 'react';
-import AddBookModal from "../Modals/AddBookModal";
 
 const Sidebar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [showAddBookModal, setShowAddBookModal] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -79,13 +79,16 @@ const Sidebar = () => {
 
                         {isAdmin && (
                             <li>
-                                <button
-                                    className="sidebar-link"
-                                    onClick={() => setShowAddBookModal(true)}
-                                >
-                                    <ImBooks size={24} />
-                                    <span className="add-book-item">Add Book</span>
-                                </button>
+                                <NavLink
+                                to="/addbook"
+                                state={{ background: location }}
+                                className={({ isActive }) =>
+                                    `sidebar-link ${isActive ? 'active' : ''}`
+                                }
+                            >
+                                <ImBooks size={24} />
+                                <span className="addbook-item">Add Book</span>
+                            </NavLink>
                             </li>
                         )}
 
@@ -109,11 +112,6 @@ const Sidebar = () => {
                     </div>
                 </nav>
             </div>
-
-
-            {showAddBookModal && (
-                <AddBookModal onClose={() => setShowAddBookModal(false)} />
-            )}
         </div>
     );
 };

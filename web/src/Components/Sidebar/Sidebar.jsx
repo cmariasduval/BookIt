@@ -11,7 +11,6 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const [showAddBookModal, setShowAddBookModal] = useState(false);
 
-    // Verificamos si el usuario es admin desde localStorage
     const user = JSON.parse(localStorage.getItem("user"));
     const isAdmin = user?.role === "admin";
 
@@ -78,7 +77,6 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
 
-                        {/* Botón Add Book visible solo para admins */}
                         {isAdmin && (
                             <li>
                                 <button
@@ -91,7 +89,6 @@ const Sidebar = () => {
                             </li>
                         )}
 
-                        {/* Botón de Log Out */}
                         <li onClick={handleLogout}>
                             <NavLink
                                 to="/"

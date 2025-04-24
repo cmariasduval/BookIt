@@ -6,6 +6,7 @@ import Layout from "./Components/Layout/Layout";
 import Library from "./Components/Home/Library";
 import Favorites from "./Components/Home/Favorites";
 import Profile from "./Components/Home/Profile";
+import BookDetails from "./Components/Home/BookDetails";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/bookDetails" element={<BookDetails />} />
         </Route>
       </Routes>
     </Router>

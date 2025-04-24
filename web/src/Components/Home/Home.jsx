@@ -16,6 +16,8 @@ import { GiGhost } from "react-icons/gi";
 import { RiKnifeBloodLine } from "react-icons/ri";
 import { MdCastle } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+
 
 
 const Home = () => {
@@ -32,6 +34,8 @@ const Home = () => {
     { icon: <MdCastle />, label: "Fantasy" },
     { icon: <FaMagnifyingGlass />, label: "Mystery" },
   ];
+
+  const navigate = useNavigate();
   
 
   return (
@@ -66,6 +70,7 @@ const Home = () => {
               src={img}
               alt="book"
               className="home-book-card"
+              onClick={() => navigate('/bookDetails')}
             />
           ))}
         </div>

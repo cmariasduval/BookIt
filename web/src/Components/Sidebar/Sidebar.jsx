@@ -82,7 +82,7 @@ const Sidebar = () => {
                         {isAdmin && (
                             <li>
                                 <button
-                                    className="sidebar-link"
+                                    className="addbook-link"
                                     onClick={() => setShowAddBookModal(true)}
                                 >
                                     <ImBooks size={24} />

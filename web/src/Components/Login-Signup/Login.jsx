@@ -28,7 +28,8 @@ const Login = () => {
                 const data = await response.json();
                 alert("Inicio de sesión exitoso");
                 const decoded = jwtDecode(data.token)
-                const isAdmin = decoded.sub == "Admin"
+                console.log(decoded);
+                const isAdmin = decoded.sub == "admin"
 
                 const user = {
                     email: data.email,

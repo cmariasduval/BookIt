@@ -19,11 +19,9 @@ function AppRoutes() {
   return (
     <>
       <Routes location={background || location}>
-        {/* Paginas sin sidebar */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Paginas con sidebar */}
         <Route element={<Layout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/library" element={<Library />} />
@@ -33,7 +31,6 @@ function AppRoutes() {
         </Route>
       </Routes>
 
-      {/* Modal solo si background existe */}
       {background && (
         <Routes>
           <Route path="/addbook" element={<AddBook />} />

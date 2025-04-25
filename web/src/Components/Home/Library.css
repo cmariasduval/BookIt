@@ -1,0 +1,23 @@
+.library-container {
+    padding: 2rem;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.book-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.book-image {
+    width: 100px;
+    height: auto;
+    margin-bottom: 1rem;
+}

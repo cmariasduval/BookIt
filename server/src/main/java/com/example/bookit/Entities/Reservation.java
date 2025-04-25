@@ -1,17 +1,15 @@
 package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "reservation")
 public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    @Column(name = "id", nullable = false)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,21 +28,30 @@ public class Reservation {
     @Column(name = "period", nullable = false)
     private int period;
 
-    public Reservation() {}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ReservationStatus status;
 
-    public Reservation(int id, User user, BookCopy copy, LocalDate reservationDate, int period) {
-        this.id = id;
+    // Constructor vacío
+    public Reservation() {
+    }
+
+    // Constructor con parámetros
+    public Reservation(User user, BookCopy copy, LocalDate reservationDate, LocalDate pickupDate, int period, ReservationStatus status) {
         this.user = user;
         this.copy = copy;
         this.reservationDate = reservationDate;
+        this.pickupDate = pickupDate;
         this.period = period;
+        this.status = status;
     }
 
-    public int getId() {
+    // Getters y Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -88,4 +95,11 @@ public class Reservation {
         this.period = period;
     }
 
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
 }

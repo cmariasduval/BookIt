@@ -1,16 +1,12 @@
 package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ManyToAny;
-
-import com.example.bookit.Entities.Book;
 
 @Entity
 public class BookCopy {
 
     @Id
     @GeneratedValue
-
     @Column(name = "ID", nullable = false)
     private int id;
 
@@ -21,38 +17,48 @@ public class BookCopy {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    public BookCopy(String copyId, Book book) {
-        this.copyId = copyId;
+    @Column(name = "Available", nullable = false)
+    private boolean available;
+
+    public BookCopy(Book book, String copyId, boolean available) {
         this.book = book;
+        this.copyId = copyId;
+        this.available = available;
     }
 
     public BookCopy() {
-
     }
 
-    public int getId(){
+    // Getters y setters
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getCopyId(){
+    public String getCopyId() {
         return copyId;
     }
 
-    public void setCopyId(String copyId){
+    public void setCopyId(String copyId) {
         this.copyId = copyId;
     }
-    public Book getBook(){
+
+    public Book getBook() {
         return book;
     }
 
-    public void setBook(Book book){
+    public void setBook(Book book) {
         this.book = book;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
 
-
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 }

@@ -12,7 +12,7 @@ const Sidebar = () => {
     const [showAddBookModal, setShowAddBookModal] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
-    const isAdmin = user?.role === "admin";
+    const isAdmin = user?.role === "Admin";
 
     const handleLogout = () => {
         localStorage.removeItem("user");

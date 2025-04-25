@@ -47,4 +47,9 @@ public class UserService {
         throw new RuntimeException("Credenciales incorrectas");
     }
 
+    public User getUserById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+    }
 }

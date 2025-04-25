@@ -27,9 +27,8 @@ public class BookController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("Admin"));
+        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("admin"));
 
-        // Verificar si el usuario tiene el rol "ADMIN"
         if (!isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only admin can upload books.");
         }
@@ -40,7 +39,6 @@ public class BookController {
         return ResponseEntity.ok("Book uploaded by " + user.getUsername());
     }
 
-    // Método auxiliar para obtener el nombre del usuario autenticado
     private String getAuthenticatedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {

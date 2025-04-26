@@ -23,7 +23,7 @@ public class Book {
     private String publisher;
 
     @Column(name = "ISBN", nullable = false)
-    private String ISBN;
+    private String isbn;
 
 
     @ManyToMany
@@ -32,7 +32,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> Genres;
+    private List<Genre> Genres = new ArrayList<>();
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BookCopy> copies = new ArrayList<>();
@@ -45,11 +45,11 @@ public class Book {
 
     public Book() {}
 
-    public Book(String title, String author, String publisher, String ISBN, List<Genre> Genres, String imageUrl) {
+    public Book(String title, String author, String publisher, String isbn, List<Genre> Genres, String imageUrl) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
-        this.ISBN = ISBN;
+        this.isbn = isbn;
         this.Genres = Genres;
         this.imageUrl = imageUrl;
     }
@@ -87,11 +87,11 @@ public class Book {
     }
 
     public String getISBN() {
-        return ISBN;
+        return isbn;
     }
 
     public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
+        this.isbn = ISBN;
     }
 
     public List<Genre> getGenres() {

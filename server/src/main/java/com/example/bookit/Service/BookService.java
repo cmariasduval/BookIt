@@ -78,4 +78,9 @@ public class BookService {
 
         return filePath.toString();  // Retorna la ruta de la imagen guardada
     }
+
+    public List<Book> searchBooks(String query) {
+        // Busca libros cuyo título contenga la cadena 'query', sin importar mayúsculas/minúsculas
+        return bookRepository.findByTitle(query);
+    }
 }

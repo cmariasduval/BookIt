@@ -31,13 +31,18 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private CorsConfig corsConfig;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .cors(withDefaults())  // Activa el filtro CORS
+                .csrf(csrf -> csrf.disable())  // Desactiva CSRF si no lo necesitas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/signup", "/user/login").permitAll()
+                        .requestMatchers("/books/search", "/books/search/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

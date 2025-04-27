@@ -1,94 +1,73 @@
 package com.example.bookit.Controllers;
-import com.example.bookit.Config.JwtUtil;
+
+import com.example.bookit.DTO.AddBookRequest;
 import com.example.bookit.Entities.Book;
-import com.example.bookit.Entities.User;
+import com.example.bookit.Entities.Genre;
 import com.example.bookit.Repository.BookRepository;
-import com.example.bookit.Repository.UserRepository;
-import com.example.bookit.Service.BookService;
+import com.example.bookit.Repository.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
-@RequestMapping("/books")
-@CrossOrigin(origins = "http://localhost:3000",
-        allowedHeaders = {"Authorization", "Content-Type"},
-        exposedHeaders = "Authorization")
+@RequestMapping("/api/books")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BookController {
 
     @Autowired
     private BookRepository bookRepository;
 
     @Autowired
-    private BookService bookService;
+    private GenreRepository genreRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @PostMapping("/")
-    public ResponseEntity<?> uploadBook(@RequestBody Book book) {
-        String username = this.getAuthenticatedUser();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("admin"));
-
-        if (!isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only admin can upload books.");
+    // Metodo para guardar la imagen en el sistema de archivos y obtener su ruta
+    private String saveImage(MultipartFile image) throws IOException {
+        // Define la carpeta de destino donde se almacenarán las imágenes
+        Path uploadDir = Paths.get("uploads");
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);  // Crea la carpeta "uploads" si no existe
         }
 
-        book.setUploadedBy(user);
-        bookRepository.save(book);
+        // Obtiene el nombre original del archivo
+        String imageName = image.getOriginalFilename();
+        Path filePath = uploadDir.resolve(imageName);
 
-        return ResponseEntity.ok("Book uploaded by " + user.getUsername());
+        // Guarda el archivo en el sistema de archivos
+        Files.copy(image.getInputStream(), filePath);
+
+        return filePath.toString();  // Retorna la ruta del archivo guardado
     }
 
-    private String getAuthenticatedUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();  // Nombre de usuario
-        } else {
-            return principal.toString();  // Si no es un UserDetails, retornar el principal (debería ser el nombre de usuario)
-        }
+    @PostMapping("/addBook")
+    public ResponseEntity<Book> addBook(@ModelAttribute AddBookRequest addBookRequest) throws IOException {
+        System.out.println(addBookRequest);
+        String title = addBookRequest.getTitle();
+        String author = addBookRequest.getAuthor();
+        String isbn = addBookRequest.getIsbn();
+        String publisher = addBookRequest.getPublisher();
+        String description = addBookRequest.getDescription();
+        String keywords = addBookRequest.getKeywords();
+        int copies = addBookRequest.getCopies();
+        MultipartFile image = addBookRequest.getImage();  // Obtiene el archivo de imagen
+        List<Genre> genres = addBookRequest.getGenres();
+
+        // Guarda la imagen y obtiene la ruta del archivo
+        String imagePath = saveImage(image);
+
+        // Crea un nuevo libro con los datos recibidos
+        Book newBook = new Book(title, author, publisher, isbn, genres, imagePath, keywords, description);
+
+        // Guarda el libro en la base de datos
+        bookRepository.save(newBook);
+
+        // Devuelve el libro creado como respuesta
+        return ResponseEntity.ok(newBook);
     }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBooks(
-            @RequestParam String query,
-            @RequestHeader(value = "Authorization", required = false) String authorization
-    ) {
-        try {
-            if (authorization == null || !authorization.startsWith("Bearer ")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .header("Location", "/")
-                        .body(null);
-            }
-
-            String token = authorization.substring(7);
-            if (!jwtUtil.validateToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .header("Location", "/")
-                        .body(null);
-            }
-
-            String username = jwtUtil.extractUsername(token);
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-            List<Book> books = bookRepository.findByTitle(query);
-            return ResponseEntity.ok(books);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-    }
-
 }

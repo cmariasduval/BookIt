@@ -1,7 +1,6 @@
 package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,6 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -22,38 +20,51 @@ public class Book {
     @Column(name = "publisher", nullable = false)
     private String publisher;
 
-    @Column(name = "ISBN", nullable = false)
+    @Column(name = "ISBN", nullable = false, unique = true) // ISBN único
     private String isbn;
-
 
     @ManyToMany
     @JoinTable(
-            name = "book_genre",
+            name = "book_genre", // Tabla intermedia
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> Genres = new ArrayList<>();
+    private List<Genre> genres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL) // Relación con las copias del libro
     private List<BookCopy> copies = new ArrayList<>();
 
+    @Column(name = "image_url")  // El campo que almacena la URL de la imagen
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "uploaded_by")  // Nombre de la columna en la base de datos
+    @JoinColumn(name = "uploaded_by") // Relación con el usuario que subió el libro
     private User uploadedBy;
 
-    public Book() {}
+    @Column(name = "keywords")
+    private String keywords;
 
-    public Book(String title, String author, String publisher, String isbn, List<Genre> Genres, String imageUrl) {
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "number_of_copies") // Número total de copias
+    private Integer numberOfCopies;
+
+    // Constructores
+    public Book(String title, String author, String publisher, String isbn, List<Genre> genres, String imageUrl, String keywords, String description) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.isbn = isbn;
-        this.Genres = Genres;
+        this.genres = genres;
         this.imageUrl = imageUrl;
+        this.keywords = keywords;
+        this.description = description;
     }
 
+    public Book() {}
+
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -86,20 +97,28 @@ public class Book {
         this.publisher = publisher;
     }
 
-    public String getISBN() {
+    public String getIsbn() {
         return isbn;
     }
 
-    public void setISBN(String ISBN) {
-        this.isbn = ISBN;
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public List<Genre> getGenres() {
-        return Genres;
+        return genres;
     }
 
-    public void setGenres(List<Genre> Genres) {
-        this.Genres = Genres;
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public List<BookCopy> getCopies() {
+        return copies;
+    }
+
+    public void setCopies(List<BookCopy> copies) {
+        this.copies = copies;
     }
 
     public String getImageUrl() {
@@ -110,17 +129,6 @@ public class Book {
         this.imageUrl = imageUrl;
     }
 
-    public List<BookCopy> getCopies() { return copies; }
-
-    public void addCopy(BookCopy copy) {
-        copies.add(copy);
-        copy.setBook(this);
-    }
-    public void removeCopy(BookCopy copy) {
-        copies.remove(copy);
-        copy.setBook(null);
-    }
-
     public User getUploadedBy() {
         return uploadedBy;
     }
@@ -129,4 +137,32 @@ public class Book {
         this.uploadedBy = uploadedBy;
     }
 
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getNumberOfCopies() {
+        return numberOfCopies;
+    }
+
+    public void setNumberOfCopies(Integer numberOfCopies) {
+        this.numberOfCopies = numberOfCopies;
+    }
+
+    public void addCopy(BookCopy copy) {
+        copies.add(copy);
+        copy.setBook(this);
+    }
 }

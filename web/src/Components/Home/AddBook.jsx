@@ -89,17 +89,52 @@ const AddBook = () => {
         formData.append(`genres[${i}]`, g.value); // solo el valor, no el label
       });
 
-    fetch("/api/books", {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => res.json())
+      const user = JSON.parse(localStorage.getItem("user")); // recuperar el token guardado
+      const token = user?.token; // si existe user, saca el token
+
+      console.log("Token en el frontend:", token);
+
+      if (!token) {
+        console.log("No token found, user is not logged in!");
+        alert("You need to be logged in to add a book.");
+        return;
+      }
+  
+      console.log("Datos del formulario que se envían al backend:");
+      console.log("Title:", title);
+      console.log("Author:", author);
+      console.log("Description:", description);
+      console.log("Copies:", copies);
+      console.log("Genres:", genres);
+      console.log("Keywords:", keywords);
+
+      fetch('http://localhost:8080/books', {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`  // <<< AGREGÁS ESTO
+          },
+          body: JSON.stringify({
+            title,
+            author,
+            description,
+            copies,
+            keywords,
+            genres: genres.map(g => g.value), // Solo enviamos los valores
+            image: image // Esto debería enviarse como parte de un FormData si es necesario, pero aquí lo dejamos como texto por simplicidad
+          })
+      })
+      .then((res) => {
+        console.log("Respuesta del backend:", res);
+      return res.json();
+       })
       .then((data) => {
         console.log("Book added:", data);
         closeModal();
       })
       .catch((err) => {
-        console.error("Error adding book:", err);
+        console.error("Error al agregar el libro:", err);
+      alert("Hubo un error al agregar el libro.");
       });
   };
 

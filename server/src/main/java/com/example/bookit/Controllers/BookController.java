@@ -1,12 +1,16 @@
 package com.example.bookit.Controllers;
 
+import com.example.bookit.Config.JwtUtil;
 import com.example.bookit.DTO.AddBookRequest;
 import com.example.bookit.Entities.Book;
 import com.example.bookit.Entities.Genre;
+import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.GenreRepository;
+import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +33,18 @@ public class BookController {
     private GenreRepository genreRepository;
 
     @Autowired
-    private BookService bookService;
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired private BookService bookService;
+
+    // Devuelve todos los libros
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.findAll();
+    }
 
     // Metodo para guardar la imagen en el sistema de archivos y obtener su ruta
     private String saveImage(MultipartFile image) throws IOException {
@@ -76,13 +91,33 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String term) {
-        List<Book> books = bookService.searchBooksByTitle(term);
+    public ResponseEntity<List<Book>> searchBooks(
+            @RequestParam String query,
+            @RequestHeader(value = "Authorization", required = false) String authorization
+    ) {
+        try {
+            if (authorization == null || !authorization.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .header("Location", "/")
+                        .body(null);
+            }
 
-        if (books.isEmpty()) {
-            return ResponseEntity.noContent().build(); // No hay resultados
+            String token = authorization.substring(7);
+            if (!jwtUtil.validateToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .header("Location", "/")
+                        .body(null);
+            }
+
+            String username = jwtUtil.extractUsername(token);
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            List<Book> books = bookRepository.findByTitle(query);
+            return ResponseEntity.ok(books);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
-
-        return ResponseEntity.ok(books); // Retornar los libros encontrados
     }
 }

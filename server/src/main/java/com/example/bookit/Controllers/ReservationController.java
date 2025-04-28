@@ -7,6 +7,8 @@ import com.example.bookit.Service.BookCopyService;
 import com.example.bookit.Service.ReservationService;
 import com.example.bookit.Service.UserService;   // Asumí que tienes un servicio para User
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,21 +28,26 @@ public class ReservationController {
 
     // Endpoint para crear una nueva reserva
     @PostMapping("/create")
-    public Reservation createReservation(@RequestParam("userId") Long userId,
-                                         @RequestParam("copyId") Long copyId,
-                                         @RequestParam("reservationDate") String reservationDate,
-                                         @RequestParam("period") int period) {
+    public ResponseEntity<?> createReservation(@RequestParam("userId") Long userId,
+                                               @RequestParam("copyId") Long copyId,
+                                               @RequestParam("reservationDate") String reservationDate,
+                                               @RequestParam("period") int period) {
+        try {
+            User user = userService.getUserById(userId);
+            BookCopy bookCopy = bookCopyService.getBookCopyById(copyId);
 
-        User user = userService.getUserById(userId);  // Recupera el usuario desde la base de datos
-        BookCopy bookCopy = bookCopyService.getBookCopyById(copyId);  // Recupera la copia de libro desde la base de datos
+            if (user == null || bookCopy == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario o copia de libro no encontrados");
+            }
 
-        // Asegúrate de que los objetos recuperados no sean nulos antes de proceder
-        if (user == null || bookCopy == null) {
-            throw new RuntimeException("Usuario o copia de libro no encontrados");
+            Reservation reservation = reservationService.createReservation(user, bookCopy, LocalDate.parse(reservationDate), period);
+            return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
-        return reservationService.createReservation(user, bookCopy, LocalDate.parse(reservationDate), period);
     }
+
 
     // Endpoint para cancelar una reserva
     @DeleteMapping("/cancel/{reservationId}")

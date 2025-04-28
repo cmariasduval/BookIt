@@ -2,6 +2,7 @@ package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,10 +25,10 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "birthDate" , nullable = false)
+    @Column(name = "birthDate", nullable = false)
     private LocalDate birthDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)  // Definido una sola vez
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -43,9 +44,32 @@ public class User {
     )
     private List<Genre> interests;
 
+    // Nueva relación para favoritos
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    private List<Book> favorites;
+
+    // Nueva relación para libros leídos
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_read_books",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    private List<Book> readBooks;
+
+    // Nueva relación para reservas
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Reservation> reservations;
+
     public User() {}
 
-    public User(String username, String password, String email, String fullName, LocalDate birthDate, List<Genre> interests, List<Role> roles) {
+    public User(String username, String password, String email, String fullName, LocalDate birthDate,
+                List<Genre> interests, List<Role> roles, List<Book> favorites, List<Book> readBooks, List<Reservation> reservations) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -53,24 +77,26 @@ public class User {
         this.birthDate = birthDate;
         this.interests = interests;
         this.roles = roles;
+        this.favorites = new ArrayList<>();;
+        this.readBooks = new ArrayList<>();;
+        this.reservations = new ArrayList<>();
     }
 
-
-
-    public int getId() {
+    // Getters y setters
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -81,20 +107,20 @@ public class User {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public LocalDate getBirthDate() {
@@ -121,4 +147,44 @@ public class User {
         this.interests = interests;
     }
 
+    public List<Book> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Book> favorites) {
+        this.favorites = favorites;
+    }
+
+    public List<Book> getReadBooks() {
+        return readBooks;
+    }
+
+    public void setReadBooks(List<Book> readBooks) {
+        this.readBooks = readBooks;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    // Métodos para manejar favoritos y libros leídos
+    public void addFavorite(Book book) {
+        this.favorites.add(book);
+    }
+
+    public void removeFavorite(Book book) {
+        this.favorites.remove(book);
+    }
+
+    public void addReadBook(Book book) {
+        this.readBooks.add(book);
+    }
+
+    public void removeReadBook(Book book) {
+        this.readBooks.remove(book);
+    }
 }

@@ -78,4 +78,8 @@ public class BookService {
 
         return filePath.toString();  // Retorna la ruta de la imagen guardada
     }
+
+    public Book getBookById(Long bookId) {
+        return bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+    }
 }

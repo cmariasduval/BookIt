@@ -33,8 +33,10 @@ public class ReservationService{
         LocalDate endDate = startDate.plusDays(period);
         List<Reservation> reservations = reservationRepository.findByCopy(bookCopy);
         for (Reservation reservation : reservations) {
-            if ((startDate.isBefore(reservation.getPickupDate()) && endDate.isAfter(reservation.getReservationDate()))) {
-                return false; // Si hay una superposición de fechas, no está disponible
+            if ((startDate.isBefore(reservation.getPickupDate()) && endDate.isAfter(reservation.getReservationDate()))
+                    && reservation.getStatus() != ReservationStatus.COMPLETED
+                    && reservation.getStatus() != ReservationStatus.CANCELLED) {
+                return false; // Si hay una superposición de fechas y la reserva no está completada ni cancelada, no está disponible
             }
         }
         return true;

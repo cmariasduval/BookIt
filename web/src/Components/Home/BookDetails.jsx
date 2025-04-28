@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 const BookDetails = () => {
-  const { id } = useParams(); // capturamos el id de la URL
+  const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [showReservationForm, setShowReservationForm] = useState(false);
+  const [reservationDate, setReservationDate] = useState('');
+  const [period, setPeriod] = useState(1);
+
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/books/{id}`);
+        const response = await fetch(`http://localhost:8080/api/books/${id}`);
         if (!response.ok) {
           throw new Error('Error fetching book');
         }
@@ -26,17 +30,40 @@ const BookDetails = () => {
     fetchBook();
   }, [id]);
 
-  if (loading) {
-    return <div>Loading...</div>;  // loader mientras carga
-  }
+  const handleReservationSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const userId = 1; // ⚡⚡ ACA DE MOMENTO HARDCODEAMOS HASTA QUE TENGAS LOGIN (después tomás el userId real)
+      const copyId = book.copyId; // OJO: tenés que asegurarte de tener la ID de la copia disponible
+      
+      const response = await fetch('http://localhost:8080/api/reservations/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          userId,
+          copyId,
+          reservationDate,
+          period,
+        }),
+      });
 
-  if (error) {
-    return <div>{error}</div>; // mensaje si hay error
-  }
+      if (!response.ok) {
+        throw new Error('Error making reservation');
+      }
 
-  if (!book) {
-    return <div>Book not found</div>; // por si no lo encuentra
-  }
+      alert('¡Reserva realizada exitosamente!');
+      setShowReservationForm(false); // Cerramos el formulario al éxito
+    } catch (error) {
+      console.error(error);
+      alert('Hubo un error al reservar el libro.');
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!book) return <div>Book not found</div>;
 
   return (
     <div className="bookdetail-container">
@@ -57,6 +84,38 @@ const BookDetails = () => {
         <p className={`book-status ${book.status === "Available" ? "available" : "unavailable"}`}>
           {book.status}
         </p>
+
+        {/* Botón para mostrar/ocultar el formulario */}
+        <button onClick={() => setShowReservationForm(!showReservationForm)}>
+          {showReservationForm ? 'Cancelar' : 'Reservar'}
+        </button>
+
+        {/* Formulario de reserva */}
+        {showReservationForm && (
+          <form className="reservation-form" onSubmit={handleReservationSubmit}>
+            <div>
+              <label>Fecha de Reserva:</label>
+              <input 
+                type="date" 
+                value={reservationDate} 
+                onChange={(e) => setReservationDate(e.target.value)} 
+                required
+              />
+            </div>
+            <div>
+              <label>Período (días):</label>
+              <input 
+                type="number" 
+                min="1" 
+                max="30" 
+                value={period} 
+                onChange={(e) => setPeriod(e.target.value)} 
+                required
+              />
+            </div>
+            <button type="submit">Confirmar Reserva</button>
+          </form>
+        )}
       </div>
     </div>
   );

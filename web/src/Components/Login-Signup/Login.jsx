@@ -28,7 +28,7 @@ const Login = () => {
                 const data = await response.json();
                 alert("Inicio de sesión exitoso");
                 const decoded = jwtDecode(data.token)
-                console.log(decoded);
+                console.log("Decoded token:", decoded);
                 const isAdmin = decoded.sub == "admin"
 
                 const user = {
@@ -36,8 +36,11 @@ const Login = () => {
                     role: isAdmin ? "admin" : "user",
                     token: data.token
                 };
-                localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("authToken", data.token);
+                // localStorage.setItem("user", JSON.stringify(user));
                 //saveToken(data.token);
+
+                console.log("Usuario guardado en localStorage:", localStorage.getItem("user"));
                 navigate("/Home");
             } else {
                 const errorMsg = await response.text();

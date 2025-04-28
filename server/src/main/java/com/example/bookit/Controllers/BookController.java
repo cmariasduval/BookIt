@@ -8,6 +8,7 @@ import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.GenreRepository;
 import com.example.bookit.Repository.UserRepository;
+import com.example.bookit.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,14 @@ public class BookController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired private BookService bookService;
+
+    // Devuelve todos los libros
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.findAll();
+    }
 
     // Metodo para guardar la imagen en el sistema de archivos y obtener su ruta
     private String saveImage(MultipartFile image) throws IOException {

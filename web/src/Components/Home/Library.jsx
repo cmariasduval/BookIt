@@ -10,9 +10,17 @@ const Library = () => {
         fetch('http://localhost:8080/api/books')
             .then(response => response.json())
             .then(data => {
+                console.log('📚 Libros recibidos desde la API:', data);
                 setAllBooks(data);
+
+                // Si tu entidad Book usa campos booleanos en lugar de `status`,
+                // ajústalo aquí (ej: b.isRead en lugar de b.status === 'read').
                 const read = data.filter(book => book.status === 'read');
                 const reserved = data.filter(book => book.status === 'reserved');
+
+                console.log('🎯 Libros leídos filtrados:', read);
+                console.log('📌 Libros reservados filtrados:', reserved);
+
                 setReadBooks(read);
                 setReservedBooks(reserved);
             })

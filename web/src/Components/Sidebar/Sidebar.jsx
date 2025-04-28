@@ -15,7 +15,7 @@ const Sidebar = () => {
     const isAdmin = user?.role === "admin";
 
     const handleLogout = () => {
-        localStorage.removeItem("user");
+        localStorage.clear();
         navigate("/");
     };
 

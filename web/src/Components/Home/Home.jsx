@@ -118,7 +118,6 @@ const Home = () => {
                         className="home-search-input"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        disabled={!isAuthenticated}
                     />
                     {authError && (
                         <div className="auth-error-message">

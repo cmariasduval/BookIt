@@ -78,4 +78,13 @@ public class BookService {
 
         return filePath.toString();  // Retorna la ruta de la imagen guardada
     }
+
+    public List<Book> searchBooksByTitle(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return bookRepository.findAll();
+        }
+
+        // Busca libros que contengan el término en el título (case insensitive)
+        return bookRepository.findByTitle(searchTerm.trim());
+    }
 }

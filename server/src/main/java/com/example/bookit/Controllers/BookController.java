@@ -5,6 +5,7 @@ import com.example.bookit.Entities.Book;
 import com.example.bookit.Entities.Genre;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.GenreRepository;
+import com.example.bookit.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,9 @@ public class BookController {
 
     @Autowired
     private GenreRepository genreRepository;
+
+    @Autowired
+    private BookService bookService;
 
     // Metodo para guardar la imagen en el sistema de archivos y obtener su ruta
     private String saveImage(MultipartFile image) throws IOException {
@@ -69,5 +73,16 @@ public class BookController {
 
         // Devuelve el libro creado como respuesta
         return ResponseEntity.ok(newBook);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String term) {
+        List<Book> books = bookService.searchBooksByTitle(term);
+
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build(); // No hay resultados
+        }
+
+        return ResponseEntity.ok(books); // Retornar los libros encontrados
     }
 }

@@ -85,4 +85,18 @@ public class BookService {
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
     }
+
+    public List<Book> searchBooksByTitle(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return bookRepository.findAll();
+        }
+
+        // Busca libros que contengan el término en el título (case insensitive)
+        return bookRepository.findByTitle(searchTerm.trim());
+    }
+
+    public Book findById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+    }
 }

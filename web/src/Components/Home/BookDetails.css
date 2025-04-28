@@ -1,0 +1,100 @@
+.bookdetail-container{
+    padding: 1.4rem;
+    font-family: 'Inter', sans-serif;
+    background-color: transparent;
+    min-height: 100vh;
+    gap: 100px;
+}
+
+.bookdetail-info-container{
+    display: grid;
+    grid-template-columns: auto 2fr; 
+    gap: 40px; /* Espacio entre las columnas y filas */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 5rem;
+}
+
+.book-header{
+    display: flex;
+    gap: 300px;
+    align-items: center;
+}
+
+.book-cover{
+    object-fit: cover;
+    height: 400px;
+}
+
+.book-info{
+    display: grid;
+}
+
+.book-title {
+    font-size: 40px;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+}
+
+.book-author {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.book-publisher {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.book-genres {
+    margin: 0;
+}
+
+.book-genres li {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    background-color: beige;
+    max-width: fit-content;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.book-synopsis{
+    width: 500px;
+    line-height: 1.5rem;
+}
+
+.book-status{
+    display: flex;
+    gap: 100px;
+    align-items: center;
+}
+
+.bookdetail-status-container {
+    padding: 2rem 5rem;
+}
+
+.status {
+    background-color: red;
+    padding: 10px 25px;  /* Opcional, para dar algo de espacio alrededor del texto */
+    border: 1px solid #ccc; 
+    border-radius: 20px;
+    max-width: fit-content;
+}
+
+
+.book-info button {
+    border-radius: 20px;
+    width: 210px;
+    height: 50px;
+    background-color: darkkhaki;
+    color: black;
+    font-size: larger;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.book-info button:hover{
+    background-color: darkkhaki;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}

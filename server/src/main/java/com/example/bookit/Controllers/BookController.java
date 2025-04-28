@@ -120,4 +120,10 @@ public class BookController {
                     .body(null);
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Book book = bookService.findById(id);
+        return ResponseEntity.ok(book);
+    }
 }

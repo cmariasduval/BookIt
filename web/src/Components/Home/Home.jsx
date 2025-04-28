@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Home.css";
 import bookthief from '../Assets/books/bookthief.png';
 import emma from '../Assets/books/emma.png';
@@ -33,59 +33,40 @@ const Home = () => {
     ];
     const navigate = useNavigate();
 
-    // Estados de autenticación y búsqueda
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authError, setAuthError] = useState(null);
-    const [token, setToken] = useState("");  // Estado para el token
+    const [token, setToken] = useState("");
+    const debounceTimeout = useRef(null);  // Ref para controlar el debounce
 
-    // Función para verificar si el token ha expirado
-    const checkTokenExpiration = (token) => {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const exp = payload.exp;
-      const currentTime = Math.floor(Date.now() / 1000);
-      return exp < currentTime;
-  };
+    // Cargar usuario al entrar
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
 
-  // useEffect para verificar el token al cargar el componente
-  useEffect(() => {
-      const storedToken = localStorage.getItem("authToken");
-      console.log("Token en localStorage:", storedToken);  // Verifica si el token está disponible
+        if (storedUser) {
+            const userObject = JSON.parse(storedUser);
+            if (userObject.token) {
+                setToken(userObject.token);
+                setIsAuthenticated(true);
+            }
+        }
+    }, []);
 
-      if (storedToken && !checkTokenExpiration(storedToken)) {
-          setIsAuthenticated(true); // Si el token es válido
-      } else {
-          setIsAuthenticated(false); // Si el token no está presente o ha expirado
-          localStorage.removeItem("authToken"); // Elimina el token del localStorage si ha expirado
-          setAuthError("Sesión expirada. Necesita volver a iniciar sesión.");
-      }
-  }, []);
-
-    const handleSearchChange = async (e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-        setAuthError(null);
-
+    const performSearch = async (query) => {
         if (!isAuthenticated) {
             setAuthError('Sesión expirada. Necesita volver a iniciar sesión.');
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:8080/books/search', {
+            const response = await fetch(`http://localhost:8080/api/books/search?query=${encodeURIComponent(query)}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,  // Se pasa el token aquí
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });
-
-            if (response.status === 401 || response.status === 403) {
-                setAuthError('Sesión expirada. Necesita volver a iniciar sesión.');
-                setIsAuthenticated(false);
-                return;
-            }
 
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -97,6 +78,24 @@ const Home = () => {
             console.error('Error en la búsqueda:', error);
             setAuthError('Error al realizar la búsqueda. Intente nuevamente.');
         }
+    };
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setAuthError(null);
+
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current); // Limpia el timeout anterior
+        }
+
+        debounceTimeout.current = setTimeout(() => {
+            if (value.trim() !== "") {
+                performSearch(value);
+            } else {
+                setSearchResults([]);
+            }
+        }, 500); // Espera 500ms después de dejar de tipear
     };
 
     return (

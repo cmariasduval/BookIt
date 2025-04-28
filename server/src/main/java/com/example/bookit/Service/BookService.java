@@ -94,4 +94,9 @@ public class BookService {
         // Busca libros que contengan el término en el título (case insensitive)
         return bookRepository.findByTitle(searchTerm.trim());
     }
+
+    public Book findById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+    }
 }

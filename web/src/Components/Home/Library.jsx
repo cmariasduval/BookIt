@@ -7,45 +7,80 @@ const Library = () => {
     const [reservedBooks, setReservedBooks] = useState([]);
     const [favoriteBooks, setFavoriteBooks] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const fetchBooks = async () => {
         const token = localStorage.getItem('authToken');
         if (!token) {
-            setError('Token no encontrado');
+            setError('Token o usuario no encontrado');
+            setLoading(false);
             return;
         }
 
-        fetch('http://localhost:8080/api/books', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error(res.statusText);
-                return res.json();
-            })
-            .then((data) => {
-                setAllBooks(data);
-                setReadBooks(data.filter((b) => b.status === 'read'));
-                setReservedBooks(data.filter((b) => b.status === 'reserved'));
-            })
-            .catch((err) => {
-                console.error(err);
-                setError('Error al obtener los libros.');
+        try {
+            const res = await fetch('http://localhost:8080/api/books', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
+
+            if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+            const data = await res.json();
+            setAllBooks(data);
+            setReadBooks(data.filter((b) => b.status === 'read'));
+            setReservedBooks(data.filter((b) => b.status === 'reserved'));
+        } catch (err) {
+            console.error(err);
+            setError('Error al obtener los libros.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchFavoriteBooks = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+
+        try {
+
+            const res = await fetch('http://localhost:8080/api/favorites', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+            const data = await res.json();
+            console.log(data);  // Verifica si la respuesta es la esperada
+            setFavoriteBooks(data);
+        } catch (err) {
+            console.error('Error en fetchFavoriteBooks:', err);
+            setError('Error al obtener los favoritos.');
+        }
+    };
+
+    useEffect(() => {
+        fetchBooks();
+        fetchFavoriteBooks();
     }, []);
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        return <p className="error">Token o usuario no encontrado</p>;
+    }
 
     const handleReserveBook = async (bookId) => {
         if (reservedBooks.length >= 3) {
             setError('No podés reservar más de 3 libros');
             return;
         }
-        const token = localStorage.getItem('authToken');
+
         const book = allBooks.find((b) => b.id === bookId);
         if (!book || reservedBooks.some((b) => b.id === bookId)) return;
 
-        // Suponemos que usamos la primera copia
         const copy = book.copies?.[0];
         if (!copy) {
             setError('No hay copias disponibles');
@@ -53,22 +88,23 @@ const Library = () => {
         }
 
         try {
-            const res = await fetch(
-                `http://localhost:8080/api/book-copies/${copy.id}/reserve`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
+            const res = await fetch(`http://localhost:8080/api/book-copies/${copy.id}/reserve`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
             if (!res.ok) {
-                if (res.status === 409) setError('Este libro ya está reservado');
-                else throw new Error(res.statusText);
+                if (res.status === 409) {
+                    setError('Este libro ya está reservado');
+                } else {
+                    throw new Error(res.statusText);
+                }
                 return;
             }
-            const updatedCopy = await res.json();
+
             const updatedBook = { ...book, status: 'reserved' };
             setAllBooks((prev) => prev.map((b) => (b.id === bookId ? updatedBook : b)));
             setReservedBooks((prev) => [...prev, updatedBook]);
@@ -79,42 +115,34 @@ const Library = () => {
         }
     };
 
-    const handleCancelReservation = async (bookId) => {
-        const token = localStorage.getItem('authToken');
-        const book = allBooks.find((b) => b.id === bookId);
-        if (!book) return;
-        const copy = book.copies?.[0];
-        if (!copy) return;
+    const handleToggleFavorite = async (bookId) => {
+        const isFavorite = favoriteBooks.some((b) => b.id === bookId);
+        const endpoint = isFavorite
+            ? `http://localhost:8080/api/favorites/remove?bookId=${bookId}`
+            : `http://localhost:8080/api/favorites/add?bookId=${bookId}`;
 
         try {
-            const res = await fetch(
-                `http://localhost:8080/api/book-copies/${copy.id}/cancel`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const res = await fetch(endpoint, {
+                method: isFavorite ? 'DELETE' : 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
             if (!res.ok) throw new Error(res.statusText);
-            // Actualizar frontend
-            setReservedBooks((prev) => prev.filter((b) => b.id !== bookId));
-            setAllBooks((prev) =>
-                prev.map((b) => (b.id === bookId ? { ...b, status: '' } : b))
+
+            setFavoriteBooks((prev) =>
+                isFavorite
+                    ? prev.filter((b) => b.id !== bookId)
+                    : [...prev, allBooks.find((b) => b.id === bookId)]
             );
+
             setError(null);
         } catch (err) {
             console.error(err);
-            setError('Error al cancelar la reserva');
+            setError('Error al actualizar favoritos');
         }
-    };
-
-    const handleToggleFavorite = (bookId) => {
-        setFavoriteBooks((prev) =>
-            prev.some((b) => b.id === bookId)
-                ? prev.filter((b) => b.id !== bookId)
-                : [...prev, allBooks.find((b) => b.id === bookId)]
-        );
     };
 
     const handleMarkAsRead = (bookId) => {
@@ -128,11 +156,35 @@ const Library = () => {
 
     const handleUnmarkAsRead = (bookId) => {
         setReadBooks((prev) => prev.filter((b) => b.id !== bookId));
-        setAllBooks((prev) =>
-            prev.map((b) => (b.id === bookId ? { ...b, status: '' } : b))
-        );
-        setError(null);
+        setAllBooks((prev) => prev.map((b) => (b.id === bookId ? { ...b, status: '' } : b)));
     };
+
+    const handleCancelReservation = async (bookId) => {
+        const book = allBooks.find((b) => b.id === bookId);
+        const copy = book?.copies?.[0];
+        if (!copy) return;
+
+        try {
+            const res = await fetch(`http://localhost:8080/api/book-copies/${copy.id}/cancel`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) throw new Error(res.statusText);
+
+            setReservedBooks((prev) => prev.filter((b) => b.id !== bookId));
+            setAllBooks((prev) => prev.map((b) => (b.id === bookId ? { ...b, status: '' } : b)));
+            setError(null);
+        } catch (err) {
+            console.error(err);
+            setError('Error al cancelar la reserva');
+        }
+    };
+
+    if (loading) return <p>Cargando libros...</p>;
 
     return (
         <div className="library-container">
@@ -147,18 +199,22 @@ const Library = () => {
                             <li key={book.id} className="book-item">
                                 <h3 className="book-title">{book.title}</h3>
                                 <div className="book-actions">
-                                    <button onClick={() => handleReserveBook(book.id)}>
-                                        Reservar
-                                    </button>
+                                    {book.status !== 'reserved' && (
+                                        <button onClick={() => handleReserveBook(book.id)}>
+                                            Reservar
+                                        </button>
+                                    )}
                                     <button
                                         className="favorito"
                                         onClick={() => handleToggleFavorite(book.id)}
                                     >
                                         {favoriteBooks.some((b) => b.id === book.id) ? '❤️' : '♡'} Favorito
                                     </button>
-                                    <button onClick={() => handleMarkAsRead(book.id)}>
-                                        Marcar como leído
-                                    </button>
+                                    {!readBooks.some((b) => b.id === book.id) && (
+                                        <button onClick={() => handleMarkAsRead(book.id)}>
+                                            Marcar como leído
+                                        </button>
+                                    )}
                                 </div>
                             </li>
                         ))
@@ -214,12 +270,7 @@ const Library = () => {
                             <li key={b.id} className="book-item">
                                 <h3 className="book-title">{b.title}</h3>
                                 <div className="book-actions">
-                                    <button
-                                        className="favorito"
-                                        onClick={() => handleToggleFavorite(b.id)}
-                                    >
-                                        ❤️
-                                    </button>
+                                    <button onClick={() => handleToggleFavorite(b.id)}>❤️</button>
                                 </div>
                             </li>
                         ))

@@ -1,9 +1,11 @@
 package com.example.bookit.Service;
 
 import com.example.bookit.Entities.Book;
+import com.example.bookit.Entities.Favorite;
 import com.example.bookit.Entities.User;
 import com.example.bookit.Entities.Genre;
 import com.example.bookit.Repository.BookRepository;
+import com.example.bookit.Repository.FavoriteRepository;
 import com.example.bookit.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class BookService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
     // Ajustamos la firma del método para que coincida con los parámetros enviados desde el controlador
     public Book addOrUpdateBook(String title, String author, String publisher, String isbn,
@@ -98,5 +103,19 @@ public class BookService {
     public Book findById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+    }
+
+    public List<Book> getFavoriteBooks(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Encuentra todos los favoritos asociados al usuario
+        List<Favorite> favorites = favoriteRepository.findByUser(user);
+
+        // Mapea la lista de favoritos a una lista de libros
+        return favorites.stream()
+                .map(Favorite::getBook)  // Mapea cada Favorite a su libro
+                .collect(Collectors.toList());
+
     }
 }

@@ -55,6 +55,11 @@ public class UserService {
         return user.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
+    public User getUserByName(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
     public void addFavoriteBook(User user, Book book) {
         if (!user.getFavorites().contains(book)) {
             user.getFavorites().add(book);

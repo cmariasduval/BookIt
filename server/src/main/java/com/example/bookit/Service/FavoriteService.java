@@ -20,11 +20,16 @@ public class FavoriteService {
         return favoriteRepository.save(favorite);
     }
 
-    public void removeFavorite(Long favoriteId) {
-        favoriteRepository.deleteById(favoriteId);
+    public void removeFavorite(User user, Book book) {
+        Favorite favorite = favoriteRepository.findByUserAndBook(user, book);
+        if (favorite != null) {
+            favoriteRepository.delete(favorite);
+        }
     }
 
     public List<Favorite> listFavorites(User user) {
         return favoriteRepository.findAllByUser(user);
     }
+
+
 }

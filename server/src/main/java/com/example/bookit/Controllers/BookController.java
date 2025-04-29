@@ -3,9 +3,11 @@ package com.example.bookit.Controllers;
 import com.example.bookit.Config.JwtUtil;
 import com.example.bookit.DTO.AddBookRequest;
 import com.example.bookit.Entities.Book;
+import com.example.bookit.Entities.Favorite;
 import com.example.bookit.Entities.Genre;
 import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.BookRepository;
+import com.example.bookit.Repository.FavoriteRepository;
 import com.example.bookit.Repository.GenreRepository;
 import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.BookService;
@@ -20,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
@@ -39,6 +42,24 @@ public class BookController {
     private JwtUtil jwtUtil;
 
     @Autowired private BookService bookService;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    // Método para obtener los libros favoritos de un usuario
+    public List<Book> getFavoriteBooks(String username) {
+        // Recupera el usuario por su nombre
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Encuentra todos los favoritos asociados al usuario
+        List<Favorite> favorites = favoriteRepository.findByUser(user);
+
+        // Devuelve la lista de libros favoritos
+        return favorites.stream()
+                .map(Favorite::getBook)  // Mapea cada Favorite a su libro
+                .collect(Collectors.toList()); // Colecciona los libros en una lista
+    }
 
     // Devuelve todos los libros
     @GetMapping

@@ -18,7 +18,7 @@ const AddBook = () => {
 
     const genreOptions = [
         { value: "Psychology", label: "Psychology" },
-        { value: "Non-fiction", label: "Non-fiction" },
+        { value: "Non-Fiction", label: "Non-Fiction" },
         { value: "Fantasy", label: "Fantasy" },
         { value: "Science Fiction", label: "Science Fiction" },
         { value: "Thriller", label: "Thriller" },

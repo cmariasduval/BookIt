@@ -28,7 +28,7 @@ function AppRoutes() {
                 </Route>
             </Routes>
 
-            {/* Renders the AddBook modal only if there's a background state */}
+            {/* Renderiza el modal de AddBook solo si hay un estado de fondo */}
             {background && (
                 <Routes>
                     <Route path="/addbook" element={<AddBook />} />

@@ -4,14 +4,14 @@ import { ImBooks } from "react-icons/im";
 import { MdLogout } from "react-icons/md";
 import bookit from "../Assets/bookit.png";
 import './Sidebar.css';
-import React, { useState } from 'react';
+import React from 'react';
 
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const user = JSON.parse(localStorage.getItem("user"));
-    const isAdmin = user?.role.toLowerCase() === "admin";
+    const isAdmin = user?.role?.toLowerCase() === "admin";
 
     const handleLogout = () => {
         localStorage.clear();
@@ -28,7 +28,7 @@ const Sidebar = () => {
                     <ul>
                         <li>
                             <NavLink
-                                to="/home"
+                                to="/Home"
                                 className={({ isActive }) =>
                                     `sidebar-link ${isActive ? 'active' : ''}`
                                 }

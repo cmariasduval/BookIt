@@ -14,13 +14,13 @@ public class AddBookRequest {
     private String keywords;
     private int copies;
     private MultipartFile image;
-    private List<Genre> genres;
+    private List<String> genres;
 
     public AddBookRequest() {
     }
 
     public AddBookRequest(String isbn, String title, String author, String publisher,
-                          String description, String keywords, int copies, MultipartFile image, List<Genre> genres) {
+                          String description, String keywords, int copies, MultipartFile image, List<String> genres) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
@@ -97,11 +97,11 @@ public class AddBookRequest {
         this.image = image;
     }
 
-    public List<Genre> getGenres() {
+    public List<String> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(List<String> genres) {
         this.genres = genres;
-    }
+}
 }

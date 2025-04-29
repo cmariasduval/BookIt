@@ -75,8 +75,7 @@ public class BookController {
         String keywords = addBookRequest.getKeywords();
         int copies = addBookRequest.getCopies();
         MultipartFile image = addBookRequest.getImage();  // Obtiene el archivo de imagen
-        List<Genre> genres = addBookRequest.getGenres();
-
+        List<Genre> genres = addBookRequest.getGenres().stream().map(name -> genreRepository.findByGenreType(name).orElseThrow(() -> new RuntimeException())).toList();
         // Guarda la imagen y obtiene la ruta del archivo
         String imagePath = saveImage(image);
 

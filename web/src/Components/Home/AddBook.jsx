@@ -99,7 +99,7 @@ const AddBook = () => {
             body: formData,
             headers: {
                 'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
-                    'Content-Type': 'application/json'
+                    //'Content-Type': 'application/json'
             }
     })
             .then((res) => {

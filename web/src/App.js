@@ -24,7 +24,7 @@ function AppRoutes() {
                     <Route path="/library" element={<Library />} />
                     <Route path="/favorites" element={<Favorites />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/bookDetails" element={<BookDetails />} />
+                    <Route path="/bookDetails/:id" element={<BookDetails />} />
                 </Route>
             </Routes>
 

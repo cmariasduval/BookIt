@@ -40,49 +40,35 @@ const Home = () => {
 
     // Cargar usuario al entrar (si lo necesitas para otras partes de la app)
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-
-        // Verifica si hay un usuario almacenado y ajusta el estado de autenticación si es necesario
-        // Aquí podrías configurar el estado `isAuthenticated` si lo deseas, pero no lo usamos en la búsqueda
-    }, []);
-
-    const performSearch = async (query) => {
-        try {
-            const response = await fetch("http://localhost:8080/api/books/search", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            setSearchResults(data);
-        } catch (error) {
-            console.error('Error en la búsqueda:', error);
-            setAuthError('Error al realizar la búsqueda. Intente nuevamente.');
-        }
-    };
-
-    const handleSearchChange = (e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-        setAuthError(null);
-
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current); // Limpia el timeout anterior
-        }
-
-        debounceTimeout.current = setTimeout(() => {
-            if (value.trim() !== "") {
-                performSearch(value);
+        const delayDebounceFn = setTimeout(() => {
+            if (searchTerm.trim() !== "") {
+                fetchBooks(searchTerm);
             } else {
                 setSearchResults([]);
             }
-        }, 500); // Espera 500ms después de dejar de tipear
+        }, 300); // esperar 300ms luego de que el usuario deja de tipear
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const fetchBooks = async (query) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/books/search?query=${encodeURIComponent(query)}`, {headers:  {Authorization: `Bearer ${localStorage.getItem("authToken")}`}});
+            if (response.ok) {
+                const data = await response.json();
+                setSearchResults(data);
+            } else {
+                console.error("Error al buscar libros");
+                setAuthError("Search failed");
+            }
+        } catch (error) {
+            console.error("Error en el fetch:", error);
+            setAuthError("Network error");
+        }
     };
 
     return (

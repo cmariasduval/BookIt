@@ -1,132 +1,175 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import './BookDetails.css';
 
 const BookDetails = () => {
-  const { id } = useParams();
-  const [book, setBook] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const { id } = useParams();
+    const [book, setBook] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  const [showReservationForm, setShowReservationForm] = useState(false);
-  const [reservationDate, setReservationDate] = useState('');
-  const [period, setPeriod] = useState(1);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isRead, setIsRead] = useState(false);
+    const [isReserved, setIsReserved] = useState(false);
 
-  useEffect(() => {
-    const fetchBook = async () => {
-      try {
-        const response = await fetch(`http://localhost:8080/api/books/${id}`, {
-            headers: {
-                'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
-                'Content-Type': 'application/json'
+    // Carga inicial: libro y estados desde localStorage
+    useEffect(() => {
+        const fetchBook = async () => {
+            try {
+                const token = localStorage.getItem('authToken');
+                const res = await fetch(`http://localhost:8080/api/books/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!res.ok) throw new Error('Error al cargar el libro');
+                const data = await res.json();
+                setBook(data);
+
+                // Inicializar desde backend y localStorage
+                setIsRead(JSON.parse(localStorage.getItem('readBooks') || '[]').includes(data.id));
+                setIsReserved(JSON.parse(localStorage.getItem('reservedBooks') || '[]').includes(data.id));
+                setIsFavorite(JSON.parse(localStorage.getItem('favoriteBooks') || '[]').some(b => b.id === data.id));
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
-        });
-        if (!response.ok) {
-          throw new Error('Error fetching book');
+        };
+        fetchBook();
+    }, [id]);
+
+    // Función genérica para actualizar listas en localStorage
+    const updateLocalList = (key, itemId, add) => {
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        let updated;
+        if (add) {
+            if (!list.includes(itemId)) updated = [...list, itemId];
+            else updated = list;
+        } else {
+            updated = list.filter(i => i !== itemId);
         }
-        const data = await response.json();
-        setBook(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+        localStorage.setItem(key, JSON.stringify(updated));
+        return updated;
     };
 
-    fetchBook();
-  }, [id]);
+    const handleReserve = async () => {
+        const token = localStorage.getItem('authToken');
+        const copy = Array.isArray(book.copies) ? book.copies[0] : null;
+        if (!copy) {
+            setError('No hay copias disponibles');
+            return;
+        }
+        try {
+            const res = await fetch(
+                `http://localhost:8080/api/book-copies/${copy.id}/reserve`,
+                { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }
+            );
+            if (!res.ok) {
+                if (res.status === 409) setError('Ya está reservado');
+                else throw new Error(res.statusText);
+                return;
+            }
+            setIsReserved(true);
+            updateLocalList('reservedBooks', book.id, true);
+            setError(null);
+        } catch (err) {
+            console.error(err);
+            setError('Error al reservar');
+        }
+    };
 
-  const handleReservationSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const userId = 1; // ⚡⚡ ACA DE MOMENTO HARDCODEAMOS HASTA QUE TENGAS LOGIN (después tomás el userId real)
-      const copyId = book.copyId; // OJO: tenés que asegurarte de tener la ID de la copia disponible
-      
-      const response = await fetch('http://localhost:8080/api/reservations/create', {
-        method: 'POST',
-        headers: {
-           'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
-                    'Content-Type': 'application/json'
+    const handleCancelReservation = async () => {
+        const token = localStorage.getItem('authToken');
+        const copy = Array.isArray(book.copies) ? book.copies[0] : null;
+        if (!copy) return;
+        try {
+            const res = await fetch(
+                `http://localhost:8080/api/book-copies/${copy.id}/cancel`,
+                { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }
+            );
+            if (!res.ok) throw new Error(res.statusText);
+            setIsReserved(false);
+            updateLocalList('reservedBooks', book.id, false);
+            setError(null);
+        } catch (err) {
+            console.error(err);
+            setError('Error al cancelar reserva');
+        }
+    };
 
+    const handleToggleFavorite = () => {
+        const newFav = !isFavorite;
+        setIsFavorite(newFav);
+        updateLocalList('favoriteBooks', book.id, newFav);
+    };
 
-        },
-        body: new URLSearchParams({
-          userId,
-          copyId,
-          reservationDate,
-          period,
-        }),
-      });
+    const handleMarkAsRead = () => {
+        setIsRead(true);
+        updateLocalList('readBooks', book.id, true);
+    };
 
-      if (!response.ok) {
-        throw new Error('Error making reservation');
-      }
+    const handleUnmarkAsRead = () => {
+        setIsRead(false);
+        updateLocalList('readBooks', book.id, false);
+    };
 
-      alert('¡Reserva realizada exitosamente!');
-      setShowReservationForm(false); // Cerramos el formulario al éxito
-    } catch (error) {
-      console.error(error);
-      alert('Hubo un error al reservar el libro.');
-    }
-  };
+    if (loading) return <div>Cargando...</div>;
+    if (error) return <div className="error">{error}</div>;
+    if (!book) return <div>No se encontró el libro</div>;
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-  if (!book) return <div>Book not found</div>;
+    const copiesCount = Array.isArray(book.copies)
+        ? book.copies.length
+        : typeof book.copies === 'number'
+            ? book.copies
+            : 0;
 
-  return (
-    <div className="bookdetail-container">
-      <div className="left-section">
-        <img src={book.coverImage} alt={book.title} className="book-image" />
-      </div>
-      <div className="right-section">
-        <h2 className="book-title">{book.title}</h2>
-        <p className="book-author">{book.author}</p>
-        <p className="book-publisher">{book.publisher}</p>
-        <div className="book-genres">
-          {book.genres.map((genre, index) => (
-            <span key={index} className="genre-tag">{genre}</span>
-          ))}
+    return (
+        <div className="bookdetail-container">
+            <div className="left-section">
+                <img
+                    src={book.coverImage}
+                    alt={`Portada de ${book.title}`}
+                    className="book-image"
+                />
+            </div>
+            <div className="right-section">
+                <h2 className="book-title">{book.title}</h2>
+                <p><strong>Autor:</strong> {book.author}</p>
+                <p><strong>Editorial:</strong> {book.publisher}</p>
+                <div className="book-genres">
+                    <strong>Géneros:</strong>
+                    {book.genres.map(g => (
+                        <span key={g.id} className="genre-tag">{g.genreType}</span>
+                    ))}
+                </div>
+                <p><strong>Sinopsis:</strong> {book.synopsis}</p>
+                <p><strong>Copias disponibles:</strong> {copiesCount}</p>
+                <p>
+                    <strong>Estado:</strong>{' '}
+                    <span className={book.status === 'Available' ? 'available' : 'unavailable'}>
+            {book.status}
+          </span>
+                </p>
+                <div className="book-actions">
+                    {isReserved ? (
+                        <button onClick={handleCancelReservation}>Cancelar reserva</button>
+                    ) : (
+                        <button onClick={handleReserve}>Reservar</button>
+                    )}
+                    <button onClick={handleToggleFavorite}>
+                        {isFavorite ? '❤️ Favorito' : '♡ Favorito'}
+                    </button>
+                    {isRead ? (
+                        <button onClick={handleUnmarkAsRead}>Desmarcar leído</button>
+                    ) : (
+                        <button onClick={handleMarkAsRead}>Marcar como leído</button>
+                    )}
+                </div>
+            </div>
         </div>
-        <p className="book-synopsis">{book.synopsis}</p>
-        <p className="book-copies">Copies available: {book.copies}</p>
-        <p className={`book-status ${book.status === "Available" ? "available" : "unavailable"}`}>
-          {book.status}
-        </p>
-
-        {/* Botón para mostrar/ocultar el formulario */}
-        <button onClick={() => setShowReservationForm(!showReservationForm)}>
-          {showReservationForm ? 'Cancelar' : 'Reservar'}
-        </button>
-
-        {/* Formulario de reserva */}
-        {showReservationForm && (
-          <form className="reservation-form" onSubmit={handleReservationSubmit}>
-            <div>
-              <label>Fecha de Reserva:</label>
-              <input 
-                type="date" 
-                value={reservationDate} 
-                onChange={(e) => setReservationDate(e.target.value)} 
-                required
-              />
-            </div>
-            <div>
-              <label>Período (días):</label>
-              <input 
-                type="number" 
-                min="1" 
-                max="30" 
-                value={period} 
-                onChange={(e) => setPeriod(e.target.value)} 
-                required
-              />
-            </div>
-            <button type="submit">Confirmar Reserva</button>
-          </form>
-        )}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default BookDetails;

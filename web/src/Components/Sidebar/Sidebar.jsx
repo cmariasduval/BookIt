@@ -6,13 +6,15 @@ import bookit from "../Assets/bookit.png";
 import './Sidebar.css';
 import React, { useState } from 'react';
 
+
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showAddBookModal, setShowAddBookModal] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
-    const isAdmin = user?.role === "Admin";
+    const isAdmin = user?.role.toLowerCase() === "admin";
+    console.log("isAdmin:", isAdmin);
 
     const handleLogout = () => {
         localStorage.clear();

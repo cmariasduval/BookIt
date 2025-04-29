@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el nombre: " + username));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -53,24 +53,24 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
 
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadBook(@RequestBody Book book) {
-        String username = getAuthenticatedUser();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        boolean isAmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("Amin"));
-
-        // Verificar si el usuario tiene el rol "ADMIN"
-        if (!isAmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only admin can upload books.");
-        }
-
-        book.setUploadedBy(user);
-        bookRepository.save(book);
-
-        return ResponseEntity.ok("Book uploaded by " + user.getUsername());
-    }
+//    @PostMapping("/upload")
+//    public ResponseEntity<?> uploadBook(@RequestBody Book book) {
+//        String username = getAuthenticatedUser();
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        boolean isAmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("Amin"));
+//
+//        // Verificar si el usuario tiene el rol "ADMIN"
+//        if (!isAmin) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only admin can upload books.");
+//        }
+//
+//        book.setUploadedBy(user);
+//        bookRepository.save(book);
+//
+//        return ResponseEntity.ok("Book uploaded by " + user.getUsername());
+//    }
 
         private String getAuthenticatedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

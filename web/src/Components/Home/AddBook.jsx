@@ -98,9 +98,10 @@ const AddBook = () => {
             method: "POST",
             body: formData,
             headers: {
-                "Authorization": localStorage.getItem("authToken")
+                'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                    'Content-Type': 'application/json'
             }
-        })
+    })
             .then((res) => {
                 if (!res.ok) {
                     throw new Error('Failed to add book');

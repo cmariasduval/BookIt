@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './Library.css';
 
 const Library = () => {
@@ -7,7 +7,13 @@ const Library = () => {
     const [reservedBooks, setReservedBooks] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/books')
+
+        fetch('http://localhost:8080/api/books', {
+            headers: {
+                'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 console.log('📚 Libros recibidos desde la API:', data);

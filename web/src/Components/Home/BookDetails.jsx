@@ -14,7 +14,12 @@ const BookDetails = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/books/${id}`);
+        const response = await fetch(`http://localhost:8080/api/books/${id}`, {
+            headers: {
+                'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                'Content-Type': 'application/json'
+            }
+        });
         if (!response.ok) {
           throw new Error('Error fetching book');
         }
@@ -39,7 +44,10 @@ const BookDetails = () => {
       const response = await fetch('http://localhost:8080/api/reservations/create', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+           'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                    'Content-Type': 'application/json'
+
+
         },
         body: new URLSearchParams({
           userId,

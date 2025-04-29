@@ -1,6 +1,7 @@
 package com.example.bookit.Config;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "secret_clave_reemplazar_por_algo_mas_seguro";
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    private final String SECRET_KEY = "9a4f2c8d3b7a1e6f45c8a0b3f267d8b1d4e6f3c8a9d2b5f8e3a7c4d9f6b3a8e1";
+    private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));;
 
     private final long EXPIRATION_TIME = 86400000; // 1 día en ms
 

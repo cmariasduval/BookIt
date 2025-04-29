@@ -16,6 +16,12 @@ const Favorites = () => {
     const handleRemoveFavorite = (bookId) => {
         fetch(`http://localhost:8080/api/favorites/${bookId}`, {
             method: 'DELETE',
+
+            headers: {
+                'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                    'Content-Type': 'application/json'
+            }
+
         })
             .then(() => {
                 // Actualizar la lista de favoritos después de eliminar un libro

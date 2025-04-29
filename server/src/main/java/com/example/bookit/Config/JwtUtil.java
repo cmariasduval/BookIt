@@ -50,4 +50,9 @@ public class JwtUtil {
                 .getBody()
                 .get("role", String.class);  // Extrae el rol del token
     }
+
+    public String extractEmailFromToken(String token) {
+        return extractUsername(token);
+
+    }
 }

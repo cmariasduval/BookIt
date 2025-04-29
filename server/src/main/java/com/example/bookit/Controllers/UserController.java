@@ -85,37 +85,29 @@ public class UserController {
         }
     }
 
-//    @PutMapping("/api/users/{email}")
-//    public ResponseEntity<?> updateUser(@PathVariable String email, @RequestBody User updatedUser, @RequestHeader("Authorization") String token) {
-//        // Verificar si el token es válido y obtener el usuario desde el token
-//        String userEmailFromToken = jwtUtil.extractEmailFromToken(token);  // Suponiendo que tienes un servicio JWT
-//
-//        if (!userEmailFromToken.equals(email)) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No puedes modificar los datos de otro usuario.");
-//        }
-//
-//        // Buscar el usuario en la base de datos por su email
-//        Optional<User> userOptional = userRepository.findByEmail(email);
-//        if (userOptional.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
-//        }
-//
-//        User user = userOptional.get();
-//        // Actualizar los campos del usuario
-//        if (updatedUser.getUsername() != null) {
-//            user.setUsername(updatedUser.getUsername());
-//        }
-//        if (updatedUser.getBirthDate() != null) {
-//            user.setBirthDate(updatedUser.getBirthDate());
-//        }
-//        if (updatedUser.getNewPassword() != null && !updatedUser.getNewPassword().isEmpty()) {
-//            user.setPassword(passwordEncoder.encode(updatedUser.getNewPassword()));  // Suponiendo que usas passwordEncoder
-//        }
-//
-//        // Guardar el usuario actualizado
-//        userRepository.save(user);
-//
-//        return ResponseEntity.ok("Datos actualizados correctamente.");
-//    }
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody User updatedUser, @RequestHeader("Authorization") String token) {
+        String emailFromToken = jwtUtil.extractEmailFromToken(token);
+        Optional<User> userOptional = userRepository.findByEmail(emailFromToken);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+        }
+
+        User user = userOptional.get();
+
+        if (updatedUser.getUsername() != null) user.setUsername(updatedUser.getUsername());
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            user.setPassword(updatedUser.getPassword()); // Codificá si usás encoder
+        }
+        if (updatedUser.getBirthDate() != null) user.setBirthDate(updatedUser.getBirthDate());
+        if (updatedUser.getFullName() != null) user.setFullName(updatedUser.getFullName());
+        if (updatedUser.getInterests() != null) user.setInterests(updatedUser.getInterests());
+
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
+    }
+
+
 
 }

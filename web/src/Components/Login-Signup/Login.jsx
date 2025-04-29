@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './Login.css';
 import { useNavigate } from "react-router-dom";
 import logo from '../Assets/logo.png';
@@ -26,6 +26,7 @@ const Login = () => {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log("Datos del usuario recibidos:", data);
                 alert("Inicio de sesión exitoso");
                 const decoded = jwtDecode(data.token)
                 console.log("Decoded token:", decoded);
@@ -34,7 +35,11 @@ const Login = () => {
                 const user = {
                     email: data.email,
                     role: isAdmin ? "admin" : "user",
-                    token: data.token
+                    token: data.token,
+                    birthDate: data.birthDate,
+                    interests: data.interests,
+                    username: data.username,
+
                 };
                 localStorage.setItem("authToken", data.token);
                 localStorage.setItem("user", JSON.stringify(user));

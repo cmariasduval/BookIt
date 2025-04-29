@@ -13,13 +13,8 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("activity");
 
-  const userData = {
-    name: "María Gómez",
-    email: "maria@gmail.com",
-    username: "mariag123",
-    birthday: "1998-05-14",
-    interests: "Romance, Fantasy"
-  };
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+
 
   const navigate = useNavigate();
   const reservedBooks = [bookthief, annafrank, belljar, emma, rebecca, mazerunner, hungergames];
@@ -27,6 +22,8 @@ const Profile = () => {
     <div className="profile-container">
       {/* Sección fija con los datos del usuario */}
       <h1 className="home-title">Profile</h1>
+
+      <button type="button" className="edit-profile-button" onClick={() => navigate("/editProfile")}>Edit Profile</button>
 
       {/* Tabs */}
       <div className="tabs-container">
@@ -102,27 +99,28 @@ const Profile = () => {
 
         {activeTab === "about" && (
           <div className="fixed-user-info">
-          <h1 className="username">{userData.name}</h1>
+          <h1 className="username">{storedUser.name}</h1>
           <div className="user-detail-row">
             <span>Email:</span>
-            <span>{userData.email}</span>
+            <span>{storedUser.email}</span>
           </div>
           <div className="user-detail-row">
             <span>Username:</span>
-            <span>{userData.username}</span>
+            <span>{storedUser.username}</span>
+            <LuPencilLine className="edit-icon" size={25} />
           </div>
           <div className="user-detail-row editable">
             <span>Password:</span>
-            <span>********</span>
+            <span>{storedUser.password}</span>
             <LuPencilLine className="edit-icon" size={25} />
           </div>
           <div className="user-detail-row">
             <span>Birth date:</span>
-            <span>{userData.birthday}</span>
+            <span>{storedUser.birthDate}</span>
           </div>
           <div className="user-detail-row editable">
             <span>Interests:</span>
-            <span>{userData.interests}</span>
+            <span>{storedUser.interests.map((interest) => interest.genreType).join(', ')}</span>
             <LuPencilLine className="edit-icon" size={25} />
           </div>
         </div>

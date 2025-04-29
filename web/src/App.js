@@ -8,6 +8,7 @@ import Favorites from "./Components/Home/Favorites";
 import Profile from "./Components/Home/Profile";
 import BookDetails from "./Components/Home/BookDetails";
 import AddBook from "./Components/Home/AddBook";
+import EditProfile from "./Components/Home/EditProfile";
 
 function AppRoutes() {
     const location = useLocation();
@@ -24,6 +25,7 @@ function AppRoutes() {
                     <Route path="/library" element={<Library />} />
                     <Route path="/favorites" element={<Favorites />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/editProfile" element={<EditProfile />} />
                     <Route path="/bookDetails/:id" element={<BookDetails />} />
                 </Route>
             </Routes>

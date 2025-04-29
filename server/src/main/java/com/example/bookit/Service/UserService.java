@@ -96,4 +96,9 @@ public class UserService {
             throw new IllegalStateException("No puedes tener más de 3 reservas activas al mismo tiempo.");
         }
     }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
 }

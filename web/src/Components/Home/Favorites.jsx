@@ -6,7 +6,12 @@ const Favorites = () => {
 
     // Función para obtener los favoritos desde la API
     useEffect(() => {
-        fetch('http://localhost:8080/api/favorites')  // Aquí debes poner la URL correcta para obtener los favoritos
+        fetch('http://localhost:8080/api/favorites', {
+            headers: {
+                 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                'Content-Type': 'application/json'
+            }
+        })  // Aquí debes poner la URL correcta para obtener los favoritos
             .then(response => response.json())
             .then(data => setFavorites(data))
             .catch(error => console.error('Error fetching favorites:', error));
@@ -18,7 +23,7 @@ const Favorites = () => {
             method: 'DELETE',
 
             headers: {
-                'Access-Control-Allow-Origin': '*', 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                 'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
                     'Content-Type': 'application/json'
             }
 

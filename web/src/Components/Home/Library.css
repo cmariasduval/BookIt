@@ -1,3 +1,4 @@
+/* src/Components/Home/Library.css */
 .library-container {
     padding: 20px;
 }
@@ -11,18 +12,59 @@ ul {
     padding: 0;
 }
 
-li {
-    margin: 10px 0;
+/* Cada elemento de libro en fila */
+.book-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
 }
 
+/* El título ocupa el espacio disponible */
+.book-title {
+    margin: 0;
+    flex: 1;
+    font-size: 1.1rem;
+}
+
+/* Contenedor de los botones */
+.book-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: 20px;
+}
+
+/* Estilos generales para botones */
 button {
-    background-color: #4CAF50;
+    background-color: #c8b97f ;
     color: white;
-    padding: 10px 20px;
+    padding: 6px 12px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 0.9rem;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #EEE8AA;
+    color: black;
+}
+
+/* Botón de favorito con estilo independiente */
+button.favorito {
+    background-color: transparent;
+    color: black;
+    padding: 0;
+    font-size: 1.1rem;
+}
+
+button.favorito:hover {
+    color: #c0392b;
+}
+
+/* Mensaje de error */
+.error {
+    color: #e74c3c;
+    margin-bottom: 20px;
 }

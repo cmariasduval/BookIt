@@ -1,178 +1,122 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./Home.css";
-import bookthief from '../Assets/books/bookthief.png';
-import emma from '../Assets/books/emma.png';
-import annafrank from '../Assets/books/annafrank.png';
-import belljar from '../Assets/books/belljar.png';
-import hungergames from '../Assets/books/hungergames.png';
-import mazerunner from '../Assets/books/mazerunner.png';
-import rebecca from '../Assets/books/rebecca.png';
-import { FaBrain } from "react-icons/fa";
-import { GiGreekTemple } from "react-icons/gi";
-import { FaHeart } from "react-icons/fa";
-import { GiMaterialsScience } from "react-icons/gi";
-import { FaRegNewspaper } from "react-icons/fa6";
-import { GiGhost } from "react-icons/gi";
-import { RiKnifeBloodLine } from "react-icons/ri";
-import { MdCastle } from "react-icons/md";
-import { FaMagnifyingGlass } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import './Library.css';
 
-const Home = () => {
-    const recommendedBooks = [bookthief, annafrank, belljar, emma, rebecca, mazerunner, hungergames];
-    const bookCategories = [
-        { icon: <FaBrain />, label: "Psychology" },
-        { icon: <GiGreekTemple />, label: "History" },
-        { icon: <FaHeart />, label: "Romance" },
-        { icon: <GiMaterialsScience />, label: "Science Fiction" },
-        { icon: <FaRegNewspaper />, label: "Non-Fiction" },
-        { icon: <GiGhost />, label: "Horror" },
-        { icon: <RiKnifeBloodLine />, label: "Thriller" },
-        { icon: <MdCastle />, label: "Fantasy" },
-        { icon: <FaMagnifyingGlass />, label: "Mystery" },
-    ];
-    const navigate = useNavigate();
+const Library = () => {
+    const [allBooks, setAllBooks] = useState([]);
+    const [readBooks, setReadBooks] = useState([]);
+    const [reservedBooks, setReservedBooks] = useState([]);
+    const [favoriteBooks, setFavoriteBooks] = useState([]);
+    const [error, setError] = useState(null);
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [authError, setAuthError] = useState(null);
-    const [token, setToken] = useState("");
-    const debounceTimeout = useRef(null);  // Ref para controlar el debounce
-
-    // Cargar usuario al entrar
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-
-        if (storedUser) {
-            const userObject = JSON.parse(storedUser);
-            if (userObject.token) {
-                setToken(userObject.token);
-                setIsAuthenticated(true);
-            }
-        }
-    }, []);
-
-    const performSearch = async (query) => {
-        if (!isAuthenticated) {
-            setAuthError('Sesión expirada. Necesita volver a iniciar sesión.');
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            console.error("Token no encontrado");
+            setError("Token no encontrado");
             return;
         }
 
-        try {
-            const response = await fetch(`http://localhost:8080/api/books/search?query=${encodeURIComponent(query)}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
+        fetch('http://localhost:8080/api/books', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+                return response.json();
+            })
+            .then(data => {
+                setAllBooks(data);
+                setReadBooks(data.filter(book => book.status === 'read'));
+                setReservedBooks(data.filter(book => book.status === 'reserved'));
+            })
+            .catch(err => {
+                console.error('Error fetching books:', err);
+                setError("Error al obtener los libros. Intenta de nuevo más tarde.");
+            });
+    }, []);
 
-            const data = await response.json();
-            setSearchResults(data);
-        } catch (error) {
-            console.error('Error en la búsqueda:', error);
-            setAuthError('Error al realizar la búsqueda. Intente nuevamente.');
-        }
+    const handleReserveBook = (bookId) => {
+        console.log(`Reservando libro ID ${bookId}`);
+        // Aquí iría la llamada a la API para reservar
     };
 
-    const handleSearchChange = (e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-        setAuthError(null);
+    const handleFavoriteBook = (bookId) => {
+        console.log(`Marcando como favorito libro ID ${bookId}`);
+        setFavoriteBooks(prev => {
+            if (prev.includes(bookId)) return prev;
+            return [...prev, bookId];
+        });
+    };
 
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current); // Limpia el timeout anterior
-        }
-
-        debounceTimeout.current = setTimeout(() => {
-            if (value.trim() !== "") {
-                performSearch(value);
-            } else {
-                setSearchResults([]);
-            }
-        }, 500); // Espera 500ms después de dejar de tipear
+    const handleMarkAsRead = (bookId) => {
+        console.log(`Marcando como leído libro ID ${bookId}`);
+        setReadBooks(prev => prev.includes(bookId) ? prev : [...prev, bookId]);
+        // Opcional: actualizar allBooks status a 'read'
+        setAllBooks(prev => prev.map(book => book.id === bookId ? { ...book, status: 'read' } : book));
     };
 
     return (
-        <div className="home-container">
-            {/* Header con título y buscador */}
-            <div className="home-header">
-                <h1 className="home-title">Discover</h1>
-                <div className="home-search-bar">
-                    <select className="home-category-select">
-                        <option>All Categories</option>
-                        <option>Fantasy</option>
-                        <option>Romance</option>
-                        <option>Sci-Fi</option>
-                        <option>Mystery</option>
-                        <option>Non-Fiction</option>
-                    </select>
-                    <input
-                        type="text"
-                        placeholder="Search book"
-                        className="home-search-input"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
-                    {authError && (
-                        <div className="auth-error-message">
-                            {authError}
-                        </div>
-                    )}
-                    {searchResults.length > 0 && (
-                        <ul className="home-search-results">
-                            {searchResults.map((book) => (
-                                <li
-                                    key={book.id}
-                                    onClick={() => navigate(`/bookDetails/${book.id}`)}
-                                    className="home-search-result-item"
-                                >
+        <div className="library-container">
+            <h1>Biblioteca</h1>
+            {error && <p className="error">{error}</p>}
+
+            <div className="book-section">
+                <h2>Todos los Libros</h2>
+                <ul>
+                    {allBooks.length > 0 ? (
+                        allBooks.map(book => (
+                            <li key={book.id} className="book-item">
+                                <h3 className="book-title">
                                     {book.title}
-                                </li>
-                            ))}
-                        </ul>
+                                </h3>
+                                <div className="book-actions">
+                                    <button onClick={() => handleReserveBook(book.id)}>Reservar</button>
+                                    <button onClick={() => handleFavoriteBook(book.id)}>
+                                        {favoriteBooks.includes(book.id) ? '❤️ Favorito' : '♡ Favorito'}
+                                    </button>
+                                    <button onClick={() => handleMarkAsRead(book.id)}>Marcar como leído</button>
+                                </div>
+                            </li>
+                        ))
+                    ) : (
+                        <p>No hay libros disponibles</p>
                     )}
-                </div>
+                </ul>
             </div>
 
-            {/* Carrusel de recomendaciones */}
-            <div className="home-section">
-                <h2 className="home-section-title">Recommendations</h2>
-                <div className="home-carousel">
-                    {recommendedBooks.map((img, index) => (
-                        <img
-                            key={index}
-                            src={img}
-                            alt="book"
-                            className="home-book-card"
-                            onClick={() => navigate('/bookDetails')}
-                        />
-                    ))}
-                </div>
+            <div className="book-section">
+                <h2>Libros Leídos</h2>
+                <ul>
+                    {readBooks.length > 0 ? (
+                        readBooks.map(bookId => {
+                            const book = allBooks.find(b => b.id === bookId);
+                            return book ? <li key={book.id}><h3>{book.title}</h3></li> : null;
+                        })
+                    ) : (
+                        <p>No hay libros leídos</p>
+                    )}
+                </ul>
             </div>
 
-            {/* Categorías */}
-            <div className="home-section">
-                <div className="home-section-header">
-                    <h2 className="home-section-title">Book Category</h2>
-                    <button className="home-view-all-btn">View All</button>
-                </div>
-                <div className="home-category-list">
-                    {bookCategories.map(({ icon, label }, index) => (
-                        <div key={index} className="home-category-card">
-                            <div className="home-category-icon">{icon}</div>
-                            <span className="home-category-label">{label}</span>
-                        </div>
-                    ))}
-                </div>
+            <div className="book-section">
+                <h2>Libros Reservados</h2>
+                <ul>
+                    {reservedBooks.length > 0 ? (
+                        reservedBooks.map(book => (
+                            <li key={book.id}>
+                                <h3>{book.title}</h3>
+                            </li>
+                        ))
+                    ) : (
+                        <p>No hay libros reservados</p>
+                    )}
+                </ul>
             </div>
+
         </div>
     );
 };
 
-export default Home;
+export default Library;

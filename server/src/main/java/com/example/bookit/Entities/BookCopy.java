@@ -1,5 +1,6 @@
 package com.example.bookit.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +15,7 @@ public class BookCopy {
     private String copyId;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 

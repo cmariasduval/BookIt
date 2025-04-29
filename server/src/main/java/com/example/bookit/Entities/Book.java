@@ -1,5 +1,6 @@
 package com.example.bookit.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,8 @@ public class Book {
     )
     private List<Genre> genres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL) // Relación con las copias del libro
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<BookCopy> copies = new ArrayList<>();
 
     @Column(name = "image_url")  // El campo que almacena la URL de la imagen

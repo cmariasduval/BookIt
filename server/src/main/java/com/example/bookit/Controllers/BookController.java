@@ -92,34 +92,25 @@ public class BookController {
 
     @GetMapping("/search")
     public ResponseEntity<List<Book>> searchBooks(
-            @RequestParam String query,
-            @RequestHeader(value = "Authorization", required = false) String authorization
+            @RequestParam String query
     ) {
         try {
-            if (authorization == null || !authorization.startsWith("Bearer ")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .header("Location", "/")
-                        .body(null);
-            }
-
-            String token = authorization.substring(7);
-            if (!jwtUtil.validateToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .header("Location", "/")
-                        .body(null);
-            }
-
-            String username = jwtUtil.extractUsername(token);
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+            // Realizar la búsqueda sin requerir autenticación
             List<Book> books = bookRepository.findByTitle(query);
+
+            // Si no se encuentran libros, devolver una respuesta vacía
+            if (books.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            // Devolver los libros encontrados
             return ResponseEntity.ok(books);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            // Manejo de errores en caso de algún problema
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {

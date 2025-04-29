@@ -35,35 +35,22 @@ const Home = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authError, setAuthError] = useState(null);
-    const [token, setToken] = useState("");
     const debounceTimeout = useRef(null);  // Ref para controlar el debounce
 
-    // Cargar usuario al entrar
+    // Cargar usuario al entrar (si lo necesitas para otras partes de la app)
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
 
-        if (storedUser) {
-            const userObject = JSON.parse(storedUser);
-            if (userObject.token) {
-                setToken(userObject.token);
-                setIsAuthenticated(true);
-            }
-        }
+        // Verifica si hay un usuario almacenado y ajusta el estado de autenticación si es necesario
+        // Aquí podrías configurar el estado `isAuthenticated` si lo deseas, pero no lo usamos en la búsqueda
     }, []);
 
     const performSearch = async (query) => {
-        if (!isAuthenticated) {
-            setAuthError('Sesión expirada. Necesita volver a iniciar sesión.');
-            return;
-        }
-
         try {
-            const response = await fetch(`http://localhost:8080/api/books/search?query=${encodeURIComponent(query)}`, {
+            const response = await fetch("http://localhost:8080/api/books/search", {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });

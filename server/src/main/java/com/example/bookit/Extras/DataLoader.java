@@ -83,6 +83,9 @@ public class DataLoader {
                 "1874620016745", getGenres("Fiction", "Mystery", "Romance", "Historical", "Thriller", "Horror"), "https://http2.mlstatic.com/D_943522-MLA83275168376_042025-C.jpg",
                 2, "Mystery, Romance, Guilt", "A psychological thriller about a woman haunted by the memory of her husband's first wife.");
         addCopies(rebecca, 2);
+
+        Book LittleWoman = addBook("Little Woman", "Louisa May Alcott", "Bantam", "9780553212754", getGenres("Fiction", "Romance"), "https://keledicionesb2c.vtexassets.com/arquivos/ids/253968-800-auto?v=638077496123600000&width=800&height=auto&aspect=true", 2, "Sisters, Little, Woman", "A Story of 5 sisters who lost their father. Sisterhood, friendship and love");
+        addCopies(LittleWoman, 2);
     }
 
     private List<Genre> getGenres(String... names) {

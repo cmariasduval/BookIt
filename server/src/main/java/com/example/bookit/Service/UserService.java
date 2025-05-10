@@ -81,7 +81,7 @@ public class UserService {
 
             // Crear la reserva
             Reservation reservation = new Reservation();
-            reservation.setUser(user);
+            //reservation.setUser(user);
             reservation.setCopy(copy);
             reservation.setReservationDate(reservationDate);
             reservation.setPickupDate(pickupDate);

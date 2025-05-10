@@ -2,10 +2,7 @@ package com.example.bookit.Controllers;
 
 import com.example.bookit.Config.JwtUtil;
 import com.example.bookit.DTO.AddBookRequest;
-import com.example.bookit.Entities.Book;
-import com.example.bookit.Entities.Favorite;
-import com.example.bookit.Entities.Genre;
-import com.example.bookit.Entities.User;
+import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.FavoriteRepository;
 import com.example.bookit.Repository.GenreRepository;
@@ -21,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +44,7 @@ public class BookController {
     @Autowired
     private FavoriteRepository favoriteRepository;
 
-    // Método para obtener los libros favoritos de un usuario
+    // Metodo para obtener los libros favoritos de un usuario
     public List<Book> getFavoriteBooks(String username) {
         // Recupera el usuario por su nombre
         User user = userRepository.findByUsername(username)
@@ -109,6 +107,53 @@ public class BookController {
         // Devuelve el libro creado como respuesta
         return ResponseEntity.ok(newBook);
     }
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Book> editBook(
+            @PathVariable Long id,
+            @ModelAttribute AddBookRequest editBookRequest
+    ) throws IOException {
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // Actualizamos los atributos del libro
+        existingBook.setTitle(editBookRequest.getTitle());
+        existingBook.setAuthor(editBookRequest.getAuthor());
+        existingBook.setIsbn(editBookRequest.getIsbn());
+        existingBook.setPublisher(editBookRequest.getPublisher());
+        existingBook.setDescription(editBookRequest.getDescription());
+        existingBook.setKeywords(editBookRequest.getKeywords());
+
+        // Actualizar géneros
+        List<Genre> genres = editBookRequest.getGenres().stream()
+                .map(name -> genreRepository.findByGenreType(name)
+                        .orElseThrow(() -> new RuntimeException("Genre not found")))
+                .collect(Collectors.toList());
+        existingBook.setGenres(genres);
+
+        // Actualizar copias
+        int copies = editBookRequest.getCopies();
+        List<BookCopy> bookCopies = new ArrayList<>();
+        for (int i = 0; i < copies; i++) {
+            String copyId = "COPY-" + (i + 1);  // Generar un ID único para cada copia
+            bookCopies.add(new BookCopy(existingBook, copyId, true));  // Todas las copias disponibles
+        }
+        existingBook.setCopies(bookCopies);  // Establecer las copias al libro
+
+        // Si se adjunta una nueva imagen, reemplazar la anterior
+        MultipartFile newImage = editBookRequest.getImage();
+        if (newImage != null && !newImage.isEmpty()) {
+            String newImagePath = saveImage(newImage);
+            existingBook.setImagePath(newImagePath);
+        }
+
+        // Guardar los cambios en la base de datos
+        Book updatedBook = bookRepository.save(existingBook);
+        return ResponseEntity.ok(updatedBook);
+    }
+
+
+
 
     @GetMapping("/search")
     public ResponseEntity<List<Book>> searchBooks(

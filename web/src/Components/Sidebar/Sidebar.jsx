@@ -65,18 +65,34 @@ const Sidebar = () => {
                         </li>
 
                         {isAdmin && (
-                            <li>
-                                <NavLink
-                                    to="/addbook"
-                                    state={{ background: location }}
-                                    className={({ isActive }) =>
-                                        `sidebar-link ${isActive ? 'active' : ''}`
-                                    }
-                                >
-                                    <ImBooks size={24} />
-                                    <span className="addbook-item">Add Book</span>
-                                </NavLink>
-                            </li>
+                            <>
+                                <li>
+                                    <NavLink
+                                        to="/addbook"
+                                        state={{ background: location }}
+                                        className={({ isActive }) =>
+                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                        }
+                                    >
+                                        <ImBooks size={24} />
+                                        <span className="addbook-item">Add Book</span>
+                                    </NavLink>
+                                </li>
+
+                                {/* Edit Book Button */}
+                                <li>
+                                    <NavLink
+                                        to="/editbook"
+                                        state={{ background: location }}
+                                        className={({ isActive }) =>
+                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                        }
+                                    >
+                                        <ImBooks size={24} />
+                                        <span className="editbook-item">Edit Book</span>
+                                    </NavLink>
+                                </li>
+                            </>
                         )}
 
                         <li onClick={handleLogout}>

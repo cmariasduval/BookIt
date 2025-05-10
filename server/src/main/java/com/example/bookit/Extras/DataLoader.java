@@ -57,12 +57,12 @@ public class DataLoader {
         Book theBellJar = addBook("The Bell Jar", "Sylvia Plath", "Faber & Faber",
                 "5820192437850", getGenres("Psychology", "Fiction"), "https://keledicionesb2c.vtexassets.com/arquivos/ids/253286/9780571081783.jpg?v=638035126535270000",
                 7, "Mental Health, Depression", "A novel about mental illness and the societal expectations placed on women.");
-        addCopies(theBellJar, 7);
+        addCopies(theBellJar, 2);
 
         Book theBookThief = addBook("The Book Thief", "Markus Zusak", "Picador",
                 "0375831002", getGenres("Historical", "Fiction"), "https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/The_Book_Thief_by_Markus_Zusak_book_cover.jpg/250px-The_Book_Thief_by_Markus_Zusak_book_cover.jpg",
                 8, "World War II, Death, Books", "The story of a young girl in Nazi Germany and her relationship with books.");
-        addCopies(theBookThief, 8);
+        addCopies(theBookThief, 3);
 
         Book janeAusten = addBook("Emma", "Jane Austen", "Collectable Classics, Complete & Unabridged",
                 "3876492189461", getGenres("Fiction", "Historical"), "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781787556997/emma-9781787556997_hr.jpg",

@@ -8,6 +8,7 @@ import com.example.bookit.Repository.BookCopyRepository;
 import com.example.bookit.Repository.ReservationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +22,9 @@ public class ReservationService{
 
     @Autowired
     private BookCopyRepository bookCopyRepository;
+
+    @Autowired
+    private UserService userService;
 
     // Verificar si el usuario tiene menos de 3 reservas activas
     public boolean hasActiveReservations(User user) {
@@ -88,5 +92,11 @@ public class ReservationService{
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
         reservation.setStatus(ReservationStatus.COMPLETED);
         reservationRepository.save(reservation);
+    }
+
+    public ResponseEntity<?> getReservedBooks(String authenticatedUser) {
+        User user = userService.getUserByName(authenticatedUser);
+        List<Reservation> reservations = reservationRepository.findByUser(user);
+        return ResponseEntity.ok(reservations);
     }
 }

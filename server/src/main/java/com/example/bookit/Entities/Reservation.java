@@ -1,5 +1,6 @@
 package com.example.bookit.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -13,6 +14,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToOne

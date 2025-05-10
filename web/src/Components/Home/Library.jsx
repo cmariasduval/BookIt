@@ -39,6 +39,40 @@ const Library = () => {
         }
     };
 
+    const fetchReservedBooks = async () => {
+        setLoading(true); // Asegura que el loading se active al inicio
+        setError(null);   // Limpia errores previos
+
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError('No se encontró el token de autenticación.');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:8080/api/reservations/get', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+            const data = await res.json();
+            console.log(data);
+            setReservedBooks(data);
+        } catch (err) {
+            console.error(err);
+            setError('Error al obtener los libros reservados.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const fetchFavoriteBooks = async () => {
         const token = localStorage.getItem('authToken');
         if (!token) return;
@@ -63,9 +97,18 @@ const Library = () => {
     };
 
     useEffect(() => {
-        fetchBooks();
-        fetchFavoriteBooks();
+        const loadAll = async () => {
+            await fetchBooks();
+            await fetchFavoriteBooks();
+        };
+        loadAll();
     }, []);
+
+    useEffect(() => {
+        if (allBooks.length > 0) {
+            fetchReservedBooks();
+        }
+    }, [allBooks]);
 
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -87,13 +130,26 @@ const Library = () => {
             return;
         }
 
+        const reservationDate = prompt('¿Para qué fecha querés reservarlo? (YYYY-MM-DD)');
+        const period = prompt('¿Por cuántos días lo querés reservar? (número)');
+
+        if (!reservationDate || !period || isNaN(parseInt(period))) {
+            setError('Datos de reserva inválidos');
+            return;
+        }
+
         try {
-            const res = await fetch(`http://localhost:8080/api/book-copies/${copy.id}/reserve`, {
-                method: 'PUT',
+            const res = await fetch(`http://localhost:8080/api/reservations/create`, {
+                method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    copyId: copy.id,
+                    period: parseInt(period),
+                    reservationDate: reservationDate,
+                }),
             });
 
             if (!res.ok) {
@@ -159,14 +215,14 @@ const Library = () => {
         setAllBooks((prev) => prev.map((b) => (b.id === bookId ? { ...b, status: '' } : b)));
     };
 
-    const handleCancelReservation = async (bookId) => {
+    const handleCancelReservation = async (bookId, reservationId) => {
         const book = allBooks.find((b) => b.id === bookId);
         const copy = book?.copies?.[0];
         if (!copy) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/book-copies/${copy.id}/cancel`, {
-                method: 'PUT',
+            const res = await fetch(`http://localhost:8080/api/reservations/cancel/${reservationId}`, {
+                method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -250,7 +306,7 @@ const Library = () => {
                             <li key={b.id} className="book-item">
                                 <h3 className="book-title">{b.title}</h3>
                                 <div className="book-actions">
-                                    <button onClick={() => handleCancelReservation(b.id)}>
+                                    <button onClick={() => handleCancelReservation(b.id, b.reservationId)}>
                                         Cancelar
                                     </button>
                                 </div>

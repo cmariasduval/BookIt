@@ -167,4 +167,8 @@ public class Book {
         copies.add(copy);
         copy.setBook(this);
     }
+
+    public void setImagePath(String newImagePath) {
+        this.imageUrl = newImagePath;
+    }
 }

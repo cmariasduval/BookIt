@@ -1,9 +1,6 @@
 package com.example.bookit.Service;
 
-import com.example.bookit.Entities.Book;
-import com.example.bookit.Entities.Favorite;
-import com.example.bookit.Entities.User;
-import com.example.bookit.Entities.Genre;
+import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.FavoriteRepository;
 import com.example.bookit.Repository.UserRepository;
@@ -30,41 +27,41 @@ public class BookService {
     @Autowired
     private FavoriteRepository favoriteRepository;
 
-    // Ajustamos la firma del método para que coincida con los parámetros enviados desde el controlador
-    public Book addOrUpdateBook(String title, String author, String publisher, String isbn,
-                                MultipartFile image, List<String> genres, String keywords,
-                                String description, String username) throws IOException {
-
-        // Buscar al usuario autenticado
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Buscar si el libro ya existe (por ISBN)
-        Book book = bookRepository.findByIsbn(isbn).orElse(null);
-
-        if (book == null) {
-            // Si el libro no existe, crear uno nuevo
-            List<Genre> genreObjects = genres.stream()
-                    .map(genreName -> new Genre(genreName))
-                    .collect(Collectors.toList());
-
-            book = new Book(title, author, publisher, isbn, genreObjects, image != null && !image.isEmpty() ? saveImage(image) : null, keywords, description);
-        } else {
-            // Si el libro ya existe, actualizar sus detalles
-            book.setTitle(title);
-            book.setAuthor(author);
-            book.setPublisher(publisher);
-            book.setDescription(description);
-            book.setKeywords(keywords);
-            if (image != null && !image.isEmpty()) {
-                String imagePath = saveImage(image);
-                book.setImageUrl(imagePath);
-            }
-        }
-
-        book.setUploadedBy(user);
-        return bookRepository.save(book);
-    }
+//    // Ajustamos la firma del método para que coincida con los parámetros enviados desde el controlador
+//    public Book addOrUpdateBook(String title, String author, String publisher, String isbn,
+//                                MultipartFile image, List<String> genres, String keywords,
+//                                String description, String username) throws IOException {
+//
+//        // Buscar al usuario autenticado
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Buscar si el libro ya existe (por ISBN)
+//        Book book = bookRepository.findByIsbn(isbn).orElse(null);
+//
+//        if (book == null) {
+//            // Si el libro no existe, crear uno nuevo
+//            List<Genre> genreObjects = genres.stream()
+//                    .map(genreName -> new Genre(genreName))
+//                    .collect(Collectors.toList());
+//
+//            book = new Book(title, author, publisher, isbn, genreObjects, image != null && !image.isEmpty() ? saveImage(image) : null, keywords, description);
+//        } else {
+//            // Si el libro ya existe, actualizar sus detalles
+//            book.setTitle(title);
+//            book.setAuthor(author);
+//            book.setPublisher(publisher);
+//            book.setDescription(description);
+//            book.setKeywords(keywords);
+//            if (image != null && !image.isEmpty()) {
+//                String imagePath = saveImage(image);
+//                book.setImageUrl(imagePath);
+//            }
+//        }
+//
+//        book.setUploadedBy(user);
+//        return bookRepository.save(book);
+//    }
 
     // Método para guardar la imagen en el servidor
     private String saveImage(MultipartFile image) throws IOException {
@@ -118,4 +115,55 @@ public class BookService {
                 .collect(Collectors.toList());
 
     }
+
+    public Book addOrUpdateBook(String title, String author, String publisher, String isbn,
+                                MultipartFile image, List<String> genres, String keywords,
+                                String description, String username) throws IOException {
+
+        // Buscar al usuario autenticado
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Buscar si el libro ya existe (por ISBN)
+        Book book = bookRepository.findByIsbn(isbn).orElse(null);
+
+        if (book == null) {
+            // Si el libro no existe, crear uno nuevo
+            List<Genre> genreObjects = genres.stream()
+                    .map(Genre::new)
+                    .collect(Collectors.toList());
+
+            book = new Book(title, author, publisher, isbn,
+                    genreObjects,
+                    image != null && !image.isEmpty() ? saveImage(image) : null,
+                    keywords, description);
+
+            // ✅ Crear copias nuevas (por ejemplo, 5 copias)
+            List<BookCopy> copies = new java.util.ArrayList<>();
+            for (int i = 1; i <= 5; i++) {
+                String copyId = isbn + "-C" + i;
+                BookCopy copy = new BookCopy(book, copyId, true);
+                copies.add(copy);
+            }
+            book.setCopies(copies);
+
+        } else {
+            // Si el libro ya existe, actualizar sus detalles
+            book.setTitle(title);
+            book.setAuthor(author);
+            book.setPublisher(publisher);
+            book.setDescription(description);
+            book.setKeywords(keywords);
+
+            if (image != null && !image.isEmpty()) {
+                String imagePath = saveImage(image);
+                book.setImageUrl(imagePath);
+            }
+        }
+
+        book.setUploadedBy(user);
+        return bookRepository.save(book);
+    }
+
+
 }

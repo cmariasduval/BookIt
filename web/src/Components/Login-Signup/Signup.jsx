@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './Signup.css';
 import { useNavigate } from "react-router-dom";
 import logo from '../Assets/logo.png';
@@ -14,6 +14,13 @@ const SignUp = () => {
   const [fullName, setFullName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+          const token = localStorage.getItem("authToken");
+          if (token) {
+              navigate("/Home");
+          }
+      }, [navigate]);
 
   const allInterests = [
     "Psychology", "Historical", "Romance", 

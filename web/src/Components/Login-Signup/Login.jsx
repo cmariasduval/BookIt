@@ -12,6 +12,13 @@ const Login = () => {
     const navigate = useNavigate();
     const { saveToken } = useAuth();  // Hook para manejar el token
 
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            navigate("/Home");
+        }
+    }, [navigate]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
 

@@ -122,7 +122,8 @@ const Library = () => {
         }
 
         const book = allBooks.find((b) => b.id === bookId);
-        if (!book || reservedBooks.some((b) => b.id === bookId)) return;
+        console.log(reservedBooks)
+        if (!book || reservedBooks.some((b) => b.book.id === bookId)) return;
 
         const copy = book.copies?.[0];
         if (!copy) {
@@ -256,7 +257,10 @@ const Library = () => {
                                 <h3 className="book-title">{book.title}</h3>
                                 <div className="book-actions">
                                     {book.status !== 'reserved' && (
-                                        <button onClick={() => handleReserveBook(book.id)}>
+                                        <button onClick={() => {
+                                            console.log(book)
+                                            handleReserveBook(book.id)
+                                        }}>
                                             Reservar
                                         </button>
                                     )}
@@ -304,9 +308,9 @@ const Library = () => {
                     {reservedBooks.length > 0 ? (
                         reservedBooks.map((b) => (
                             <li key={b.id} className="book-item">
-                                <h3 className="book-title">{b.title}</h3>
+                                <h3 className="book-title">{b.book.title}</h3>
                                 <div className="book-actions">
-                                    <button onClick={() => handleCancelReservation(b.id, b.reservationId)}>
+                                    <button onClick={() => handleCancelReservation(b.book.id, b.id)}>
                                         Cancelar
                                     </button>
                                 </div>

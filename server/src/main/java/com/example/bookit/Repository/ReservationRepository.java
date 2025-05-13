@@ -1,6 +1,7 @@
 package com.example.bookit.Repository;
 
 
+import com.example.bookit.DTO.ReservationRequest;
 import com.example.bookit.Entities.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<Reservation> findFirstByCopyAndStatusIn(BookCopy copy, List<ReservationStatus> pending);
 
     List<Reservation> findByUser(User user);
+
+    List<ReservationRequest> findReservedBooksByUser(User user);
+
+    List<Reservation> findByUserUsername(String authenticatedUser);
 }

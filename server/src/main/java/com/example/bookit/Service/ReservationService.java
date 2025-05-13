@@ -1,9 +1,6 @@
 package com.example.bookit.Service;
 
-import com.example.bookit.Entities.BookCopy;
-import com.example.bookit.Entities.Reservation;
-import com.example.bookit.Entities.ReservationStatus;
-import com.example.bookit.Entities.User;
+import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookCopyRepository;
 import com.example.bookit.Repository.ReservationRepository;
 import jakarta.transaction.Transactional;
@@ -13,9 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class ReservationService{
+public class ReservationService {
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -56,6 +54,8 @@ public class ReservationService{
             throw new RuntimeException("La copia del libro no está disponible para las fechas seleccionadas.");
         }
 
+        String bookName = bookCopy.getBook().getTitle(); // Obtener el nombre del libro desde BookCopy
+
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setCopy(bookCopy);
@@ -68,8 +68,10 @@ public class ReservationService{
     }
 
     // Cancelar una reserva
+
     public void cancelReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
 
         if (reservation.getPickupDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("No puedes cancelar una reserva después de la fecha de pickup.");
@@ -79,24 +81,28 @@ public class ReservationService{
     }
 
     // Marcar como 'active' cuando el libro sea retirado
-
     @Transactional
     public void markAsActive(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
         reservation.setStatus(ReservationStatus.ACTIVE);
         reservationRepository.save(reservation);
     }
 
     // Marcar como 'completed' cuando el libro sea devuelto
     public void markAsCompleted(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
         reservation.setStatus(ReservationStatus.COMPLETED);
         reservationRepository.save(reservation);
     }
 
+    // Obtener los libros reservados por un usuario autenticado
     public ResponseEntity<?> getReservedBooks(String authenticatedUser) {
-        User user = userService.getUserByName(authenticatedUser);
-        List<Reservation> reservations = reservationRepository.findByUser(user);
-        return ResponseEntity.ok(reservations);
+        List<Reservation> reservations = reservationRepository.findByUserUsername(authenticatedUser);
+
+        // Extraer los libros de las reservas
+        List<Reservation> reservedBooks = reservations;
+        return ResponseEntity.ok(reservedBooks);
     }
 }

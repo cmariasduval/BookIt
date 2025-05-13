@@ -40,7 +40,7 @@ public class ReservationController {
 
 
     @GetMapping("/get")
-    public ResponseEntity<?> getReservedBooks(String authenticatedUser) {
+    public ResponseEntity<?> getReservedBooks() {
         return reservationService.getReservedBooks(getAuthenticatedUser());
     }
 

@@ -34,6 +34,8 @@ public class Reservation {
     @Column(name = "status", nullable = false)
     private ReservationStatus status;
 
+
+
     // Constructor vacío
     public Reservation() {
     }
@@ -106,4 +108,7 @@ public class Reservation {
     }
 
 
+    public Book getBook() {
+        return copy.getBook();
+    }
 }

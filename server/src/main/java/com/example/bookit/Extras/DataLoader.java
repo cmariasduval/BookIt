@@ -49,10 +49,6 @@ public class DataLoader {
             }
         }
 
-        Book anneFrank = addBook("Anne Frank, The Diary of a young girl", "Anne Frank", "Mass Market Paperback",
-                "5620582213794", getGenres("Non-Fiction"), "https://m.media-amazon.com/images/I/51Eyjz65gyL._AC_UF1000,1000_QL80_.jpg",
-                5, "World War II, Diary", "The Diary of Anne Frank, detailing the life of a young Jewish girl during WWII.");
-        addCopies(anneFrank, 5);
 
         Book theBellJar = addBook("The Bell Jar", "Sylvia Plath", "Faber & Faber",
                 "5820192437850", getGenres("Psychology", "Fiction"), "https://keledicionesb2c.vtexassets.com/arquivos/ids/253286/9780571081783.jpg?v=638035126535270000",

@@ -92,12 +92,18 @@
     cursor: pointer;
     border-radius: 30px;
     width: 125px;
+    color: black;
   }
   
   .interests-buttons button.selected { 
     color: black;
     border-color: #749FD1 ;
     border-width: 3px;
+  }
+
+  .interests-buttons button:hover {
+    color: black;
+    background-color: beige;
   }
 
   .signup-submit-container{

@@ -38,17 +38,23 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
 
-                        <li>
-                            <NavLink
-                                to="/library"
-                                className={({ isActive }) =>
-                                    `sidebar-link ${isActive ? 'active' : ''}`
-                                }
-                            >
-                                <ImBooks size={24} />
-                                <span className="library-item">My Library</span>
-                            </NavLink>
-                        </li>
+                        {!isAdmin && (
+                            <>
+                                <li>
+                                    <NavLink
+                                        to="/library"
+                                        className={({ isActive }) =>
+                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                        }
+                                    >
+                                        <ImBooks size={24} />
+                                        <span className="library-item">My Library</span>
+                                    </NavLink>
+                                </li>
+                            </>
+                        )}
+
+                        
 
                         <div className="divider"></div>
 

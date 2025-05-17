@@ -54,32 +54,35 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
-            {/* Sección fija con los datos del usuario */}
-            <h1 className="home-title">Profile</h1>
-
-            <button type="button" className="edit-profile-button" onClick={() => navigate("/editProfile")}>Edit Profile</button>
-
-            {/* Tabs */}
-            <div className="tabs-container">
-                <button
-                    className={activeTab === "about" ? "tab active" : "tab"}
-                    onClick={() => setActiveTab("about")}
-                >
-                    About me
-                </button>
-                <button
-                    className={activeTab === "activity" ? "tab active" : "tab"}
-                    onClick={() => setActiveTab("activity")}
-                >
-                    My Activity
-                </button>
-                <button
-                    className={activeTab === "reviews" ? "tab active" : "tab"}
-                    onClick={() => setActiveTab("reviews")}
-                >
-                    Reviews & Ratings
-                </button>
+            <div className="barra-superior-profile">
+                <h1 className="home-title">Profile</h1>
+                {/* Tabs */}
+                <div className="tabs-container">
+                    <button
+                        className={activeTab === "about" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("about")}
+                    >
+                        About me
+                    </button>
+                    <button
+                        className={activeTab === "activity" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("activity")}
+                    >
+                        My Activity
+                    </button>
+                    <button
+                        className={activeTab === "reviews" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("reviews")}
+                    >
+                        Reviews & Ratings
+                    </button>
+                </div>
             </div>
+            {/* Sección fija con los datos del usuario */}
+
+            
+
+            
 
             {/* Contenido dinámico */}
             <div className="tab-content">
@@ -132,7 +135,9 @@ const Profile = () => {
                 )}
 
                 {activeTab === "about" && (
+                    
                     <div className="fixed-user-info">
+                        <button type="button" className="edit-profile-button" onClick={() => navigate("/editProfile")}>Edit Profile</button>
                         <h1 className="username">{storedUser.name}</h1>
                         <div className="user-detail-row">
                             <span>Email:</span>
@@ -141,12 +146,10 @@ const Profile = () => {
                         <div className="user-detail-row">
                             <span>Username:</span>
                             <span>{storedUser.username}</span>
-                            <LuPencilLine className="edit-icon" size={25} />
                         </div>
                         <div className="user-detail-row editable">
                             <span>Password:</span>
                             <span>{storedUser.password}</span>
-                            <LuPencilLine className="edit-icon" size={25} />
                         </div>
                         <div className="user-detail-row">
                             <span>Birth date:</span>
@@ -155,7 +158,6 @@ const Profile = () => {
                         <div className="user-detail-row editable">
                             <span>Interests:</span>
                             <span>{storedUser.interests.map((interest) => interest.genreType).join(', ')}</span>
-                            <LuPencilLine className="edit-icon" size={25} />
                         </div>
                     </div>
                 )}

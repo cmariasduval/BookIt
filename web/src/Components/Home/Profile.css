@@ -10,7 +10,26 @@
     font-weight: 600;
     color: #2d2d2d;
     font-family: 'Merriweather', serif;
-    margin-bottom: 1px;
+  }
+
+  .barra-superior-profile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* título a la izquierda, tabs a la derecha */
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 1rem;            /* espacio arriba/abajo e izquierda/derecha */
+    background-color: transparent;          /* opcional para resaltar el borde */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 2px;
+  }
+
+  .tabs-container{
+    background-color: transparent;
+    border-radius: 2cap;
+    outline: #ccc;
+    outline-width: 2cap;
   }
   
   .fixed-user-info {
@@ -83,7 +102,7 @@
   .tab.active {
     background-color: transparent;
     color: goldenrod;
-    border-bottom: 4px solid goldenrod;
+
     font-weight: 600;
   }
   

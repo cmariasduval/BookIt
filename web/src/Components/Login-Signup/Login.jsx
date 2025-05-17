@@ -34,10 +34,10 @@ const Login = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Datos del usuario recibidos:", data);
-                alert("Inicio de sesión exitoso");
-                const decoded = jwtDecode(data.token)
-                console.log("Decoded token:", decoded);
-                const isAdmin = decoded.sub == "admin"
+                //const decoded = jwtDecode(data.token)
+                //console.log("Decoded token:", decoded);
+                //const isAdmin = decoded.sub === "admin" se guardaban los datos con el username que se usa para generar el token, y cuando el usuario se cambia el user, se cambiaba el rol a user 
+                const isAdmin = data.email.endsWith("@admin.com")
 
                 const user = {
                     email: data.email,

@@ -70,12 +70,11 @@ public class User {
 
     public User() {}
 
-    public User(String username, String password, String email, String fullName, LocalDate birthDate,
+    public User(String username, String password, String email, LocalDate birthDate,
                 List<Genre> interests, List<Role> roles, List<Book> favorites, List<Book> readBooks, List<Reservation> reservations) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.fullName = fullName;
         this.birthDate = birthDate;
         this.interests = interests;
         this.roles = roles;
@@ -91,14 +90,6 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getEmail() {

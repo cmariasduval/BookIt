@@ -99,7 +99,8 @@ const Home = () => {
                     )}
                     {searchResults.length > 0 && (
                         <ul className="home-search-results">
-                            {searchResults.map((book) => (
+                        {searchResults.length > 0 ? (
+                            searchResults.map((book) => (
                                 <li
                                     key={book.id}
                                     onClick={() => navigate(`/bookDetails/${book.id}`)}
@@ -107,8 +108,11 @@ const Home = () => {
                                 >
                                     {book.title}
                                 </li>
-                            ))}
-                        </ul>
+                            ))
+                        ) : (
+                            <li className="home-search-no-result">No results found</li>
+                        )}
+                    </ul>
                     )}
                 </div>
             </div>

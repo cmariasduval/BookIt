@@ -1,6 +1,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { FaSearch, FaBars, FaUser } from "react-icons/fa";
+import { FaSearch, FaBars, FaUser, FaPlus, FaCalendarCheck} from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
+import { RiPencilFill } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
 import bookit from "../Assets/bookit.png";
 import './Sidebar.css';
@@ -80,7 +81,7 @@ const Sidebar = () => {
                                             `sidebar-link ${isActive ? 'active' : ''}`
                                         }
                                     >
-                                        <ImBooks size={24} />
+                                        <FaPlus size={24} />
                                         <span className="addbook-item">Add Book</span>
                                     </NavLink>
                                 </li>
@@ -94,8 +95,21 @@ const Sidebar = () => {
                                             `sidebar-link ${isActive ? 'active' : ''}`
                                         }
                                     >
-                                        <ImBooks size={24} />
+                                        <RiPencilFill size={24} />
                                         <span className="editbook-item">Edit Book</span>
+                                    </NavLink>
+                                </li>
+
+                                <li>
+                                    <NavLink
+                                        to="/manage"
+                                        state={{ background: location }}
+                                        className={({ isActive }) =>
+                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                        }
+                                    >
+                                        <FaCalendarCheck size={24} />
+                                        <span className="manage-item">Manage Reservations</span>
                                     </NavLink>
                                 </li>
                             </>

@@ -12,6 +12,8 @@
 
   .back{
     cursor: pointer;
+    color: black;
+    background-color: beige;
   }
   
   .edit-profile-form {

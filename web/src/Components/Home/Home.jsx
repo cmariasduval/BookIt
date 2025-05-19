@@ -19,7 +19,15 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-    const recommendedBooks = [bookthief, annafrank, belljar, emma, rebecca, mazerunner, hungergames];
+    const recommendedBooks = [
+        { id: 1, img: annafrank },
+        { id: 2, img: belljar },
+        { id: 3, img: bookthief },
+        { id: 4, img: emma },
+        { id: 5, img: hungergames },
+        { id: 6, img: mazerunner },
+        { id: 7, img: rebecca }
+      ];
     const bookCategories = [
         { icon: <FaBrain />, label: "Psychology" },
         { icon: <GiGreekTemple />, label: "History" },
@@ -121,13 +129,14 @@ const Home = () => {
             <div className="home-section">
                 <h2 className="home-section-title">Recommendations</h2>
                 <div className="home-carousel">
-                    {recommendedBooks.map((img, index) => (
+                    {recommendedBooks.map((book) => (
                         <img
-                            key={index}
-                            src={img}
-                            alt="book"
-                            className="home-book-card"
-                            onClick={() => navigate('/bookDetails')}
+                        key={book.id}
+                        src={book.img}
+                        alt="book"
+                        className="home-book-card"
+                        onClick={() => navigate(`/bookDetails/${book.id}`)}
+                        style={{ cursor: 'pointer' }}
                         />
                     ))}
                 </div>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { IoMdArrowBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import './BookDetails.css';
 
 const BookDetails = () => {
@@ -11,6 +13,8 @@ const BookDetails = () => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [isRead, setIsRead] = useState(false);
     const [isReserved, setIsReserved] = useState(false);
+
+    const navigate = useNavigate();
 
     // Carga inicial: libro y estados desde localStorage
     useEffect(() => {
@@ -128,47 +132,58 @@ const BookDetails = () => {
 
     return (
         <div className="bookdetail-container">
-            <div className="left-section">
-                <img
-                    src={book.imageUrl}
-                    alt={`Portada de ${book.title}`}
-                    className="book-image"
-                />
+            <div className='upper-section'>
+                <button type="button" onClick={() => navigate("/home")}>
+                    <IoMdArrowBack size={24} />
+                </button>
             </div>
-            <div className="right-section">
-                <h2 className="book-title">{book.title}</h2>
-                <p><strong>Autor:</strong> {book.author}</p>
-                <p><strong>Editorial:</strong> {book.publisher}</p>
-                <div className="book-genres">
-                    <strong>Géneros:</strong>
-                    {book.genres.map(g => (
-                        <span key={g.id} className="genre-tag">{g.genreType}</span>
-                    ))}
+            <div className='lower-section'>
+                <div className="left-section">
+                    <img
+                        src={book.imageUrl}
+                        alt={`Portada de ${book.title}`}
+                        className="book-image"
+                    />
                 </div>
-                <p><strong>Sinopsis:</strong> {book.synopsis}</p>
-                <p><strong>Copias disponibles:</strong> {copiesCount}</p>
-                <p>
-                    <strong>Estado:</strong>{' '}
-                    <span className={book.status === 'Available' ? 'available' : 'unavailable'}>
-            {book.status}
-          </span>
-                </p>
-                <div className="book-actions">
-                    {isReserved ? (
-                        <button onClick={handleCancelReservation}>Cancelar reserva</button>
-                    ) : (
-                        <button onClick={handleReserve}>Reservar</button>
-                    )}
-                    <button onClick={handleToggleFavorite}>
-                        {isFavorite ? '❤️ Favorito' : '♡ Favorito'}
-                    </button>
-                    {isRead ? (
-                        <button onClick={handleUnmarkAsRead}>Desmarcar leído</button>
-                    ) : (
-                        <button onClick={handleMarkAsRead}>Marcar como leído</button>
-                    )}
+                <div className="right-section">
+                    <h2 className="book-title">{book.title}</h2>
+                    <p><strong>Autor:</strong> {book.author}</p>
+                    <p><strong>Editorial:</strong> {book.publisher}</p>
+                    <div className="book-genres">
+                        <strong>Géneros:</strong>{' '}
+                        {book.genres.map((g, index) => (
+                            <span key={g.id} className="genre-tag">
+                            {g.genreType}
+                            {index < book.genres.length - 1 ? ', ' : ''}
+                            </span>
+                        ))}
+                    </div>
+                    <p><strong>Sinopsis:</strong> {book.synopsis}</p>
+                    <p><strong>Copias disponibles:</strong> {copiesCount}</p>
+                    <p>
+                        <strong>Estado:</strong>{' '}
+                        <span className={book.status === 'Available' ? 'available' : 'unavailable'}>
+                {book.status}
+            </span>
+                    </p>
+                    <div className="book-actions">
+                        {isReserved ? (
+                            <button onClick={handleCancelReservation}>Cancelar reserva</button>
+                        ) : (
+                            <button onClick={handleReserve}>Reservar</button>
+                        )}
+                        <button onClick={handleToggleFavorite}>
+                            {isFavorite ? '❤️ Favorito' : '♡ Favorito'}
+                        </button>
+                        {isRead ? (
+                            <button onClick={handleUnmarkAsRead}>Desmarcar leído</button>
+                        ) : (
+                            <button onClick={handleMarkAsRead}>Marcar como leído</button>
+                        )}
+                    </div>
                 </div>
             </div>
+        
         </div>
     );
 };

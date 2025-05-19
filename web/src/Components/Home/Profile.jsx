@@ -79,11 +79,7 @@ const Profile = () => {
                 </div>
             </div>
             {/* Sección fija con los datos del usuario */}
-
             
-
-            
-
             {/* Contenido dinámico */}
             <div className="tab-content">
                 {activeTab === "activity" && (

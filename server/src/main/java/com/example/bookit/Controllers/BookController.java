@@ -161,7 +161,7 @@ public class BookController {
     ) {
         try {
             // Realizar la búsqueda sin requerir autenticación
-            List<Book> books = bookRepository.findByTitle(query);
+            List<Book> books = bookRepository.findByTitleContainingIgnoreCase(query);
 
             // Si no se encuentran libros, devolver una respuesta vacía
             if (books.isEmpty()) {

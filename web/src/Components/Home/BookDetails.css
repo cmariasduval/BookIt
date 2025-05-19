@@ -20,10 +20,13 @@
     align-items: center;
 }
 
-.book-cover{
-    object-fit: cover;
-    height: 400px;
-}
+.book-image {
+    width: 280px;       
+    height: 400px;      /* proporción de libro vertical */
+    object-fit: cover;  /* esto recorta sin deformar */
+    border-radius: 8px; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+  }
 
 .book-info{
     display: grid;

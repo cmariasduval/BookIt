@@ -26,6 +26,7 @@ const BookDetails = () => {
                 if (!res.ok) throw new Error('Error al cargar el libro');
                 const data = await res.json();
                 setBook(data);
+                console.log("Datos del libro:", data);
 
                 // Inicializar desde backend y localStorage
                 setIsRead(JSON.parse(localStorage.getItem('readBooks') || '[]').includes(data.id));
@@ -129,7 +130,7 @@ const BookDetails = () => {
         <div className="bookdetail-container">
             <div className="left-section">
                 <img
-                    src={book.coverImage}
+                    src={book.imageUrl}
                     alt={`Portada de ${book.title}`}
                     className="book-image"
                 />

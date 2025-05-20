@@ -1,0 +1,63 @@
+/* Estilo general del contenedor */
+.manage-reservations {
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.manage-reservations h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Tabla */
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-table th,
+.reservation-table td {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    vertical-align: top;
+    text-align: left;
+}
+
+.reservation-table th {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Botones */
+.reservation-table button {
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    border: none;
+    background-color: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+}
+
+.reservation-table button:hover {
+    transform: scale(1.2);
+}
+
+/* Texto en cursiva para campos vacíos */
+.reservation-table em {
+    color: #888;
+    font-style: italic;
+}
+
+/* Mensajes de carga o error */
+.loading,
+.error {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+
+.error {
+    color: red;
+}

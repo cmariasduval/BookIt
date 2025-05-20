@@ -1,5 +1,7 @@
 package com.example.bookit.Service;
 
+import com.example.bookit.DTO.ReservationDTO;
+import com.example.bookit.DTO.ReservationRequest;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookCopyRepository;
 import com.example.bookit.Repository.ReservationRepository;
@@ -104,5 +106,55 @@ public class ReservationService {
         // Extraer los libros de las reservas
         List<Reservation> reservedBooks = reservations;
         return ResponseEntity.ok(reservedBooks);
+    }
+
+    private ReservationDTO convertToDTO(Reservation r) {
+        return new ReservationDTO(
+                r.getId(),
+                r.getCopy().getBook().getTitle(),
+                r.getUser().getUsername(),
+                r.getPickupDate().toString(), // convertir LocalDate a String yyyy-MM-dd
+                r.getPeriod(),
+                r.getStatus().name()
+        );
+    }
+
+    public List<ReservationDTO> getPickupsToday() {
+        LocalDate today = LocalDate.now();
+        List<Reservation> reservations = reservationRepository.findByPickupDateAndStatus(today, ReservationStatus.PENDING);
+        return reservations.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReservationDTO> getLatePickups() {
+        LocalDate today = LocalDate.now();
+        List<Reservation> reservations = reservationRepository.findLatePickups(today);
+        return reservations.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void markAsPickedUp(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
+        reservation.setStatus(ReservationStatus.ACTIVE);
+        reservationRepository.save(reservation);
+    }
+
+    @Transactional
+    public void markAsNotPickedUp(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        reservationRepository.save(reservation);
+    }
+
+    public List<ReservationDTO> getReturnsToday() {
+        List<Reservation> reservations = reservationRepository.findByReturnDate(LocalDate.now());
+        return reservations.stream()
+                .map(ReservationDTO::fromEntity)
+                .toList();
     }
 }

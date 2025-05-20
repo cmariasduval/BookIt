@@ -1,5 +1,6 @@
 package com.example.bookit.Controllers;
 
+import com.example.bookit.DTO.ReservationDTO;
 import com.example.bookit.DTO.ReservationRequest;
 import com.example.bookit.Entities.BookCopy;
 import com.example.bookit.Entities.User;
@@ -92,4 +93,32 @@ public class ReservationController {
             return principal.toString();
         }
     }
+
+    @GetMapping("/pickups-today")
+    public List<ReservationDTO> getPickupsToday() {
+        return reservationService.getPickupsToday();
+    }
+
+    @GetMapping("/late-pickups")
+    public List<ReservationDTO> getLatePickups() {
+        return reservationService.getLatePickups();
+    }
+
+    @PostMapping("/{id}/mark-picked-up")
+    public ResponseEntity<?> markPickedUp(@PathVariable Long id) {
+        reservationService.markAsPickedUp(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/mark-not-picked-up")
+    public ResponseEntity<?> markNotPickedUp(@PathVariable Long id) {
+        reservationService.markAsNotPickedUp(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/returns-today")
+    public List<ReservationDTO> getReturnsToday() {
+        return reservationService.getReturnsToday();
+    }
+
 }

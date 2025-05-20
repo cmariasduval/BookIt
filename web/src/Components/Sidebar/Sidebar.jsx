@@ -103,13 +103,12 @@ const Sidebar = () => {
                                 <li>
                                     <NavLink
                                         to="/manage"
-                                        state={{ background: location }}
                                         className={({ isActive }) =>
                                             `sidebar-link ${isActive ? 'active' : ''}`
                                         }
                                     >
                                         <FaCalendarCheck size={24} />
-                                        <span className="manage-item">Manage Reservations</span>
+                                        <span className="manage-item">Manage Reservation</span>
                                     </NavLink>
                                 </li>
                             </>

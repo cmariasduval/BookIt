@@ -49,6 +49,13 @@ h2 {
     color: #333;
 }
 
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
 /* Form Inputs */
 input[type="text"],
 input[type="number"],
@@ -83,20 +90,48 @@ textarea {
     margin-bottom: 1rem;
 }
 
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1rem;
+}
+
 /* Button */
-button[type="submit"] {
+.submit-button {
     background-color: #7187E9;
-    color: white;
+    color: black;
     padding: 0.8rem 2rem;
     border: none;
     border-radius: 5px;
     font-size: 1.1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 5px;
 }
 
-button[type="submit"]:hover {
+.submit-button:hover {
     background-color: #5a6bc6;
+    margin: 5px;
+}
+
+.delete-button{
+    background-color: red;
+    color: black;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+}
+
+.delete-button:hover {
+    background-color: #e74c3c;
+    color: black;
+    margin: 5px;
 }
 
 /* File Input */

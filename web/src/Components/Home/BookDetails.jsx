@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 import './BookDetails.css';
 
 const BookDetails = () => {
@@ -13,6 +15,24 @@ const BookDetails = () => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [isRead, setIsRead] = useState(false);
     const [isReserved, setIsReserved] = useState(false);
+
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+        try {
+            const user = JSON.parse(storedUser);
+            const email = user.email;
+            setIsAdmin(email?.endsWith("@admin.com"));
+        } catch (e) {
+            console.error("Usuario inválido", e);
+            setIsAdmin(false);
+        }
+    }
+}, []);
+
+
 
     const navigate = useNavigate();
 
@@ -179,6 +199,11 @@ const BookDetails = () => {
                             <button onClick={handleUnmarkAsRead}>Desmarcar leído</button>
                         ) : (
                             <button onClick={handleMarkAsRead}>Marcar como leído</button>
+                        )}
+                        {isAdmin && (
+                            <button onClick={() => navigate(`/bookDetails/${book.id}/editbook`)}>
+                                Editar libro
+                            </button>
                         )}
                     </div>
                 </div>

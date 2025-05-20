@@ -13,14 +13,14 @@ public class AddBookRequest {
     private String description;
     private String keywords;
     private int copies;
-    private MultipartFile image;
+    private String imageUrl;
     private List<String> genres;
 
     public AddBookRequest() {
     }
 
     public AddBookRequest(String isbn, String title, String author, String publisher,
-                          String description, String keywords, int copies, MultipartFile image, List<String> genres) {
+                          String description, String keywords, int copies, String imageUrl, List<String> genres) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
@@ -28,7 +28,7 @@ public class AddBookRequest {
         this.description = description;
         this.keywords = keywords;
         this.copies = copies;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.genres = genres;
     }
 
@@ -89,12 +89,12 @@ public class AddBookRequest {
         this.copies = copies;
     }
 
-    public MultipartFile getImage() {
-        return image;
+    public String getImage() {
+        return imageUrl;
     }
 
-    public void setImage(MultipartFile image) {
-        this.image = image;
+    public void setImage(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public List<String> getGenres() {

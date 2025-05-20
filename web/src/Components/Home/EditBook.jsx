@@ -21,7 +21,7 @@ const EditBook = () => {
         { value: "Psychology", label: "Psychology" },
         { value: "Non-Fiction", label: "Non-Fiction" },
         { value: "Fantasy", label: "Fantasy" },
-        { value: "Science Fiction", label: "Science Fiction" },
+        { value: "Sci-Fi", label: "Sci-Fi" },
         { value: "Thriller", label: "Thriller" },
         { value: "Mystery", label: "Mystery" },
         { value: "Romance", label: "Romance" },
@@ -40,6 +40,7 @@ const EditBook = () => {
         })
             .then((res) => res.json())
             .then((data) => {
+                console.log("Libro recibido:", data);
                 setBook(data);
                 setTitle(data.title);
                 setAuthor(data.author);
@@ -49,6 +50,7 @@ const EditBook = () => {
                 setCopies(data.copies);
                 setGenres(data.genres.map(g => ({ value: g.name, label: g.name })));  // Asumimos que los géneros vienen como un array de objetos con 'name'
                 setKeywords(data.keywords);
+                setImage(data.image);
             })
             .catch((err) => {
                 console.error("Error fetching book:", err);
@@ -57,10 +59,6 @@ const EditBook = () => {
 
     const closeModal = () => {
         navigate(-1);
-    };
-
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
     };
 
     const handleSubmit = (e) => {
@@ -81,7 +79,7 @@ const EditBook = () => {
             formData.append(`genres[${i}]`, g.value);
         });
 
-        fetch(`http://localhost:8080/api/books/editBook/${bookId}`, {
+        fetch(`http://localhost:8080/api/books/edit/${bookId}`, {
             method: "PUT",
             body: formData,
             headers: {
@@ -178,12 +176,17 @@ const EditBook = () => {
                     />
 
                     <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
+                        type="text"
+                        placeholder="Cover Image URL"
+                        value={image}
+                        onChange={(e) => setImage(e.target.value)}
+                        required
                     />
 
-                    <button type="submit">Save Changes</button>
+                    <div className="button-group">
+                        <button className="submit-button" type="submit">Save Changes</button>
+                        <button className="delete-button" type="button">Delete Book</button>
+                    </div>
                 </form>
             </div>
         </div>

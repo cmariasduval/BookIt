@@ -10,6 +10,8 @@ import BookDetails from "./Components/Home/BookDetails";
 import AddBook from "./Components/Home/AddBook";
 import EditProfile from "./Components/Home/EditProfile";
 import ManageReservations from "./Components/Home/ManageReservations";
+import EditBook from "./Components/Home/EditBook";
+
 
 function AppRoutes() {
     const location = useLocation();
@@ -29,6 +31,9 @@ function AppRoutes() {
                     <Route path="/editProfile" element={<EditProfile />} />
                     <Route path="/bookDetails/:id" element={<BookDetails />} />
                     <Route path="/manage" element={<ManageReservations />} />
+                    <Route path="/bookDetails/:bookId/editbook" element={<EditBook />} />
+                    
+
 
                 </Route>
             </Routes>

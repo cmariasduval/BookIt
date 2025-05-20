@@ -66,22 +66,22 @@ public class BookController {
     }
 
     // Metodo para guardar la imagen en el sistema de archivos y obtener su ruta
-    private String saveImage(MultipartFile image) throws IOException {
-        // Define la carpeta de destino donde se almacenarán las imágenes
-        Path uploadDir = Paths.get("uploads");
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);  // Crea la carpeta "uploads" si no existe
-        }
-
-        // Obtiene el nombre original del archivo
-        String imageName = image.getOriginalFilename();
-        Path filePath = uploadDir.resolve(imageName);
-
-        // Guarda el archivo en el sistema de archivos
-        Files.copy(image.getInputStream(), filePath);
-
-        return filePath.toString();  // Retorna la ruta del archivo guardado
-    }
+//    private String saveImage(String imageUrl) throws IOException {
+//        // Define la carpeta de destino donde se almacenarán las imágenes
+//        Path uploadDir = Paths.get("uploads");
+//        if (!Files.exists(uploadDir)) {
+//            Files.createDirectories(uploadDir);  // Crea la carpeta "uploads" si no existe
+//        }
+//
+//        // Obtiene el nombre original del archivo
+//        String imageName = imageUrl.getOriginalFilename();
+//        Path filePath = uploadDir.resolve(imageName);
+//
+//        // Guarda el archivo en el sistema de archivos
+//        Files.copy(imageUrl.getInputStream(), filePath);
+//
+//        return filePath.toString();  // Retorna la ruta del archivo guardado
+//    }
 
     @PostMapping("/addBook")
     public ResponseEntity<Book> addBook(@ModelAttribute AddBookRequest addBookRequest) throws IOException {
@@ -93,10 +93,13 @@ public class BookController {
         String description = addBookRequest.getDescription();
         String keywords = addBookRequest.getKeywords();
         int copies = addBookRequest.getCopies();
-        MultipartFile image = addBookRequest.getImage();  // Obtiene el archivo de imagen
+        //MultipartFile image = addBookRequest.getImage();  // Obtiene el archivo de imagen
+        //String imageUrl = addBookRequest.getImage();
         List<Genre> genres = addBookRequest.getGenres().stream().map(name -> genreRepository.findByGenreType(name).orElseThrow(() -> new RuntimeException())).toList();
         // Guarda la imagen y obtiene la ruta del archivo
-        String imagePath = saveImage(image);
+        //String imagePath = saveImage(imageUrl);
+        String imagePath = addBookRequest.getImage(); // ya es la URL
+
 
         // Crea un nuevo libro con los datos recibidos
         Book newBook = new Book(title, author, publisher, isbn, genres, imagePath, keywords, description);
@@ -141,10 +144,9 @@ public class BookController {
         existingBook.setCopies(bookCopies);  // Establecer las copias al libro
 
         // Si se adjunta una nueva imagen, reemplazar la anterior
-        MultipartFile newImage = editBookRequest.getImage();
-        if (newImage != null && !newImage.isEmpty()) {
-            String newImagePath = saveImage(newImage);
-            existingBook.setImagePath(newImagePath);
+        String newImageUrl = editBookRequest.getImage();
+        if (newImageUrl != null && !newImageUrl.isEmpty()) {
+            existingBook.setImagePath(newImageUrl);
         }
 
         // Guardar los cambios en la base de datos

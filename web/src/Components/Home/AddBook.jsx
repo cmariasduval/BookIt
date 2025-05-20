@@ -72,9 +72,6 @@ const AddBook = () => {
         navigate(-1);
     };
 
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -189,9 +186,10 @@ const AddBook = () => {
                     />
 
                     <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
+                        type="text"
+                        placeholder="Cover Image URL"
+                        value={image}
+                        onChange={(e) => setImage(e.target.value)}
                         required
                     />
 

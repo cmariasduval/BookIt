@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute.js";
 import Login from "./Components/Login-Signup/Login";
 import Signup from "./Components/Login-Signup/Signup";
 import Home from "./Components/Home/Home";
@@ -10,9 +11,7 @@ import BookDetails from "./Components/Home/BookDetails";
 import AddBook from "./Components/Home/AddBook";
 import EditProfile from "./Components/Home/EditProfile";
 import ManageReservation from "./Components/Home/ManageReservation";
-import ManageInfractions from "./Components/Home/ManageInfractions";
-
-
+import EditBook from "./Components/Home/EditBook";
 
 function AppRoutes() {
     const location = useLocation();
@@ -21,10 +20,19 @@ function AppRoutes() {
     return (
         <>
             <Routes location={background || location}>
+                {/* Rutas públicas */}
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
 
-                <Route element={<Layout />}>
+                {/* Rutas privadas dentro del layout */}
+                <Route
+                    path="/"
+                    element={
+                        <PrivateRoute>
+                            <Layout />
+                        </PrivateRoute>
+                    }
+                >
                     <Route path="/home" element={<Home />} />
                     <Route path="/library" element={<Library />} />
                     <Route path="/favorites" element={<Favorites />} />
@@ -32,16 +40,21 @@ function AppRoutes() {
                     <Route path="/editProfile" element={<EditProfile />} />
                     <Route path="/bookDetails/:id" element={<BookDetails />} />
                     <Route path="/manage" element={<ManageReservation />} />
-                    <Route path="/manage-infractions" element={<ManageInfractions />} />
-
-
+                    <Route path="/bookDetails/:bookId/editbook" element={<EditBook />} />
                 </Route>
             </Routes>
 
-            {/* Renderiza el modal de AddBook solo si hay un estado de fondo */}
+            {/* Modal AddBook con fondo */}
             {background && (
                 <Routes>
-                    <Route path="/addbook" element={<AddBook />} />
+                    <Route
+                        path="/addbook"
+                        element={
+                            <PrivateRoute>
+                                <AddBook />
+                            </PrivateRoute>
+                        }
+                    />
                 </Routes>
             )}
         </>

@@ -1,17 +1,13 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import useAuth from './useAuth';
+import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ element }) => {
-  const { authToken } = useAuth();
+const PrivateRoute = ({ children }) => {
+    const token = localStorage.getItem("authToken");
 
-  // Si no hay token, redirige al login
-  if (!authToken) {
-    return <Navigate to="/" replace />;  // El 'replace' evita que el usuario regrese al login al presionar el botón de atrás
-  }
+    if (!token) {
+        return <Navigate to="/" />;
+    }
 
-  // Si hay token, retorna el componente original
-  return element;
+    return children;
 };
 
 export default PrivateRoute;

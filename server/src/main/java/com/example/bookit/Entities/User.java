@@ -45,6 +45,12 @@ public class User {
     )
     private List<Genre> interests;
 
+    @Column(name = "blocked")
+    private boolean blocked;
+
+    @Column(name = "blocked_until")
+    private LocalDate blockedUntil;
+
     // Nueva relación para favoritos
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -62,6 +68,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
     private List<Book> readBooks;
+
+    @OneToMany(mappedBy = "user")
+    private List<Infraction> infractions;
+
+
 
     // Nueva relación para reservas
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -180,4 +191,25 @@ public class User {
     public void removeReadBook(Book book) {
         this.readBooks.remove(book);
     }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public LocalDate getBlockedUntil() {
+        return blockedUntil;
+    }
+
+    public void setBlockedUntil(LocalDate blockedUntil) {
+        this.blockedUntil = blockedUntil;
+    }
+
+    public int getInfractionCount() {
+        return infractions.size();
+    }
+
 }

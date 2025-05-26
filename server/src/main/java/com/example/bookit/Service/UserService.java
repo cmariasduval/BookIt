@@ -106,4 +106,8 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
+
+    public List<User> findUsersWithInfractions() {
+        return userRepository.findUsersWithInfractions();
+    }
 }

@@ -2,50 +2,75 @@ package com.example.bookit.Entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 public class Infraction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(name = "block_status", nullable = false)
-    private Boolean blockStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "user_ID", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "count", nullable = false)
-    private int count;
+    @Column(nullable = false)
+    private boolean withFine;
+
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private double debt = 0;  // valor de multa, si corresponde
 
     public Infraction() {}
-    public Infraction(User user, int count, Boolean blockStatus) {
+
+    public Infraction(User user, boolean withFine, double debt) {
         this.user = user;
-        this.count = count;
-        this.blockStatus = blockStatus;
+        this.withFine = withFine;
+        this.date = LocalDate.now();
+        this.debt = debt;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Boolean getBlockStatus() {
-        return blockStatus;
-    }
-
-    public void setBlockStatus(Boolean blockStatus) {
-        this.blockStatus = blockStatus;
     }
 
     public User getUser() {
         return user;
     }
 
-    public int getCount() {
-        return count;
+    public void setUser(User user) {
+        this.user = user;
     }
+
+    public boolean isWithFine() {
+        return withFine;
+    }
+
+    public void setWithFine(boolean withFine) {
+        this.withFine = withFine;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public double getDebt() {
+        return debt;
+    }
+
+    public void setDebt(double debt) {
+        this.debt = debt;
+    }
+
 }

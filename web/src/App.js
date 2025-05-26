@@ -12,6 +12,8 @@ import AddBook from "./Components/Home/AddBook";
 import EditProfile from "./Components/Home/EditProfile";
 import ManageReservation from "./Components/Home/ManageReservation";
 import EditBook from "./Components/Home/EditBook";
+import ManageInfractions from "./Components/Home/ManageInfractions";
+
 
 function AppRoutes() {
     const location = useLocation();
@@ -41,6 +43,8 @@ function AppRoutes() {
                     <Route path="/bookDetails/:id" element={<BookDetails />} />
                     <Route path="/manage" element={<ManageReservation />} />
                     <Route path="/bookDetails/:bookId/editbook" element={<EditBook />} />
+                    <Route path="/manage-infractions" element={<ManageInfractions />} />
+
                 </Route>
             </Routes>
 

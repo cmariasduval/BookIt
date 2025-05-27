@@ -1,16 +1,21 @@
 package com.example.bookit.Controllers;
 
+import com.example.bookit.DTO.UserInfractionDTO;
 import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.InfractionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/infractions")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class InfractionController {
 
     private final InfractionService infractionService;
@@ -68,12 +73,55 @@ public class InfractionController {
 
     // GET: Obtener usuarios con infracciones pendientes
     @GetMapping("/pending")
-    public ResponseEntity<List<User>> getUsersWithInfractions() {
-        List<User> usersWithInfractions = infractionService.findUsersWithInfractions();
-        return ResponseEntity.ok(usersWithInfractions);
+    public ResponseEntity<List<UserInfractionDTO>> getUsersWithInfractions() {
+        List<User> usersWithDebt = userRepository.findUsersWithDebtPending();
+
+        List<UserInfractionDTO> dtos = usersWithDebt.stream()
+                .map(user -> new UserInfractionDTO(
+                        user.getId() != null ? user.getId().longValue() : null,
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getDebt(),
+                        user.getInfractionsCount()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
-    // PUT: Resetear deuda de un usuario por ID
+
+
+    @PutMapping("/users/{id}/pay-debt")
+    public ResponseEntity<?> payDebt(@PathVariable Long id) {
+        try {
+            infractionService.resetDebtById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la deuda");
+        }
+    }
+
+    @PostMapping("/return-late/{userId}/{bookId}")
+    public ResponseEntity<?> procesarDevolucionTardia(
+            @PathVariable Long userId,
+            @PathVariable Long bookId,
+            @RequestParam String dueDate,     // fecha límite (ej: 2025-05-25)
+            @RequestParam String returnDate)  // fecha de devolución (ej: 2025-05-30)
+    {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = optionalUser.get();
+        try {
+            infractionService.procesarDevolucionTardia(user, bookId, dueDate, returnDate);
+            return ResponseEntity.ok("Devolución procesada, multa y/o infracción registrada.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al procesar devolución: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/{userId}/clear-debt")
     public ResponseEntity<Void> resetDebt(@PathVariable Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -81,7 +129,11 @@ public class InfractionController {
             return ResponseEntity.notFound().build();
         }
 
-        infractionService.resetDebt(optionalUser.get().getEmail());
-        return ResponseEntity.ok().build();
+        try {
+            infractionService.resetDebt(optionalUser.get().getEmail());
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

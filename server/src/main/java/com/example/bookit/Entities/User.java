@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,7 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = true)
     private String fullName;
 
     @Column(name = "email", nullable = false)
@@ -48,7 +49,7 @@ public class User {
     @Column(name = "blocked")
     private boolean blocked;
 
-    @Column(name = "blocked_until")
+    @Column(name = "blocked_until", nullable = true)
     private LocalDate blockedUntil;
 
     // Nueva relación para favoritos
@@ -82,16 +83,21 @@ public class User {
     public User() {}
 
     public User(String username, String password, String email, LocalDate birthDate,
-                List<Genre> interests, List<Role> roles, List<Book> favorites, List<Book> readBooks, List<Reservation> reservations) {
+                List<Genre> interests, List<Role> roles, List<Book> favorites,
+                List<Book> readBooks, List<Reservation> reservations,
+                List<Infraction> infractions) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.birthDate = birthDate;
         this.interests = interests;
         this.roles = roles;
-        this.favorites = new ArrayList<>();;
-        this.readBooks = new ArrayList<>();;
-        this.reservations = new ArrayList<>();
+        this.favorites = favorites;
+        this.readBooks = readBooks;
+        this.reservations = reservations;
+        this.blocked = false;
+        this.blockedUntil = null;
+        this.infractions = infractions;
     }
 
     // Getters y setters
@@ -212,4 +218,22 @@ public class User {
         return infractions.size();
     }
 
+
+    public double getDebt() {
+        return infractions.stream()
+                .filter(inf -> !inf.isPaid())
+                .mapToDouble(Infraction::getAmount)
+                .sum();
+    }
+
+    public List<Infraction> getInfractions() {
+        return infractions;
+    }
+
+    public void setDebt(int i) {
+    }
+
+    public int getInfractionsCount() {
+        return infractions.size();
+    }
 }

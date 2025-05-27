@@ -24,6 +24,9 @@ public class Infraction {
     @Column(nullable = false)
     private double debt = 0;  // valor de multa, si corresponde
 
+    @Column(name = "paid")
+    private boolean paid;
+
     public Infraction() {}
 
     public Infraction(User user, boolean withFine, double debt) {
@@ -71,6 +74,18 @@ public class Infraction {
 
     public void setDebt(double debt) {
         this.debt = debt;
+    }
+
+    public double getAmount() {
+        return this.debt;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
     }
 
 }

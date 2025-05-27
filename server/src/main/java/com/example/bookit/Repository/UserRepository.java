@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT DISTINCT u FROM User u JOIN u.infractions i WHERE i.debt > 0")
     List<User> findUsersWithInfractions();
+
+    @Query("SELECT DISTINCT u FROM User u JOIN u.infractions i WHERE i.paid = false")
+    List<User> findUsersWithDebtPending();
 }

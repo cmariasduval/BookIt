@@ -37,7 +37,7 @@ public class UserService {
                     .orElseThrow(() -> new RuntimeException("Género no encontrado: " + name));
         }).toList();
 
-        User user = new User(username, password, email, birthdate, interests, role, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        User user = new User(username, password, email, birthdate, interests, role, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         return userRepository.save(user);
     }
 

@@ -1,0 +1,34 @@
+.set-goal-container {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.set-goal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.set-goal-form input {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.set-goal-form button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #7187E9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.set-goal-form button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+}

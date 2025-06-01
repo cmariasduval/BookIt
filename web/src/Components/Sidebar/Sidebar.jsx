@@ -1,18 +1,18 @@
+import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { FaSearch, FaBars, FaUser, FaPlus, FaCalendarCheck } from "react-icons/fa";
-import { FaExclamationTriangle } from "react-icons/fa";
-
+import {
+    FaSearch, FaUser, FaPlus, FaCalendarCheck, FaExclamationTriangle
+} from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
+
 import bookit from "../Assets/bookit.png";
-import './Sidebar.css';
-import React from 'react';
+import "./Sidebar.css";
 
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
     const user = JSON.parse(localStorage.getItem("user"));
     const isAdmin = user?.role?.toLowerCase() === "admin";
 
@@ -27,13 +27,14 @@ const Sidebar = () => {
                 <div className="logo">
                     <img src={bookit} alt="bookit" className="bookit" />
                 </div>
+
                 <nav className="bar-items">
                     <ul>
                         <li>
                             <NavLink
-                                to="/Home"
+                                to="/home"
                                 className={({ isActive }) =>
-                                    `sidebar-link ${isActive ? 'active' : ''}`
+                                    `sidebar-link ${isActive ? "active" : ""}`
                                 }
                             >
                                 <FaSearch size={24} />
@@ -42,19 +43,17 @@ const Sidebar = () => {
                         </li>
 
                         {!isAdmin && (
-                            <>
-                                <li>
-                                    <NavLink
-                                        to="/library"
-                                        className={({ isActive }) =>
-                                            `sidebar-link ${isActive ? 'active' : ''}`
-                                        }
-                                    >
-                                        <ImBooks size={24} />
-                                        <span className="library-item">My Library</span>
-                                    </NavLink>
-                                </li>
-                            </>
+                            <li>
+                                <NavLink
+                                    to="/library"
+                                    className={({ isActive }) =>
+                                        `sidebar-link ${isActive ? "active" : ""}`
+                                    }
+                                >
+                                    <ImBooks size={24} />
+                                    <span className="library-item">My Library</span>
+                                </NavLink>
+                            </li>
                         )}
 
                         <div className="divider"></div>
@@ -63,7 +62,7 @@ const Sidebar = () => {
                             <NavLink
                                 to="/profile"
                                 className={({ isActive }) =>
-                                    `sidebar-link ${isActive ? 'active' : ''}`
+                                    `sidebar-link ${isActive ? "active" : ""}`
                                 }
                             >
                                 <FaUser size={24} />
@@ -78,7 +77,7 @@ const Sidebar = () => {
                                         to="/addbook"
                                         state={{ background: location }}
                                         className={({ isActive }) =>
-                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                            `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
                                         <FaPlus size={24} />
@@ -86,13 +85,12 @@ const Sidebar = () => {
                                     </NavLink>
                                 </li>
 
-                                {/* Edit Book Button */}
                                 <li>
                                     <NavLink
                                         to="/editbook"
                                         state={{ background: location }}
                                         className={({ isActive }) =>
-                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                            `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
                                         <RiPencilFill size={24} />
@@ -104,7 +102,7 @@ const Sidebar = () => {
                                     <NavLink
                                         to="/manage"
                                         className={({ isActive }) =>
-                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                            `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
                                         <FaCalendarCheck size={24} />
@@ -116,11 +114,11 @@ const Sidebar = () => {
                                     <NavLink
                                         to="/manage-infractions"
                                         className={({ isActive }) =>
-                                            `sidebar-link ${isActive ? 'active' : ''}`
+                                            `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
                                         <FaExclamationTriangle size={24} />
-                                        <span className="manage-infracctions-item">Manage Infractions</span>
+                                        <span className="manage-infractions-item">Manage Infractions</span>
                                     </NavLink>
                                 </li>
                             </>
@@ -130,7 +128,7 @@ const Sidebar = () => {
                             <NavLink
                                 to="/"
                                 className={({ isActive }) =>
-                                    `sidebar-link ${isActive ? 'active' : ''}`
+                                    `sidebar-link ${isActive ? "active" : ""}`
                                 }
                             >
                                 <MdLogout size={24} />

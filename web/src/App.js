@@ -13,6 +13,8 @@ import EditProfile from "./Components/Home/EditProfile";
 import ManageReservation from "./Components/Home/ManageReservation";
 import EditBook from "./Components/Home/EditBook";
 import ManageInfractions from "./Components/Home/ManageInfractions";
+import SetGoal from "./Components/Home/SetGoal";
+
 
 
 function AppRoutes() {
@@ -44,6 +46,8 @@ function AppRoutes() {
                     <Route path="/manage" element={<ManageReservation />} />
                     <Route path="/bookDetails/:bookId/editbook" element={<EditBook />} />
                     <Route path="/manage-infractions" element={<ManageInfractions />} />
+                    <Route path="/set-goal" element={<SetGoal />} />
+
 
                 </Route>
             </Routes>

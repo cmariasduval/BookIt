@@ -11,8 +11,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
 
-    @Query("SELECT DISTINCT u FROM User u JOIN u.infractions i WHERE i.debt > 0")
-    List<User> findUsersWithInfractions();
+    @Query("""
+    SELECT DISTINCT u
+    FROM User u
+    LEFT JOIN u.infractions i
+    WHERE (i.debt > 0) OR (u.blocked = true)
+""")
+    List<User> findUsersWithInfractionsOrBlocked();
 
     @Query("SELECT DISTINCT u FROM User u JOIN u.infractions i WHERE i.paid = false")
     List<User> findUsersWithDebtPending();

@@ -1,5 +1,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaBars, FaUser, FaPlus, FaCalendarCheck } from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
+
 import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
@@ -117,7 +119,7 @@ const Sidebar = () => {
                                             `sidebar-link ${isActive ? 'active' : ''}`
                                         }
                                     >
-                                        <FaCalendarCheck size={24} />
+                                        <FaExclamationTriangle size={24} />
                                         <span className="manage-infracctions-item">Manage Infractions</span>
                                     </NavLink>
                                 </li>

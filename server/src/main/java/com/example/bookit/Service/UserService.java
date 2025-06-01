@@ -108,6 +108,6 @@ public class UserService {
     }
 
     public List<User> findUsersWithInfractions() {
-        return userRepository.findUsersWithInfractions();
+        return userRepository.findUsersWithInfractionsOrBlocked();
     }
 }

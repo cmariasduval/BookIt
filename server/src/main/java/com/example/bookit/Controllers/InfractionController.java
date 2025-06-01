@@ -1,7 +1,9 @@
 package com.example.bookit.Controllers;
 
 import com.example.bookit.DTO.UserInfractionDTO;
+import com.example.bookit.Entities.Infraction;
 import com.example.bookit.Entities.User;
+import com.example.bookit.Repository.InfractionRepository;
 import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.InfractionService;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,12 @@ public class InfractionController {
 
     private final InfractionService infractionService;
     private final UserRepository userRepository;
+    private final InfractionRepository infractionRepository;
 
-    public InfractionController(InfractionService infractionService, UserRepository userRepository) {
+    public InfractionController(InfractionService infractionService, UserRepository userRepository, InfractionRepository infractionRepository) {
         this.infractionService = infractionService;
         this.userRepository = userRepository;
+        this.infractionRepository = infractionRepository;
     }
 
     // POST: Registrar infracción para un usuario
@@ -71,14 +75,14 @@ public class InfractionController {
         return ResponseEntity.ok("Usuario desbloqueado manualmente.");
     }
 
-    // GET: Obtener usuarios con infracciones pendientes
+    // GET: Obtener usuarios con infracciones pendientes o bloqueados
     @GetMapping("/pending")
     public ResponseEntity<List<UserInfractionDTO>> getUsersWithInfractions() {
-        List<User> usersWithDebt = userRepository.findUsersWithDebtPending();
+        List<User> users = userRepository.findUsersWithInfractionsOrBlocked();
 
-        List<UserInfractionDTO> dtos = usersWithDebt.stream()
+        List<UserInfractionDTO> dtos = users.stream()
                 .map(user -> new UserInfractionDTO(
-                        user.getId() != null ? user.getId().longValue() : null,
+                        user.getId().longValue(),
                         user.getUsername(),
                         user.getEmail(),
                         user.getDebt(),
@@ -92,13 +96,13 @@ public class InfractionController {
 
 
     @PutMapping("/users/{id}/pay-debt")
-    public ResponseEntity<?> payDebt(@PathVariable Long id) {
-        try {
-            infractionService.resetDebtById(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la deuda");
+    public ResponseEntity<Void> payDebt(@PathVariable Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        for (Infraction inf : user.getInfractions()) {
+            inf.setDebt(0);
+            infractionRepository.save(inf); // ¡No te olvides de guardar!
         }
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/return-late/{userId}/{bookId}")

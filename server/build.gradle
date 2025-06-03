@@ -44,7 +44,11 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    implementation 'org.hibernate.orm:hibernate-core:6.4.4.Final' // o la versión recomendada
+    implementation 'org.hibernate.common:hibernate-commons-annotations:6.0.6.Final'
 
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.1'
 }
 
 tasks.named('test') {

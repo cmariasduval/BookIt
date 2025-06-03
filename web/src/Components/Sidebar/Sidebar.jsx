@@ -140,7 +140,7 @@ const Sidebar = () => {
                     <div className="goal">
                         <h2 className="goal-title">Monthly Goal</h2>
                         <p className="goal-number">5</p>
-                        <button className="goal-button">Set Goal</button>
+                        <button onClick={() => navigate("/set-goal")} className="goal-button">Set Goal</button>
                     </div>
                 </nav>
             </div>

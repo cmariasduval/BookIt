@@ -15,7 +15,7 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "full_name", nullable = true)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @Column(name = "email", nullable = false)
@@ -46,7 +46,7 @@ public class User {
     )
     private List<Genre> interests;
 
-    @Column(name = "blocked")
+    @Column(name = "blocked", nullable = false)
     private boolean blocked;
 
     @Column(name = "blocked_until", nullable = true)
@@ -70,7 +70,13 @@ public class User {
     )
     private List<Book> readBooks;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name = "user_infractions",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "book_id")
+//    )
+//    @JsonManagedReference
     private List<Infraction> infractions;
 
 
@@ -87,6 +93,7 @@ public class User {
                 List<Book> readBooks, List<Reservation> reservations,
                 List<Infraction> infractions) {
         this.username = username;
+        this.fullName = username;
         this.password = password;
         this.email = email;
         this.birthDate = birthDate;

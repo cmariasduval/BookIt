@@ -11,8 +11,7 @@ public class MonthlyGoal {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+
 
     @ManyToOne
     @JoinColumn(name = "User_ID")
@@ -29,8 +28,8 @@ public class MonthlyGoal {
 
     public MonthlyGoal() {}
 
-    public MonthlyGoal(String name, int bookCount, int month, int year) {
-        this.name = name;
+    public MonthlyGoal(int bookCount, int month, int year) {
+
         this.bookCount = bookCount;
         this.month = month;
         this.year = year;
@@ -44,13 +43,7 @@ public class MonthlyGoal {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public User getUser() {
         return user;

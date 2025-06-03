@@ -4,6 +4,8 @@ import com.example.bookit.DTO.MonthlyGoalRequest;
 import com.example.bookit.Entities.MonthlyGoal;
 import com.example.bookit.Service.MonthlyGoalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,17 +20,16 @@ public class MonthlyGoalController {
     }
 
     // POST: Crear una nueva meta mensual
-    @PostMapping("/{userId}/monthly")
-    public ResponseEntity<MonthlyGoal> createMonthlyGoal(@PathVariable Long userId,
-                                                         @RequestBody MonthlyGoalRequest request) {
-        MonthlyGoal created = goalService.setMonthlyGoal(userId, request);
+    @PostMapping("/monthly")
+    public ResponseEntity<MonthlyGoal> createMonthlyGoal(@RequestBody MonthlyGoalRequest request) {
+        MonthlyGoal created = goalService.setMonthlyGoal(getAuthenticatedUser(), request);
         return ResponseEntity.ok(created);
     }
 
     // GET: Obtener la meta mensual de un usuario
-    @GetMapping("/{userId}/monthly")
-    public ResponseEntity<MonthlyGoal> getMonthlyGoal(@PathVariable Long userId) {
-        MonthlyGoal goal = goalService.getMonthlyGoal(userId);
+    @GetMapping("/monthly")
+    public ResponseEntity<MonthlyGoal> getMonthlyGoal() {
+        MonthlyGoal goal = goalService.getMonthlyGoal(getAuthenticatedUser());
         if (goal != null) {
             return ResponseEntity.ok(goal);
         } else {
@@ -37,14 +38,22 @@ public class MonthlyGoalController {
     }
 
     // PUT: Actualizar la meta mensual de un usuario
-    @PutMapping("/{userId}/monthly")
-    public ResponseEntity<MonthlyGoal> updateMonthlyGoal(@PathVariable Long userId,
-                                                         @RequestBody MonthlyGoalRequest request) {
-        MonthlyGoal updated = goalService.updateMonthlyGoal(userId, request);
+    @PutMapping("/monthly")
+    public ResponseEntity<MonthlyGoal> updateMonthlyGoal(@RequestBody MonthlyGoalRequest request) {
+        MonthlyGoal updated = goalService.updateMonthlyGoal(getAuthenticatedUser(), request);
         if (updated != null) {
             return ResponseEntity.ok(updated);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    private String getAuthenticatedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString();
         }
     }
 }

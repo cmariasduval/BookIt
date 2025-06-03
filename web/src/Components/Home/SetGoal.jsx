@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import './SetGoal.css'; // si querés agregar estilos personalizados
 
 function SetGoal() {
-    const [name, setName] = useState("");
     const [bookCount, setBookCount] = useState("");
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
@@ -16,15 +15,15 @@ function SetGoal() {
     const token = localStorage.getItem("authToken");
 
     const handleSubmit = async (e) => {
+        console.log(user)
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
             await axios.post(
-                `http://localhost:8080/api/goals/${user.id}/monthly`,
+                `http://localhost:8080/api/goals/monthly`,
                 {
-                    name,
                     bookCount,
                     month,
                     year
@@ -51,13 +50,7 @@ function SetGoal() {
             <h2>Establecer Objetivo Mensual</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <form onSubmit={handleSubmit} className="set-goal-form">
-                <input
-                    type="text"
-                    placeholder="Nombre del objetivo"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
+
                 <input
                     type="number"
                     placeholder="Cantidad de libros"

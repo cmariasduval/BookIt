@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-
 import './BookDetails.css';
 
 const BookDetails = () => {
@@ -18,21 +16,25 @@ const BookDetails = () => {
 
     const [isAdmin, setIsAdmin] = useState(false);
 
+    // Estados para comentarios y rating
+    const [commentOpen, setCommentOpen] = useState(false);
+    const [commentText, setCommentText] = useState("");
+    const [ratingOpen, setRatingOpen] = useState(false);
+    const [rating, setRating] = useState(0);
+
     useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-        try {
-            const user = JSON.parse(storedUser);
-            const email = user.email;
-            setIsAdmin(email?.endsWith("@admin.com"));
-        } catch (e) {
-            console.error("Usuario inválido", e);
-            setIsAdmin(false);
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                const email = user.email;
+                setIsAdmin(email?.endsWith("@admin.com"));
+            } catch (e) {
+                console.error("Usuario inválido", e);
+                setIsAdmin(false);
+            }
         }
-    }
-}, []);
-
-
+    }, []);
 
     const navigate = useNavigate();
 
@@ -52,7 +54,6 @@ const BookDetails = () => {
                 setBook(data);
                 console.log("Datos del libro:", data);
 
-                // Inicializar desde backend y localStorage
                 setIsRead(JSON.parse(localStorage.getItem('readBooks') || '[]').includes(data.id));
                 setIsReserved(JSON.parse(localStorage.getItem('reservedBooks') || '[]').includes(data.id));
                 setIsFavorite(JSON.parse(localStorage.getItem('favoriteBooks') || '[]').some(b => b.id === data.id));
@@ -65,7 +66,6 @@ const BookDetails = () => {
         fetchBook();
     }, [id]);
 
-    // Función genérica para actualizar listas en localStorage
     const updateLocalList = (key, itemId, add) => {
         const list = JSON.parse(localStorage.getItem(key) || '[]');
         let updated;
@@ -140,6 +140,85 @@ const BookDetails = () => {
         updateLocalList('readBooks', book.id, false);
     };
 
+    // Enviar comentario al backend
+    const submitComment = async () => {
+        if (!commentText.trim()) {
+            alert("El comentario está vacío");
+            return;
+        }
+
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert("Tenés que estar logueado para comentar");
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:8080/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    bookId: book.id,
+                    comment: commentText.trim()
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error(`Error al enviar comentario: ${res.statusText}`);
+            }
+
+            alert("Comentario enviado correctamente");
+            setCommentText("");
+            setCommentOpen(false);
+            // Opcional: recargar comentarios
+        } catch (error) {
+            console.error(error);
+            alert("Error enviando comentario");
+        }
+    };
+
+    // Enviar rating al backend
+    const submitRating = async () => {
+        if (rating < 1 || rating > 5) {
+            alert("Seleccioná una cantidad de estrellas válida");
+            return;
+        }
+
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert("Tenés que estar logueado para calificar");
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:8080/api/ratings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    bookId: book.id,
+                    rating: rating
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error(`Error al enviar calificación: ${res.statusText}`);
+            }
+
+            alert("Calificación enviada correctamente");
+            setRatingOpen(false);
+            // Opcional: actualizar rating mostrado
+        } catch (error) {
+            console.error(error);
+            alert("Error enviando calificación");
+        }
+    };
+
     if (loading) return <div>Cargando...</div>;
     if (error) return <div className="error">{error}</div>;
     if (!book) return <div>No se encontró el libro</div>;
@@ -173,8 +252,8 @@ const BookDetails = () => {
                         <strong>Géneros:</strong>{' '}
                         {book.genres.map((g, index) => (
                             <span key={g.id} className="genre-tag">
-                            {g.genreType}
-                            {index < book.genres.length - 1 ? ', ' : ''}
+                                {g.genreType}
+                                {index < book.genres.length - 1 ? ', ' : ''}
                             </span>
                         ))}
                     </div>
@@ -183,8 +262,8 @@ const BookDetails = () => {
                     <p>
                         <strong>Estado:</strong>{' '}
                         <span className={book.status === 'Available' ? 'available' : 'unavailable'}>
-                {book.status}
-            </span>
+                            {book.status}
+                        </span>
                     </p>
                     <div className="book-actions">
                         {isReserved ? (
@@ -206,9 +285,51 @@ const BookDetails = () => {
                             </button>
                         )}
                     </div>
+
+                    {/* Comentarios y rating */}
+                    <div style={{ marginTop: "1em" }}>
+                        <button onClick={() => setCommentOpen(!commentOpen)}>
+                            {commentOpen ? "Cancelar comentario" : "Dejar comentario"}
+                        </button>
+                        <button onClick={() => setRatingOpen(!ratingOpen)} style={{ marginLeft: "10px" }}>
+                            {ratingOpen ? "Cancelar calificación" : "Calificar"}
+                        </button>
+                    </div>
+
+                    {commentOpen && (
+                        <div style={{ marginTop: "1em" }}>
+                            <textarea
+                                rows="4"
+                                cols="50"
+                                placeholder="Escribí tu comentario aquí..."
+                                value={commentText}
+                                onChange={(e) => setCommentText(e.target.value)}
+                            />
+                            <br />
+                            <button onClick={submitComment}>Enviar comentario</button>
+                        </div>
+                    )}
+
+                    {ratingOpen && (
+                        <div style={{ marginTop: "1em" }}>
+                            <label>Seleccioná estrellas: </label>
+                            <select
+                                value={rating}
+                                onChange={(e) => setRating(Number(e.target.value))}
+                            >
+                                <option value={0}>--</option>
+                                <option value={1}>⭐</option>
+                                <option value={2}>⭐⭐</option>
+                                <option value={3}>⭐⭐⭐</option>
+                                <option value={4}>⭐⭐⭐⭐</option>
+                                <option value={5}>⭐⭐⭐⭐⭐</option>
+                            </select>
+                            <br />
+                            <button onClick={submitRating}>Enviar calificación</button>
+                        </div>
+                    )}
                 </div>
             </div>
-        
         </div>
     );
 };

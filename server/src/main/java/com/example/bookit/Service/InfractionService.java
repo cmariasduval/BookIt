@@ -5,11 +5,11 @@ import com.example.bookit.Entities.Infraction;
 import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.InfractionRepository;
 import com.example.bookit.Repository.UserRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -17,10 +17,14 @@ public class InfractionService {
 
     private final InfractionRepository infractionRepository;
     private final UserRepository userRepository;
+    private final ReservationService reservationService;  // Inyección mutua
 
-    public InfractionService(InfractionRepository infractionRepository, UserRepository userRepository) {
+    public InfractionService(InfractionRepository infractionRepository,
+                             UserRepository userRepository,
+                             @Lazy ReservationService reservationService) {
         this.infractionRepository = infractionRepository;
         this.userRepository = userRepository;
+        this.reservationService = reservationService;
     }
 
     public Infraction findByUserEmail(String email) {
@@ -38,13 +42,12 @@ public class InfractionService {
     }
 
     public void registrarInfraccion(User user) {
-        // Buscar infracciones previas
         List<Infraction> infracciones = infractionRepository.findByUser(user);
         int nuevoConteo = infracciones.size() + 1;
 
         boolean debeBloquear = nuevoConteo >= 5 && !user.isBlocked();
 
-        Infraction nueva = new Infraction(user, true, 0); // true indica infracción activa, 0 multa inicial
+        Infraction nueva = new Infraction(user, true, 0); // infracción activa sin multa por defecto
         infractionRepository.save(nueva);
 
         if (debeBloquear) {
@@ -52,7 +55,9 @@ public class InfractionService {
             user.setBlockedUntil(LocalDate.now().plusMonths(3));
             userRepository.save(user);
 
-            // Notificar al manager (ejemplo con println)
+            // Cancelar reservas activas al bloquear usuario
+            reservationService.cancelAllActiveReservationsByUser(user);
+
             System.out.println("⚠️ Usuario " + user.getUsername() + " ha sido bloqueado por 3 meses.");
         }
     }
@@ -61,7 +66,7 @@ public class InfractionService {
         if (!user.isBlocked()) return true;
 
         if (LocalDate.now().isAfter(user.getBlockedUntil())) {
-            // Se cumplió el período, se desbloquea pero se mantiene el historial
+            // Se desbloquea pero mantiene historial
             user.setBlocked(false);
             user.setBlockedUntil(null);
             userRepository.save(user);
@@ -87,7 +92,7 @@ public class InfractionService {
                         user.getId().longValue(),
                         user.getUsername(),
                         user.getEmail(),
-                        user.getDebt(),  // asumimos que esto lo tenés en User
+                        user.getDebt(),
                         user.getInfractions().size()
                 ))
                 .toList();
@@ -103,38 +108,43 @@ public class InfractionService {
     /**
      * Procesa la devolución tardía de un libro:
      * - Calcula días hábiles de atraso (excluye sábados y domingos)
-     * - Si hay más de 3 días hábiles, cobra multa diaria (ej: 10 unidades monetarias por día)
+     * - Si hay más de 3 días hábiles, cobra multa diaria
      * - Registra la infracción (con multa si corresponde)
      * - Bloquea usuario si tiene 5 o más infracciones
      */
     public void procesarDevolucionTardia(User user, Long bookId, String dueDate, String returnDate) {
-        // Parsear fechas
         LocalDate due = LocalDate.parse(dueDate);
         LocalDate returned = LocalDate.parse(returnDate);
 
         if (returned.isAfter(due)) {
-            long diasRetraso = java.time.temporal.ChronoUnit.DAYS.between(due, returned);
-            double multaPorDia = 2.5;
-            double multaTotal = diasRetraso * multaPorDia;
+            // Contar días hábiles de atraso (excluyendo sábados y domingos)
+            int diasRetrasoHabiles = contarDiasHabilesEntre(due.plusDays(1), returned);
 
-            // Crear una nueva infracción con el monto de la multa
-            Infraction infraction = new Infraction();
-            infraction.setUser(user);
-            infraction.setPaid(false);
-            infraction.setDebt(multaTotal);
-            infraction.setDate(LocalDate.now());  // o la fecha que corresponda
-            infractionRepository.save(infraction);
+            if (diasRetrasoHabiles > 3) {
+                double multaPorDia = 2.5;
+                double multaTotal = diasRetrasoHabiles * multaPorDia;
 
-            // Actualizar lista local de infracciones del usuario
-            user.getInfractions().add(infraction);
+                Infraction infraction = new Infraction();
+                infraction.setUser(user);
+                infraction.setPaid(false);
+                infraction.setDebt(multaTotal);
+                infraction.setDate(LocalDate.now());
+                infractionRepository.save(infraction);
 
-            System.out.println("Multa aplicada al usuario " + user.getUsername() + ": $" + multaTotal);
+                user.getInfractions().add(infraction);
+
+                System.out.println("Multa aplicada al usuario " + user.getUsername() + ": $" + multaTotal);
+
+                // Registrar infracción y chequear bloqueo
+                registrarInfraccion(user);
+            } else {
+                System.out.println("Devolución tardía pero sin multa (<=3 días hábiles).");
+            }
         } else {
             System.out.println("Devolución dentro del plazo, no hay multa.");
         }
     }
 
-    // Metodo auxiliar para contar días hábiles entre dos fechas (inclusive)
     private int contarDiasHabilesEntre(LocalDate start, LocalDate end) {
         int diasHabiles = 0;
         LocalDate date = start;

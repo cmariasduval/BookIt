@@ -4,7 +4,7 @@ const ManageInfractions = () => {
     const [usersWithDebt, setUsersWithDebt] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [updatingUserId, setUpdatingUserId] = useState(null);
+    const [updatingUsername, setUpdatingUsername] = useState(null);
 
     useEffect(() => {
         fetchUsersWithDebt();
@@ -40,17 +40,16 @@ const ManageInfractions = () => {
         }
     };
 
-    const handlePayDebt = async (userId) => {
-        setUpdatingUserId(userId);
+    const handlePayDebt = async (username) => {
+        setUpdatingUsername(username);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('No se encontró el token de autenticación.');
-            setUpdatingUserId(null);
+            setUpdatingUsername(null);
             return;
         }
         try {
-            // CORRECCIÓN: URL corregida para coincidir con backend
-            const res = await fetch(`http://localhost:8080/api/infractions/users/${userId}/pay-debt`, {
+            const res = await fetch(`http://localhost:8080/api/infractions/users/${username}/pay-debt`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -60,15 +59,38 @@ const ManageInfractions = () => {
             if (!res.ok) {
                 throw new Error(`Error ${res.status}: ${res.statusText}`);
             }
-            // Actualizamos la lista local para reflejar deuda 0 e infracciones 0
             setUsersWithDebt(prev =>
-                prev.map(u => u.userId === userId ? { ...u, debt: 0, infractionCount: 0 } : u)
+                prev.map(u => u.username === username ? { ...u, debt: 0, infractionCount: 0 } : u)
             );
         } catch (err) {
             console.error(err);
             setError('Error al actualizar la deuda.');
         } finally {
-            setUpdatingUserId(null);
+            setUpdatingUsername(null);
+        }
+    };
+
+    const handleBlockUser = async (username) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError('No se encontró el token de autenticación.');
+            return;
+        }
+        try {
+            const res = await fetch(`http://localhost:8080/api/infractions/block/${username}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: ${res.statusText}`);
+            }
+            alert(`Usuario ${username} bloqueado por 90 días.`);
+        } catch (err) {
+            console.error(err);
+            setError('Error al bloquear el usuario.');
         }
     };
 
@@ -81,14 +103,20 @@ const ManageInfractions = () => {
             {usersWithDebt.length > 0 ? (
                 <ul>
                     {usersWithDebt.map(user => (
-                        <li key={user.userId}>
+                        <li key={user.username}>
                             <strong>{user.username || 'Usuario desconocido'}</strong> - Deuda: ${user.debt.toFixed(2)} - Infracciones: {user.infractionCount}
                             <button
-                                onClick={() => handlePayDebt(user.id)}
-                                disabled={updatingUserId === user.id || user.debt === 0}
+                                onClick={() => handlePayDebt(user.username)}
+                                disabled={updatingUsername === user.username || user.debt === 0}
                                 style={{ marginLeft: '10px' }}
                             >
-                                {updatingUserId === user.id ? 'Actualizando...' : 'Pagar deuda'}
+                                {updatingUsername === user.username ? 'Actualizando...' : 'Pagar deuda'}
+                            </button>
+                            <button
+                                onClick={() => handleBlockUser(user.username)}
+                                style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
+                            >
+                                Bloquear
                             </button>
                         </li>
                     ))}

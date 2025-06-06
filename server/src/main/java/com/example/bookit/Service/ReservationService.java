@@ -26,6 +26,14 @@ public class ReservationService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private final InfractionService infractionService;
+
+    public ReservationService(InfractionService infractionService) {
+        this.infractionService = infractionService;
+    }
+
+
     // Verificar si el usuario tiene menos de 3 reservas activas
     public boolean hasActiveReservations(User user) {
         List<Reservation> activeReservations = reservationRepository.findByUserAndStatus(user, ReservationStatus.ACTIVE);
@@ -48,6 +56,10 @@ public class ReservationService {
 
     // Crear una nueva reserva
     public Reservation createReservation(User user, BookCopy bookCopy, LocalDate reservationDate, int period) {
+        if (!infractionService.puedeOperar(user)) {
+            throw new RuntimeException("Usuario bloqueado. No puede realizar nuevas reservas.");
+        }
+
         if (hasActiveReservations(user)) {
             throw new RuntimeException("No puedes tener más de 3 reservas activas.");
         }
@@ -91,12 +103,19 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    // Marcar como 'completed' cuando el libro sea devuelto
     public void markAsCompleted(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada."));
         reservation.setStatus(ReservationStatus.COMPLETED);
         reservationRepository.save(reservation);
+
+        // Procesar devolución tardía e infracciones si corresponde
+        infractionService.procesarDevolucionTardia(
+                reservation.getUser(),
+                Long.valueOf(reservation.getCopy().getId()),  // convertí a Long
+                reservation.getPickupDate().toString(),
+                LocalDate.now().toString()
+        );
     }
 
     // Obtener los libros reservados por un usuario autenticado
@@ -157,4 +176,13 @@ public class ReservationService {
                 .map(ReservationDTO::fromEntity)
                 .toList();
     }
+
+    public void cancelAllActiveReservationsByUser(User user) {
+        List<Reservation> activeReservations = reservationRepository.findByUserAndStatus(user, ReservationStatus.ACTIVE);
+
+        for (Reservation res : activeReservations) {
+            reservationRepository.delete(res);  // Cancela sin restricciones
+        }
+    }
+
 }

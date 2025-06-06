@@ -8,8 +8,11 @@ import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.InfractionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -140,4 +143,32 @@ public class InfractionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PutMapping("/block/{username}")
+    public ResponseEntity<?> bloquearUsuario(@PathVariable String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = optionalUser.get();
+        user.setBlocked(true);
+        user.setBlockedUntil(LocalDate.now().plusDays(90));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Usuario " + username + " bloqueado por 90 días.");
+    }
+
+
+
+    private String getAuthenticatedUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString();
+        }
+    }
+
+
 }

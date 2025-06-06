@@ -40,8 +40,8 @@ const Library = () => {
     };
 
     const fetchReservedBooks = async () => {
-        setLoading(true); // Asegura que el loading se active al inicio
-        setError(null);   // Limpia errores previos
+        setLoading(true);
+        setError(null);
 
         const token = localStorage.getItem('authToken');
         if (!token) {
@@ -62,7 +62,6 @@ const Library = () => {
             if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
             const data = await res.json();
-            console.log(data);
             setReservedBooks(data);
         } catch (err) {
             console.error(err);
@@ -72,13 +71,11 @@ const Library = () => {
         }
     };
 
-
     const fetchFavoriteBooks = async () => {
         const token = localStorage.getItem('authToken');
         if (!token) return;
 
         try {
-
             const res = await fetch('http://localhost:8080/api/favorites', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -88,7 +85,6 @@ const Library = () => {
 
             if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
             const data = await res.json();
-            console.log(data);  // Verifica si la respuesta es la esperada
             setFavoriteBooks(data);
         } catch (err) {
             console.error('Error en fetchFavoriteBooks:', err);
@@ -122,7 +118,6 @@ const Library = () => {
         }
 
         const book = allBooks.find((b) => b.id === bookId);
-        console.log(reservedBooks)
         if (!book || reservedBooks.some((b) => b.book.id === bookId)) return;
 
         const copy = book.copies?.[0];
@@ -154,17 +149,19 @@ const Library = () => {
             });
 
             if (!res.ok) {
-                if (res.status === 409) {
+                if (res.status === 403) {
+                    setError('No puede hacer reserva porque se encuentra bloqueado por haber cometido 3 infracciones.');
+                } else if (res.status === 409) {
                     setError('Este libro ya está reservado');
                 } else {
-                    throw new Error(res.statusText);
+                    setError(`Error ${res.status}: ${res.statusText}`);
                 }
                 return;
             }
 
             const updatedBook = { ...book, status: 'reserved' };
             setAllBooks((prev) => prev.map((b) => (b.id === bookId ? updatedBook : b)));
-            setReservedBooks((prev) => [...prev, updatedBook]);
+            setReservedBooks((prev) => [...prev, { book: updatedBook, id: 'temp' }]); // Ajustá según estructura de reserva
             setError(null);
         } catch (err) {
             console.error(err);
@@ -257,10 +254,7 @@ const Library = () => {
                                 <h3 className="book-title">{book.title}</h3>
                                 <div className="book-actions">
                                     {book.status !== 'reserved' && (
-                                        <button onClick={() => {
-                                            console.log(book)
-                                            handleReserveBook(book.id)
-                                        }}>
+                                        <button onClick={() => handleReserveBook(book.id)}>
                                             Reservar
                                         </button>
                                     )}
@@ -329,9 +323,12 @@ const Library = () => {
                         favoriteBooks.map((b) => (
                             <li key={b.id} className="book-item">
                                 <h3 className="book-title">{b.title}</h3>
-                                <div className="book-actions">
-                                    <button onClick={() => handleToggleFavorite(b.id)}>❤️</button>
-                                </div>
+                                <button
+                                    className="favorito"
+                                    onClick={() => handleToggleFavorite(b.id)}
+                                >
+                                    {favoriteBooks.some((fb) => fb.id === b.id) ? '❤️' : '♡'} Favorito
+                                </button>
                             </li>
                         ))
                     ) : (

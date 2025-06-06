@@ -48,14 +48,19 @@ public class ReservationController {
         // Endpoint para crear una nueva reserva
 
     @PostMapping("/create")
-    public ResponseEntity<?> createReservation(
-            @RequestBody ReservationRequest request) {
+    public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
         try {
             User user = userService.getUserByName(getAuthenticatedUser());
             BookCopy bookCopy = bookCopyService.getBookCopyById(request.copyId);
 
             if (user == null || bookCopy == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario o copia de libro no encontrados");
+            }
+
+            // Validar bloqueo del usuario
+            if (user.isBlocked() && user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(LocalDate.now())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("No podés reservar libros porque estás bloqueado hasta " + user.getBlockedUntil());
             }
 
             Reservation reservation = reservationService.createReservation(user, bookCopy, LocalDate.parse(request.reservationDate), request.period);
@@ -65,6 +70,7 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
 
 
     // Endpoint para cancelar una reserva

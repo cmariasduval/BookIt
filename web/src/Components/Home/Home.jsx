@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Home.css";
-import bookthief from '../Assets/books/bookthief.png';
-import emma from '../Assets/books/emma.png';
-import annafrank from '../Assets/books/annafrank.png';
-import belljar from '../Assets/books/belljar.png';
-import hungergames from '../Assets/books/hungergames.png';
-import mazerunner from '../Assets/books/mazerunner.png';
-import rebecca from '../Assets/books/rebecca.png';
 import { FaBrain } from "react-icons/fa";
 import { GiGreekTemple } from "react-icons/gi";
 import { FaHeart } from "react-icons/fa";
@@ -19,15 +12,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-    const recommendedBooks = [
-        { id: 1, img: annafrank },
-        { id: 2, img: belljar },
-        { id: 3, img: bookthief },
-        { id: 4, img: emma },
-        { id: 5, img: hungergames },
-        { id: 6, img: mazerunner },
-        { id: 7, img: rebecca }
-      ];
+    const [recommendedBooks, setRecommendedBooks] = useState([]);
     const bookCategories = [
         { icon: <FaBrain />, label: "Psychology" },
         { icon: <GiGreekTemple />, label: "History" },
@@ -45,6 +30,30 @@ const Home = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [authError, setAuthError] = useState(null);
     const debounceTimeout = useRef(null);  // Ref para controlar el debounce
+
+    useEffect(() => {
+        fetchBookDetails()
+    }, []);
+
+    const fetchBookDetails = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/books",
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
+                });
+            if (response.ok) {
+                const data = await response.json();
+                setRecommendedBooks(data);
+            } else {
+                console.error("Error al cargar libros recomendados");
+            }
+        } catch (error) {
+            console.error("Error en el fetch:", error);
+        }
+    };
+
 
     // Cargar usuario al entrar (si lo necesitas para otras partes de la app)
     useEffect(() => {
@@ -107,20 +116,20 @@ const Home = () => {
                     )}
                     {searchResults.length > 0 && (
                         <ul className="home-search-results">
-                        {searchResults.length > 0 ? (
-                            searchResults.map((book) => (
-                                <li
-                                    key={book.id}
-                                    onClick={() => navigate(`/bookDetails/${book.id}`)}
-                                    className="home-search-result-item"
-                                >
-                                    {book.title}
-                                </li>
-                            ))
-                        ) : (
-                            <li className="home-search-no-result">No results found</li>
-                        )}
-                    </ul>
+                            {searchResults.length > 0 ? (
+                                searchResults.map((book) => (
+                                    <li
+                                        key={book.id}
+                                        onClick={() => navigate(`/bookDetails/${book.id}`)}
+                                        className="home-search-result-item"
+                                    >
+                                        {book.title}
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="home-search-no-result">No results found</li>
+                            )}
+                        </ul>
                     )}
                 </div>
             </div>
@@ -131,12 +140,12 @@ const Home = () => {
                 <div className="home-carousel">
                     {recommendedBooks.map((book) => (
                         <img
-                        key={book.id}
-                        src={book.img}
-                        alt="book"
-                        className="home-book-card"
-                        onClick={() => navigate(`/bookDetails/${book.id}`)}
-                        style={{ cursor: 'pointer' }}
+                            key={book.id}
+                            src={book.imageUrl}
+                            alt="book"
+                            className="home-book-card"
+                            onClick={() => navigate(`/bookDetails/${book.id}`)}
+                            style={{ cursor: 'pointer' }}
                         />
                     ))}
                 </div>

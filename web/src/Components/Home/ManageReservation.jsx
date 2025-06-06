@@ -91,8 +91,8 @@ function ManageReservations() {
                                     <>
                                         <div><b>{pickup.bookTitle}</b></div>
                                         <div>Usuario: {pickup.username}</div>
-                                        <button onClick={() => handleAction(pickup.id, 'picked-up')} title="Entregado">✅</button>{' '}
-                                        <button onClick={() => handleAction(pickup.id, 'not-picked-up')} title="No entregado">❌</button>
+                                        <button onClick={() => handleAction(pickup.id, 'mark-picked-up')} title="Entregado">✅</button>{' '}
+                                        <button onClick={() => handleAction(pickup.id, 'mark-not-picked-up')} title="No entregado">❌</button>
                                     </>
                                 ) : (
                                     <em>No hay reservas</em>
@@ -105,8 +105,8 @@ function ManageReservations() {
                                     <>
                                         <div><b>{late.bookTitle}</b></div>
                                         <div>Usuario: {late.username}</div>
-                                        <button onClick={() => handleAction(late.id, 'picked-up')} title="Entregado">✅</button>{' '}
-                                        <button onClick={() => handleAction(late.id, 'not-picked-up')} title="No entregado">❌</button>
+                                        <button onClick={() => handleAction(late.id, 'mark-picked-up')} title="Entregado">✅</button>{' '}
+                                        <button onClick={() => handleAction(late.id, 'mark-not-picked-up')} title="No entregado">❌</button>
                                     </>
                                 ) : (
                                     <em>No hay reservas</em>
@@ -119,8 +119,8 @@ function ManageReservations() {
                                     <>
                                         <div><b>{ret.bookTitle}</b></div>
                                         <div>Usuario: {ret.username}</div>
-                                        <button onClick={() => handleAction(ret.id, 'returned')} title="Devuelto">✅</button>{' '}
-                                        <button onClick={() => handleAction(ret.id, 'not-returned')} title="No devuelto">❌</button>
+                                        <button onClick={() => handleAction(ret.id, 'mark-returned')} title="Devuelto">✅</button>{' '}
+                                        <button onClick={() => handleAction(ret.id, 'mark-not-returned')} title="No devuelto">❌</button>
                                     </>
                                 ) : (
                                     <em>No hay devoluciones</em>

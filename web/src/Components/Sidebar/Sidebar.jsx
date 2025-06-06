@@ -15,7 +15,7 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     const isAdmin = user?.role?.toLowerCase() === "admin";
 
     const [goal, setGoal] = useState(null);
@@ -23,11 +23,10 @@ const Sidebar = () => {
     useEffect(() => {
         const fetchGoal = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/api/goals/getGoal", {
+                const response = await axios.get("http://localhost:8080/api/goals/monthly", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     },
-                    withCredentials: true
                 });
                 setGoal(response.data);
             } catch (error) {
@@ -161,7 +160,7 @@ const Sidebar = () => {
 
                     <div className="goal">
                         <h2 className="goal-title">Monthly Goal</h2>
-                        <p className="goal-number">{goal?.goal ?? "—"}</p>
+                        <p className="goal-number">{goal?.bookCount ?? "—"}</p>
                         <button onClick={() => navigate("/set-goal")} className="goal-button">
                             Set Goal
                         </button>

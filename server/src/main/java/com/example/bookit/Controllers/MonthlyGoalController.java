@@ -27,7 +27,7 @@ public class MonthlyGoalController {
     }
 
     // GET: Obtener la meta mensual de un usuario
-    @GetMapping("/getGoal")
+    @GetMapping("/monthly")
     public ResponseEntity<MonthlyGoal> getMonthlyGoal() {
         String username = getAuthenticatedUser();
         MonthlyGoal goal = goalService.getMonthlyGoal(username);

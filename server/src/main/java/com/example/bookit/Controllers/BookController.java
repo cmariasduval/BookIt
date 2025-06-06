@@ -2,6 +2,7 @@ package com.example.bookit.Controllers;
 
 import com.example.bookit.Config.JwtUtil;
 import com.example.bookit.DTO.AddBookRequest;
+import com.example.bookit.DTO.BookDTO;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.FavoriteRepository;
@@ -158,25 +159,30 @@ public class BookController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBooks(
-            @RequestParam String query
-    ) {
+    public ResponseEntity<List<BookDTO>> searchBooks(@RequestParam String query) {
+        System.out.println("🔍 Entró al endpoint /search con query: " + query);
         try {
-            // Realizar la búsqueda sin requerir autenticación
             List<Book> books = bookRepository.findByTitleContainingIgnoreCase(query);
+            System.out.println("📚 Libros encontrados: " + books.size());
 
-            // Si no se encuentran libros, devolver una respuesta vacía
             if (books.isEmpty()) {
+                System.out.println("⚠️ No se encontraron libros.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
 
-            // Devolver los libros encontrados
-            return ResponseEntity.ok(books);
+            // Convertir a DTO si estás usando DTOs
+            List<BookDTO> dtos = books.stream()
+                    .map(book -> new BookDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getImage()))
+                    .toList();
+
+            return ResponseEntity.ok(dtos);
         } catch (Exception e) {
-            // Manejo de errores en caso de algún problema
+            System.out.println("❌ Error en searchBooks: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+
 
 
     @GetMapping("/{id}")

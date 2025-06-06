@@ -7,6 +7,7 @@ import com.example.bookit.Repository.MonthlyGoalRepository;
 import com.example.bookit.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -43,15 +44,12 @@ public class MonthlyGoalService {
     }
 
     // ✅ Obtener la meta mensual
-    public MonthlyGoal getMonthlyGoal(String userId) {
-        User user = userRepository.findByUsername(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    public MonthlyGoal getMonthlyGoal(String username) {
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        int year = now.getYear();
 
-        // Asumimos que se busca la meta del mes actual
-        int currentMonth = java.time.LocalDate.now().getMonthValue();
-        int currentYear = java.time.LocalDate.now().getYear();
-
-        return goalRepository.findByUserAndMonthAndYear(user, currentMonth, currentYear)
+        return goalRepository.findByUserUsernameAndMonthAndYear(username, month, year)
                 .orElse(null);
     }
 

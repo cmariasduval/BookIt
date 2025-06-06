@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
     FaSearch, FaUser, FaPlus, FaCalendarCheck, FaExclamationTriangle
@@ -7,6 +7,7 @@ import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
 
+import axios from "axios";
 import bookit from "../Assets/bookit.png";
 import "./Sidebar.css";
 
@@ -14,7 +15,28 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
     const isAdmin = user?.role?.toLowerCase() === "admin";
+
+    const [goal, setGoal] = useState(null);
+
+    useEffect(() => {
+        const fetchGoal = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/goals/getGoal", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    withCredentials: true
+                });
+                setGoal(response.data);
+            } catch (error) {
+                console.error("Error fetching monthly goal:", error);
+            }
+        };
+
+        fetchGoal();
+    }, []);
 
     const handleLogout = () => {
         localStorage.clear();
@@ -139,8 +161,10 @@ const Sidebar = () => {
 
                     <div className="goal">
                         <h2 className="goal-title">Monthly Goal</h2>
-                        <p className="goal-number">5</p>
-                        <button onClick={() => navigate("/set-goal")} className="goal-button">Set Goal</button>
+                        <p className="goal-number">{goal?.goal ?? "—"}</p>
+                        <button onClick={() => navigate("/set-goal")} className="goal-button">
+                            Set Goal
+                        </button>
                     </div>
                 </nav>
             </div>

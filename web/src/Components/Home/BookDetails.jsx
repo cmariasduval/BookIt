@@ -19,7 +19,6 @@ const BookDetails = () => {
     // Estados para comentarios y rating
     const [commentOpen, setCommentOpen] = useState(false);
     const [commentText, setCommentText] = useState("");
-    const [ratingOpen, setRatingOpen] = useState(false);
     const [rating, setRating] = useState(0);
 
     useEffect(() => {
@@ -162,7 +161,8 @@ const BookDetails = () => {
                 },
                 body: JSON.stringify({
                     bookId: book.id,
-                    comment: commentText.trim()
+                    comment: commentText.trim(),
+                    rating: rating
                 })
             });
 
@@ -177,45 +177,6 @@ const BookDetails = () => {
         } catch (error) {
             console.error(error);
             alert("Error enviando comentario");
-        }
-    };
-
-    // Enviar rating al backend
-    const submitRating = async () => {
-        if (rating < 1 || rating > 5) {
-            alert("Seleccioná una cantidad de estrellas válida");
-            return;
-        }
-
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            alert("Tenés que estar logueado para calificar");
-            return;
-        }
-
-        try {
-            const res = await fetch('http://localhost:8080/api/ratings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    bookId: book.id,
-                    rating: rating
-                })
-            });
-
-            if (!res.ok) {
-                throw new Error(`Error al enviar calificación: ${res.statusText}`);
-            }
-
-            alert("Calificación enviada correctamente");
-            setRatingOpen(false);
-            // Opcional: actualizar rating mostrado
-        } catch (error) {
-            console.error(error);
-            alert("Error enviando calificación");
         }
     };
 
@@ -291,9 +252,6 @@ const BookDetails = () => {
                         <button onClick={() => setCommentOpen(!commentOpen)}>
                             {commentOpen ? "Cancelar comentario" : "Dejar comentario"}
                         </button>
-                        <button onClick={() => setRatingOpen(!ratingOpen)} style={{ marginLeft: "10px" }}>
-                            {ratingOpen ? "Cancelar calificación" : "Calificar"}
-                        </button>
                     </div>
 
                     {commentOpen && (
@@ -306,26 +264,22 @@ const BookDetails = () => {
                                 onChange={(e) => setCommentText(e.target.value)}
                             />
                             <br />
+                            <div style={{ marginTop: "1em" }}>
+                                <label>Seleccioná estrellas: </label>
+                                <select
+                                    value={rating}
+                                    onChange={(e) => setRating(Number(e.target.value))}
+                                >
+                                    <option value={0}>--</option>
+                                    <option value={1}>⭐</option>
+                                    <option value={2}>⭐⭐</option>
+                                    <option value={3}>⭐⭐⭐</option>
+                                    <option value={4}>⭐⭐⭐⭐</option>
+                                    <option value={5}>⭐⭐⭐⭐⭐</option>
+                                </select>
+                                <br />
+                            </div>
                             <button onClick={submitComment}>Enviar comentario</button>
-                        </div>
-                    )}
-
-                    {ratingOpen && (
-                        <div style={{ marginTop: "1em" }}>
-                            <label>Seleccioná estrellas: </label>
-                            <select
-                                value={rating}
-                                onChange={(e) => setRating(Number(e.target.value))}
-                            >
-                                <option value={0}>--</option>
-                                <option value={1}>⭐</option>
-                                <option value={2}>⭐⭐</option>
-                                <option value={3}>⭐⭐⭐</option>
-                                <option value={4}>⭐⭐⭐⭐</option>
-                                <option value={5}>⭐⭐⭐⭐⭐</option>
-                            </select>
-                            <br />
-                            <button onClick={submitRating}>Enviar calificación</button>
                         </div>
                     )}
                 </div>

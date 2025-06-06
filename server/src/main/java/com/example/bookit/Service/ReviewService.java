@@ -6,6 +6,7 @@ import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,6 +24,7 @@ public class ReviewService {
 
         Review review = new Review();
         review.setUser(user);
+        review.setCreationDate(LocalDateTime.now());
         review.setBook(book);
 
         if (comment != null && !comment.isBlank()) {

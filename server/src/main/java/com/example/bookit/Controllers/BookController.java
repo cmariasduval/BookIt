@@ -172,7 +172,7 @@ public class BookController {
 
             // Convertir a DTO si estás usando DTOs
             List<BookDTO> dtos = books.stream()
-                    .map(book -> new BookDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getImage()))
+                    .map(book -> new BookDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getGenres(), book.getImageUrl()))
                     .toList();
 
             return ResponseEntity.ok(dtos);

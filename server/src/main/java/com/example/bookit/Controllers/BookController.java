@@ -162,7 +162,7 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> searchBooks(@RequestParam String query) {
         System.out.println("🔍 Entró al endpoint /search con query: " + query);
         try {
-            List<Book> books = bookRepository.findByTitleContainingIgnoreCase(query);
+            List<Book> books = bookRepository.searchBooks(query);
             System.out.println("📚 Libros encontrados: " + books.size());
 
             if (books.isEmpty()) {
@@ -178,8 +178,10 @@ public class BookController {
             return ResponseEntity.ok(dtos);
         } catch (Exception e) {
             System.out.println("❌ Error en searchBooks: " + e.getMessage());
+            e.printStackTrace(); // <- esto imprime el error completo
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+
     }
 
 

@@ -9,6 +9,8 @@ import hungergames from '../Assets/books/hungergames.png';
 import mazerunner from '../Assets/books/mazerunner.png';
 import rebecca from '../Assets/books/rebecca.png';
 import { useNavigate } from "react-router-dom";
+import BookCalendar from "./BookCalendar"; 
+
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("activity");
@@ -81,10 +83,15 @@ const Profile = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="infracciones-container">
-                            <div className="infracciones"><h2>Deuda</h2><p>$2000</p></div>
-                            <div className="infracciones"><h2>Infracciones</h2><p>2</p></div>
-                            <div className="calendario">Calendario</div>
+                        <div className="lower-activity-section">
+                            
+                            <div className="calendario">
+                                <BookCalendar />
+                            </div>
+                            <div className="infracciones-container">
+                                <div className="infracciones"><h2>Deuda</h2><p>$2000</p></div>
+                                <div className="infracciones"><h2>Infracciones</h2><p>2</p></div>
+                            </div>
                         </div>
                     </div>
                 )}

@@ -83,14 +83,15 @@ const Profile = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="infracciones-container">
-                            <div className="infracciones"><h2>Deuda</h2><p>$2000</p></div>
-                            <div className="infracciones"><h2>Infracciones</h2><p>2</p></div>
+                        <div className="lower-activity-section">
+                            
                             <div className="calendario">
-                                <h2>Calendario de reservas</h2>
                                 <BookCalendar />
                             </div>
-
+                            <div className="infracciones-container">
+                                <div className="infracciones"><h2>Deuda</h2><p>$2000</p></div>
+                                <div className="infracciones"><h2>Infracciones</h2><p>2</p></div>
+                            </div>
                         </div>
                     </div>
                 )}

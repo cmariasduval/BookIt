@@ -5,6 +5,31 @@ const ManageInfractions = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updatingUsername, setUpdatingUsername] = useState(null);
+    const [modalInfo, setModalInfo] = useState({ isOpen: false, action: null, user: null });
+
+    const openModal = (action, user) => {
+    setModalInfo({ isOpen: true, action, user });
+    };  
+
+    const closeModal = () => {
+    setModalInfo({ isOpen: false, action: null, user: null });
+    };
+
+    const confirmAction = async () => {
+    const { action, user } = modalInfo;
+    if (!user) return;
+
+    if (action === 'block') {
+        await handleBlockUser(user.username);
+    } else if (action === 'unblock') {
+        await handleUnblockUser(user.id);
+    }
+
+    closeModal();
+    };
+
+
+
 
 
     useEffect(() => {
@@ -151,7 +176,7 @@ const ManageInfractions = () => {
                             </button>
                             {!user.blocked && (
                                 <button
-                                    onClick={() => handleBlockUser(user.username)}
+                                    onClick={() => openModal('block', user)}
                                     style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
                                 >
                                     Bloquear
@@ -160,12 +185,26 @@ const ManageInfractions = () => {
 
                             {user.blocked && (
                                 <button
-                                    onClick={() => handleUnblockUser(user.id)}
+                                    onClick={() => openModal('unblock', user)}
                                     style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}
                                 >
                                     Desbloquear
                                 </button>
                             )}
+
+                            {modalInfo.isOpen && (
+                                <div className="modal-overlay">
+                                    <div className="modal-content">
+                                        <p>¿Seguro que querés {modalInfo.action === 'block' ? 'bloquear' : 'desbloquear'} a este usuario?</p>
+                                        <strong>{modalInfo.user?.username || 'Usuario'}</strong>
+                                        <div style={{ marginTop: '10px' }}>
+                                            <button onClick={confirmAction} style={{ marginRight: '10px' }}>Sí</button>
+                                            <button onClick={closeModal}>Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
 
                         </li>
                     ))}

@@ -243,4 +243,5 @@ public class User {
     public int getInfractionsCount() {
         return infractions.size();
     }
+
 }

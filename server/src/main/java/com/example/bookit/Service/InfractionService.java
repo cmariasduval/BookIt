@@ -93,7 +93,8 @@ public class InfractionService {
                         user.getUsername(),
                         user.getEmail(),
                         user.getDebt(),
-                        user.getInfractions().size()
+                        user.getInfractions().size(),
+                        user.isBlocked()
                 ))
                 .toList();
     }

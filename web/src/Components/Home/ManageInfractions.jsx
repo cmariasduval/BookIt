@@ -6,6 +6,7 @@ const ManageInfractions = () => {
     const [loading, setLoading] = useState(true);
     const [updatingUsername, setUpdatingUsername] = useState(null);
 
+
     useEffect(() => {
         fetchUsersWithDebt();
     }, []);
@@ -40,8 +41,8 @@ const ManageInfractions = () => {
         }
     };
 
-    const handlePayDebt = async (username) => {
-        setUpdatingUsername(username);
+    const handlePayDebt = async (userId) => {
+        setUpdatingUsername(userId);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('No se encontró el token de autenticación.');
@@ -49,7 +50,7 @@ const ManageInfractions = () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:8080/api/infractions/users/${username}/pay-debt`, {
+            const res = await fetch(`http://localhost:8080/api/infractions/users/${userId}/pay-debt`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -60,7 +61,7 @@ const ManageInfractions = () => {
                 throw new Error(`Error ${res.status}: ${res.statusText}`);
             }
             setUsersWithDebt(prev =>
-                prev.map(u => u.username === username ? { ...u, debt: 0, infractionCount: 0 } : u)
+                prev.map(u => u.userId === userId ? { ...u, debt: 0, infractionCount: 0 } : u)
             );
         } catch (err) {
             console.error(err);
@@ -87,10 +88,46 @@ const ManageInfractions = () => {
             if (!res.ok) {
                 throw new Error(`Error ${res.status}: ${res.statusText}`);
             }
+
+            setUsersWithDebt(prev =>
+                prev.map(user =>
+                    user.username === username ? { ...user, blocked: true } : user
+                )
+            );
             alert(`Usuario ${username} bloqueado por 90 días.`);
         } catch (err) {
             console.error(err);
             setError('Error al bloquear el usuario.');
+        }
+    };
+
+    const handleUnblockUser = async (userId) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError('No se encontró el token de autenticación.');
+            return;
+        }
+        try {
+            const res = await fetch(`http://localhost:8080/api/infractions/unblock/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: ${res.statusText}`);
+            }
+
+            setUsersWithDebt(prev =>
+                prev.map(user =>
+                    user.id === userId ? { ...user, blocked: false } : user
+                )
+            );
+            alert(`Usuario desbloqueado.`);
+        } catch (err) {
+            console.error(err);
+            setError('Error al desbloquear el usuario.');
         }
     };
 
@@ -106,18 +143,30 @@ const ManageInfractions = () => {
                         <li key={user.username}>
                             <strong>{user.username || 'Usuario desconocido'}</strong> - Deuda: ${user.debt.toFixed(2)} - Infracciones: {user.infractionCount}
                             <button
-                                onClick={() => handlePayDebt(user.username)}
+                                onClick={() => handlePayDebt(user.id)}
                                 disabled={updatingUsername === user.username || user.debt === 0}
                                 style={{ marginLeft: '10px' }}
                             >
                                 {updatingUsername === user.username ? 'Actualizando...' : 'Pagar deuda'}
                             </button>
-                            <button
-                                onClick={() => handleBlockUser(user.username)}
-                                style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
-                            >
-                                Bloquear
-                            </button>
+                            {!user.blocked && (
+                                <button
+                                    onClick={() => handleBlockUser(user.username)}
+                                    style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
+                                >
+                                    Bloquear
+                                </button>
+                            )}
+
+                            {user.blocked && (
+                                <button
+                                    onClick={() => handleUnblockUser(user.id)}
+                                    style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}
+                                >
+                                    Desbloquear
+                                </button>
+                            )}
+
                         </li>
                     ))}
                 </ul>

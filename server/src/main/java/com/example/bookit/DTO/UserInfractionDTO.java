@@ -6,13 +6,15 @@ public class UserInfractionDTO {
     private String email;
     private double debt;          // deuda por infracciones
     private int infractionCount;  // cantidad de infracciones
+    private boolean blocked;
 
-    public UserInfractionDTO(Long id, String username, String email, double debt, int infractionCount) {
+    public UserInfractionDTO(Long id, String username, String email, double debt, int infractionCount, boolean blocked) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.debt = debt;
         this.infractionCount = infractionCount;
+        this.blocked = blocked;
     }
 
     // getters y setters
@@ -47,4 +49,6 @@ public class UserInfractionDTO {
     public void setInfractionCount(int infractionCount) {
         this.infractionCount = infractionCount;
     }
+    public boolean isBlocked() {return blocked;}
+    public void setBlocked(boolean blocked) {this.blocked = blocked;}
 }

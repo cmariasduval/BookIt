@@ -5,6 +5,7 @@ import com.example.bookit.DTO.ReservationRequest;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookCopyRepository;
 import com.example.bookit.Repository.ReservationRepository;
+import com.example.bookit.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,9 @@ public class ReservationService {
 
     @Autowired
     private final InfractionService infractionService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public ReservationService(InfractionService infractionService) {
         this.infractionService = infractionService;
@@ -183,6 +187,12 @@ public class ReservationService {
         for (Reservation res : activeReservations) {
             reservationRepository.delete(res);  // Cancela sin restricciones
         }
+    }
+
+    public List<ReservationDTO> getReservationsByUserEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        List<Reservation> reservations = reservationRepository.findByUser(user);
+        return reservations.stream().map(ReservationDTO::fromEntity).toList();
     }
 
 }

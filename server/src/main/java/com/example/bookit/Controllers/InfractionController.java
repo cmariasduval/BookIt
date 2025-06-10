@@ -63,7 +63,7 @@ public class InfractionController {
     }
 
     // PUT: Desbloquear manualmente (opcional, para manager)
-    @PutMapping("/unlock/{userId}")
+    @PutMapping("/unblock/{userId}")
     public ResponseEntity<?> desbloquearUsuario(@PathVariable Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
@@ -89,7 +89,8 @@ public class InfractionController {
                         user.getUsername(),
                         user.getEmail(),
                         user.getDebt(),
-                        user.getInfractionsCount()
+                        user.getInfractionsCount(),
+                        user.isBlocked()
                 ))
                 .collect(Collectors.toList());
 
@@ -158,7 +159,6 @@ public class InfractionController {
 
         return ResponseEntity.ok("Usuario " + username + " bloqueado por 90 días.");
     }
-
 
 
     private String getAuthenticatedUsername() {

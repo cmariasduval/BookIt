@@ -10,15 +10,12 @@ import com.example.bookit.Repository.GenreRepository;
 import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -216,5 +213,15 @@ public class BookController {
         List<Book> recommendedBooks = bookRepository.findBooksByGenres(genreNames);
         return ResponseEntity.ok(recommendedBooks);
     }
+
+    @GetMapping("/genre/{genreName}")
+    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable String genreName) {
+        List<Book> books = bookRepository.findByGenres_GenreTypeIgnoreCase(genreName);
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(books);
+    }
+
 
 }

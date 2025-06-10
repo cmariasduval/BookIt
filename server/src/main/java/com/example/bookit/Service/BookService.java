@@ -1,5 +1,6 @@
 package com.example.bookit.Service;
 
+import com.example.bookit.DTO.BookDTO;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookRepository;
 import com.example.bookit.Repository.FavoriteRepository;
@@ -166,4 +167,11 @@ public class BookService {
     }
 
 
+    public List<BookDTO> findBooksByGenre(String genreName) {
+        // Asumiendo que tienes una entidad Book con un campo "genre" (String o entidad Genre)
+        List<Book> books = bookRepository.findBooksByGenre(genreName);
+        return books.stream()
+                .map(book -> new BookDTO(book))
+                .collect(Collectors.toList());
+    }
 }

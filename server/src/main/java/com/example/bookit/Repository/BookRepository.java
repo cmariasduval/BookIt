@@ -26,5 +26,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT DISTINCT b FROM Book b JOIN b.genres g WHERE g.genreType IN :genres")
     List<Book> findBooksByGenres(@Param("genres") List<String> genres);
 
+    @Query("SELECT DISTINCT b FROM Book b JOIN b.genres g WHERE g.genreType IN :genres")
+    List<Book> findBooksByGenre(@Param("genres") String genre);
+
+    List<Book> findByGenres_GenreTypeIgnoreCase(String genreType);
 
 }

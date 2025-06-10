@@ -168,10 +168,16 @@ const Home = () => {
                 </div>
                 <div className="home-category-list">
                     {bookCategories.map(({ icon, label }, index) => (
-                        <div key={index} className="home-category-card">
+                        <div
+                            key={index}
+                            className="home-category-card"
+                            onClick={() => navigate(`/genres/${label.toLowerCase().replace(/\s+/g, '-')}`)}
+                            style={{ cursor: "pointer" }}
+                        >
                             <div className="home-category-icon">{icon}</div>
                             <span className="home-category-label">{label}</span>
                         </div>
+
                     ))}
                 </div>
             </div>

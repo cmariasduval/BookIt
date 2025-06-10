@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -184,12 +185,36 @@ public class BookController {
 
     }
 
-
-
-
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         Book book = bookService.findById(id);
         return ResponseEntity.ok(book);
     }
+
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> getRecommendations(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replaceFirst("Bearer ", "");
+        String usernameFromToken = jwtUtil.extractUsername(token);
+
+        Optional<User> userOptional = userRepository.findByUsername(usernameFromToken);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+        }
+
+        User user = userOptional.get();
+        List<Genre> interests = user.getInterests();
+
+        if (interests.isEmpty()) {
+            return ResponseEntity.ok(List.of()); // o libros populares si querés fallback
+        }
+
+        List<String> genreNames = interests.stream()
+                .map(Genre::getGenreType)
+                .toList();
+
+        List<Book> recommendedBooks = bookRepository.findBooksByGenres(genreNames);
+        return ResponseEntity.ok(recommendedBooks);
+    }
+
 }

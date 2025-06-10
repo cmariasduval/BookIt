@@ -23,4 +23,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "LOWER(g.genreType) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Book> searchBooks(@Param("query") String query);
 
+    @Query("SELECT DISTINCT b FROM Book b JOIN b.genres g WHERE g.genreType IN :genres")
+    List<Book> findBooksByGenres(@Param("genres") List<String> genres);
+
+
 }

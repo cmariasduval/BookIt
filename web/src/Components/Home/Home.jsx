@@ -36,23 +36,32 @@ const Home = () => {
     }, []);
 
     const fetchBookDetails = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/books",
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
-                    }
-                });
-            if (response.ok) {
-                const data = await response.json();
-                setRecommendedBooks(data);
-            } else {
-                console.error("Error al cargar libros recomendados");
-            }
-        } catch (error) {
-            console.error("Error en el fetch:", error);
+    try {
+        const token = localStorage.getItem("authToken");
+
+        if (!token) {
+            console.error("Token no encontrado");
+            return;
         }
-    };
+
+        const response = await fetch("http://localhost:8080/api/books/recommendations", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();  // Mostrar contenido del error
+            console.error("Error al obtener libros recomendados:", response.status, errorText);
+            return;
+        }
+
+        const recommended = await response.json();
+        console.log("Libros recomendados:", recommended);  // Confirmar que llegan los datos
+        setRecommendedBooks(recommended);
+    } catch (error) {
+        console.error("Error en el fetch:", error);
+    }
+};
+
 
 
     // Cargar usuario al entrar (si lo necesitas para otras partes de la app)

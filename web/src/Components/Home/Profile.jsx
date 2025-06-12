@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Profile.css";
-import { LuPencilLine } from "react-icons/lu";
+import BookCalendar from "./BookCalendar";
+
 import bookthief from '../Assets/books/bookthief.png';
 import emma from '../Assets/books/emma.png';
 import annafrank from '../Assets/books/annafrank.png';
@@ -8,89 +10,187 @@ import belljar from '../Assets/books/belljar.png';
 import hungergames from '../Assets/books/hungergames.png';
 import mazerunner from '../Assets/books/mazerunner.png';
 import rebecca from '../Assets/books/rebecca.png';
-import { useNavigate } from "react-router-dom";
-import BookCalendar from "./BookCalendar"; 
 
+const reservedBooks = [
+    bookthief,
+    annafrank,
+    belljar,
+    emma,
+    rebecca,
+    mazerunner,
+    hungergames,
+];
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("activity");
-    const [userData, setUserData] = useState(null);
     const [userReviews, setUserReviews] = useState([]);
+    const [editingReviewId, setEditingReviewId] = useState(null);
+    const [editRating, setEditRating] = useState(0);
+    const [editComment, setEditComment] = useState("");
+
     const storedUser = JSON.parse(localStorage.getItem("user"));
+    const authToken = localStorage.getItem("authToken");
     const navigate = useNavigate();
 
-    const userEmail = storedUser?.email;
-
+    // Load user reviews when "Reviews & Ratings" tab is active
     useEffect(() => {
-        if (userEmail) {
-            const yourAuthToken = localStorage.getItem('authToken');
-            fetch(`http://localhost:8080/api/users/${userEmail}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${yourAuthToken}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.json();
-                })
-                .then(data => setUserData(data))
-                .catch(error => console.error("Error fetching user data:", error));
+        if (activeTab === "reviews") {
+            fetchUserReviews();
         }
-    }, [userEmail]);
+    }, [activeTab]);
 
-    useEffect(() => {
-        const authToken = localStorage.getItem('authToken');
-        if (authToken) {
-            fetch("http://localhost:8080/api/reviews/me", {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json'
-                }
+    const fetchUserReviews = () => {
+        fetch("http://localhost:8080/api/reviews/me", {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Error al obtener reviews");
+                return res.json();
             })
-                .then(res => {
-                    if (!res.ok) throw new Error(`Error ${res.status}`);
-                    return res.json();
-                })
-                .then(data => setUserReviews(data))
-                .catch(err => console.error("Error fetching reviews:", err));
-        }
-    }, []);
+            .then(setUserReviews)
+            .catch(console.error);
+    };
 
-    const reservedBooks = [bookthief, annafrank, belljar, emma, rebecca, mazerunner, hungergames];
+    // Edit handlers
+    const startEditing = (review) => {
+        setEditingReviewId(review.id);
+        setEditRating(review.rating);
+        setEditComment(review.comment);
+    };
+
+    const cancelEditing = () => {
+        setEditingReviewId(null);
+        setEditRating(0);
+        setEditComment("");
+    };
+
+    const saveReview = (reviewId) => {
+        fetch(`http://localhost:8080/api/reviews/${reviewId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ rating: editRating, comment: editComment }),
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Error al actualizar review");
+                return res.json();
+            })
+            .then(() => {
+                cancelEditing();
+                fetchUserReviews();
+            })
+            .catch(console.error);
+    };
+
+    const deleteReview = (reviewId) => {
+        if (!window.confirm("¿Querés eliminar esta reseña?")) return;
+        fetch(`http://localhost:8080/api/reviews/${reviewId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Error al eliminar review");
+                fetchUserReviews();
+            })
+            .catch(console.error);
+    };
 
     return (
         <div className="profile-container">
             <div className="barra-superior-profile">
                 <h1 className="home-title">Profile</h1>
                 <div className="tabs-container">
-                    <button className={activeTab === "about" ? "tab active" : "tab"} onClick={() => setActiveTab("about")}>About me</button>
-                    <button className={activeTab === "activity" ? "tab active" : "tab"} onClick={() => setActiveTab("activity")}>My Activity</button>
-                    <button className={activeTab === "reviews" ? "tab active" : "tab"} onClick={() => setActiveTab("reviews")}>Reviews & Ratings</button>
+                    <button
+                        className={activeTab === "about" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("about")}
+                    >
+                        About me
+                    </button>
+                    <button
+                        className={activeTab === "activity" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("activity")}
+                    >
+                        My Activity
+                    </button>
+                    <button
+                        className={activeTab === "reviews" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("reviews")}
+                    >
+                        Reviews & Ratings
+                    </button>
                 </div>
             </div>
 
             <div className="tab-content">
+                {activeTab === "about" && (
+                    <div className="fixed-user-info">
+                        <button
+                            type="button"
+                            className="edit-profile-button"
+                            onClick={() => navigate("/editProfile")}
+                        >
+                            Edit Profile
+                        </button>
+                        <h1 className="username">{storedUser?.name}</h1>
+                        <div className="user-detail-row">
+                            <span>Email:</span> <span>{storedUser?.email}</span>
+                        </div>
+                        <div className="user-detail-row">
+                            <span>Username:</span> <span>{storedUser?.username}</span>
+                        </div>
+                        <div className="user-detail-row editable">
+                            <span>Password:</span> <span>{storedUser?.password}</span>
+                        </div>
+                        <div className="user-detail-row">
+                            <span>Birth date:</span> <span>{storedUser?.birthDate}</span>
+                        </div>
+                        <div className="user-detail-row editable">
+                            <span>Interests:</span>{" "}
+                            <span>
+                                {storedUser?.interests
+                                    ? storedUser.interests.map((i) => i.genreType).join(", ")
+                                    : ""}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
                 {activeTab === "activity" && (
                     <div className="activity-section">
                         <div className="reservados">
                             <h2 className="reservados-title">Reserved Books</h2>
                             <div className="reservados-carousel">
-                                {reservedBooks.map((img, index) => (
-                                    <img key={index} src={img} alt="book" className="reserved-book-card" onClick={() => navigate('/bookDetails')} />
+                                {reservedBooks.map((img, idx) => (
+                                    <img
+                                        key={idx}
+                                        src={img}
+                                        alt="book"
+                                        className="reserved-book-card"
+                                        onClick={() => navigate("/bookDetails")}
+                                    />
                                 ))}
                             </div>
                         </div>
+
                         <div className="lower-activity-section">
-                            
                             <div className="calendario">
                                 <BookCalendar />
                             </div>
                             <div className="infracciones-container">
-                                <div className="infracciones"><h2>Deuda</h2><p>$2000</p></div>
-                                <div className="infracciones"><h2>Infracciones</h2><p>2</p></div>
+                                <div className="infracciones">
+                                    <h2>Deuda</h2>
+                                    <p>$2000</p>
+                                </div>
+                                <div className="infracciones">
+                                    <h2>Infracciones</h2>
+                                    <p>2</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -102,25 +202,68 @@ const Profile = () => {
                         {userReviews.length === 0 ? (
                             <p>No tenés reseñas todavía.</p>
                         ) : (
-                            userReviews.map(review => (
+                            userReviews.map((review) => (
                                 <div className="review" key={review.id}>
-                                    <strong>{review.book.title}</strong>
-                                    <p>{"⭐".repeat(review.rating)} – {review.comment}</p>
+                                    {editingReviewId === review.id ? (
+                                        <div className="review-content">
+                                            <strong>{review.book.title}</strong>
+                                            <label>
+                                                Rating:{" "}
+                                                <select
+                                                    value={editRating}
+                                                    onChange={(e) => setEditRating(Number(e.target.value))}
+                                                >
+                                                    {[1, 2, 3, 4, 5].map((n) => (
+                                                        <option key={n} value={n}>
+                                                            {n}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                            <label>
+                                                Comentario:
+                                                <textarea
+                                                    rows={3}
+                                                    value={editComment}
+                                                    onChange={(e) => setEditComment(e.target.value)}
+                                                />
+                                            </label>
+                                            <div className="review-actions">
+                                                <button onClick={() => saveReview(review.id)}>Guardar</button>
+                                                <button onClick={cancelEditing}>Cancelar</button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="review-content">
+                                                <strong>{review.book.title}</strong>
+                                                <p>
+                                                    {"⭐".repeat(review.rating)} – {review.comment}
+                                                </p>
+                                            </div>
+                                            <div className="review-actions">
+                                                <button
+                                                    onClick={() => startEditing(review)}
+                                                    className="icon-button edit"
+                                                    aria-label="Editar reseña"
+                                                    title="Editar"
+                                                >
+                                                    ✏️
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteReview(review.id)}
+                                                    className="icon-button delete"
+                                                    aria-label="Eliminar reseña"
+                                                    title="Eliminar"
+                                                >
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             ))
                         )}
-                    </div>
-                )}
-
-                {activeTab === "about" && (
-                    <div className="fixed-user-info">
-                        <button type="button" className="edit-profile-button" onClick={() => navigate("/editProfile")}>Edit Profile</button>
-                        <h1 className="username">{storedUser.name}</h1>
-                        <div className="user-detail-row"><span>Email:</span><span>{storedUser.email}</span></div>
-                        <div className="user-detail-row"><span>Username:</span><span>{storedUser.username}</span></div>
-                        <div className="user-detail-row editable"><span>Password:</span><span>{storedUser.password}</span></div>
-                        <div className="user-detail-row"><span>Birth date:</span><span>{storedUser.birthDate}</span></div>
-                        <div className="user-detail-row editable"><span>Interests:</span><span>{storedUser.interests.map(i => i.genreType).join(', ')}</span></div>
                     </div>
                 )}
             </div>

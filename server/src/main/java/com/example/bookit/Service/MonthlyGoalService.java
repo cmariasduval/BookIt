@@ -37,8 +37,8 @@ public class MonthlyGoalService {
         MonthlyGoal goal = new MonthlyGoal(
                 request.getBookCount(),
                 request.getMonth(),
-                request.getYear()
-        );
+                request.getYear(),
+                request.getBooksRead() == 0 ? 0 : request.getBooksRead()        );
         goal.setUser(user);
         return goalRepository.save(goal);
     }
@@ -65,4 +65,26 @@ public class MonthlyGoalService {
 
         return goalRepository.save(goal);
     }
+
+    public MonthlyGoal incrementBooksRead(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        int year = now.getYear();
+
+        MonthlyGoal goal = goalRepository
+                .findByUserAndMonthAndYear(user, month, year)
+                .orElseThrow(() -> new RuntimeException("Monthly goal not set"));
+
+        if (goal.getBooksRead() < goal.getBookCount()) {
+            goal.setBooksRead(goal.getBooksRead() + 1);
+            return goalRepository.save(goal);
+        }
+
+        return goal;
+    }
+
+
 }

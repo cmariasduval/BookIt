@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
-    FaSearch, FaUser, FaPlus, FaCalendarCheck, FaExclamationTriangle
+    FaSearch,
+    FaUser,
+    FaPlus,
+    FaCalendarCheck,
+    FaExclamationTriangle,
 } from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
@@ -25,7 +29,7 @@ const Sidebar = () => {
             try {
                 const response = await axios.get("http://localhost:8080/api/goals/monthly", {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 setGoal(response.data);
@@ -35,7 +39,24 @@ const Sidebar = () => {
         };
 
         fetchGoal();
-    }, []);
+    }, [token]);
+
+    const incrementBooksRead = async () => {
+        try {
+            const response = await axios.post(
+                "http://localhost:8080/api/goals/monthly/increment",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setGoal(response.data);
+        } catch (error) {
+            console.error("Error incrementing books read:", error);
+        }
+    };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -160,7 +181,14 @@ const Sidebar = () => {
 
                     <div className="goal">
                         <h2 className="goal-title">Monthly Goal</h2>
-                        <p className="goal-number">{goal?.bookCount ?? "—"}</p>
+                        <div className="goal-progress">
+              <span className="goal-progress-text">
+                {goal?.booksRead ?? 0} / {goal?.bookCount ?? "—"}
+              </span>
+                            <button onClick={incrementBooksRead} className="increment-button">
+                                +
+                            </button>
+                        </div>
                         <button onClick={() => navigate("/set-goal")} className="goal-button">
                             Set Goal
                         </button>

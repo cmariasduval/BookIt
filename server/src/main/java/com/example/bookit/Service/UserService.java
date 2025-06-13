@@ -85,7 +85,7 @@ public class UserService {
 
             // Crear la reserva
             Reservation reservation = new Reservation();
-            //reservation.setUser(user);
+            reservation.setUser(user);
             reservation.setCopy(copy);
             reservation.setReservationDate(reservationDate);
             reservation.setPickupDate(pickupDate);
@@ -137,4 +137,20 @@ public class UserService {
                 .collect(Collectors.toList());
 
     }
+
+    //traes las reservas activas del usuario
+    public List<BookDTO> getActiveReservedBooksByUserEmail(String email) {
+        List<Reservation> activeReservations = reservationRepository.findByUserEmailAndStatuses(
+                email,
+                List.of(ReservationStatus.PENDING, ReservationStatus.ACTIVE)
+        );
+
+        return activeReservations.stream()
+                .map(reservation -> {
+                    Book book = reservation.getCopy().getBook();
+                    return new BookDTO(book);
+                })
+                .collect(Collectors.toList());
+    }
+
 }

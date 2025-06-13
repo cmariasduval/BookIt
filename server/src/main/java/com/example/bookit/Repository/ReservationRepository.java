@@ -36,4 +36,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query(value = "SELECT * FROM reservation r WHERE DATEADD('DAY', r.period, r.reservation_date) = ?1", nativeQuery = true)
     List<Reservation> findByReturnDate(LocalDate now);
+
+    //devuelve todas las reservas de un usuarios que esten en el estado que le pases
+    @Query("SELECT r FROM Reservation r WHERE r.user.email = :email AND r.status IN :statuses")
+    List<Reservation> findByUserEmailAndStatuses(@Param("email") String email, @Param("statuses") List<ReservationStatus> statuses);
+
 }

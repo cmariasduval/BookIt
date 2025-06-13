@@ -10,6 +10,7 @@ const Profile = () => {
     const [editRating, setEditRating] = useState(0);
     const [editComment, setEditComment] = useState("");
     const [reservedBooks, setReservedBooks] = useState([]);
+    const [userData, setUserData] = useState(null);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const authToken = localStorage.getItem("authToken");
@@ -83,61 +84,42 @@ const Profile = () => {
             })
             .catch(console.error);
     };
-  const userEmail = storedUser?.email;
-  const userId = storedUser?.id
+    console.log("storedUser:", storedUser);
+  const userEmail = storedUser.email;
+  const userId = storedUser.id
 
   useEffect(() => {
-    console.log("useEffect para cargar datos del usuario y libros reservados iniciado"); // LOG
-    console.log("userEmail:", userEmail); // LOG
+  const fetchReservedBooks = async () => {
+    try {
+      const userEmail = localStorage.getItem("userEmail");
+      const authToken = localStorage.getItem("authToken");
 
-    if (userEmail) {
-      const yourAuthToken = localStorage.getItem('authToken');
-      console.log("Auth token:", yourAuthToken ? "Existe" : "No existe"); // LOG
+      const reservedBooksUrl = `http://localhost:8080/api/users/${userEmail}/active-reservations`;
 
-      // Obtener datos del usuario
-      console.log(`Fetch user data: http://localhost:8080/api/users/${userEmail}`); // LOG
-      fetch(`http://localhost:8080/api/users/${userEmail}`, {
-        method: 'GET',
+      const response = await fetch(reservedBooksUrl, {
         headers: {
-          'Authorization': `Bearer ${yourAuthToken}`,
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(response => {
-          console.log("Respuesta user data recibida con status:", response.status); // LOG
-          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-          return response.json();
-        })
-        .then(data => {
-          console.log("Datos del usuario recibidos:", data); // LOG
-          setUserData(data);
-        })
-        .catch(error => console.error("Error fetching user data:", error));
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
 
-      // Obtener libros reservados del usuario
-      const reservedBooksUrl = `http://localhost:8080/api/users/${userId}/reserved-books`;
-      console.log(`Fetch reserved books: ${reservedBooksUrl}`); // LOG
-      fetch(reservedBooksUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${yourAuthToken}`,
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(response => {
-          console.log("Respuesta reserved books recibida con status:", response.status); // LOG
-          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-          return response.json();
-        })
-        .then(data => {
-          console.log("Reserved books data:", data); // LOG
-          setReservedBooks(data);
-        })
-        .catch(error => console.error("Error fetching reserved books:", error));
-    } else {
-      console.log("No hay userEmail, no se harán fetches."); // LOG
+      if (!response.ok) {
+        throw new Error("Failed to fetch reserved books");
+      }
+
+      const data = await response.json();
+
+      // ⬇️ Acá va el log
+      console.log("Reserved books data:", data);
+
+      setReservedBooks(data);
+    } catch (error) {
+      console.error("Error fetching reserved books:", error);
     }
-  }, [userEmail]);
+  };
+
+  fetchReservedBooks();
+}, []);
+
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');

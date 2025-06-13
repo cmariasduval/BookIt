@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.bookit.Entities.Role;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -161,9 +162,13 @@ public class UserController {
     @GetMapping("/{email}/reserved-books")
     public ResponseEntity<List<BookDTO>> getReservedBooksByUser(@PathVariable String email) {
         List<BookDTO> reservedBooks = userService.getReservedBooksByUserEmail(email);
-        if (reservedBooks == null || reservedBooks.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 si no tiene libros reservados
-        }
-        return ResponseEntity.ok(reservedBooks);
+        return ResponseEntity.ok(reservedBooks != null ? reservedBooks : new ArrayList<>());
     }
+
+    @GetMapping("/{email}/active-reservations")
+    public ResponseEntity<List<BookDTO>> getActiveReservations(@PathVariable String email) {
+        List<BookDTO> activeBooks = userService.getActiveReservedBooksByUserEmail(email);
+        return ResponseEntity.ok(activeBooks);
+    }
+
 }

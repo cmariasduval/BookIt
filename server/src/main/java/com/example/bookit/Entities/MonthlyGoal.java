@@ -11,7 +11,8 @@ public class MonthlyGoal {
     @Column(name = "id", nullable = false)
     private int id;
 
-
+    @Column
+    private int booksRead;
 
     @ManyToOne
     @JoinColumn(name = "User_ID")
@@ -28,11 +29,12 @@ public class MonthlyGoal {
 
     public MonthlyGoal() {}
 
-    public MonthlyGoal(int bookCount, int month, int year) {
+    public MonthlyGoal(int bookCount, int month, int year, int booksRead) {
 
         this.bookCount = bookCount;
         this.month = month;
         this.year = year;
+        this.booksRead = booksRead;
     }
 
     public int getId() {
@@ -43,6 +45,13 @@ public class MonthlyGoal {
         this.id = id;
     }
 
+    public int getBooksRead() {
+        return booksRead;
+    }
+
+    public void setBooksRead(int booksRead) {
+        this.booksRead = booksRead;
+    }
 
 
     public User getUser() {

@@ -5,12 +5,14 @@ public class MonthlyGoalRequest {
     private int bookCount;
     private int month;
     private int year;
+    private int booksRead;
 
-    public MonthlyGoalRequest(String name, int bookCount, int month, int year) {
+    public MonthlyGoalRequest(String name, int bookCount, int month, int year, int booksRead) {
         this.name = name;
         this.bookCount = bookCount;
         this.month = month;
         this.year = year;
+        this.booksRead = booksRead;
     }
 
     public String getName() {
@@ -40,5 +42,9 @@ public class MonthlyGoalRequest {
     }
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public int getBooksRead() {
+        return booksRead;
     }
 }

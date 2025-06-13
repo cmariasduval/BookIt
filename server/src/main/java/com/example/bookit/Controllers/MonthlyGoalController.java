@@ -57,4 +57,14 @@ public class MonthlyGoalController {
             return principal.toString();
         }
     }
+
+
+    @PostMapping("/monthly/increment")
+    public ResponseEntity<MonthlyGoal> incrementBooksRead() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        MonthlyGoal updatedGoal = goalService.incrementBooksRead(username);
+        return ResponseEntity.ok(updatedGoal);
+    }
+
+
 }

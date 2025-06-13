@@ -1,10 +1,7 @@
 package com.example.bookit.Controllers;
 
 import com.example.bookit.Config.JwtUtil;
-import com.example.bookit.DTO.AuthResponse;
-import com.example.bookit.DTO.LoginResponse;
-import com.example.bookit.DTO.UserRequest;
-import com.example.bookit.DTO.UserUpdateRequest;
+import com.example.bookit.DTO.*;
 import com.example.bookit.Entities.Genre;
 import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.GenreRepository;
@@ -159,5 +156,14 @@ public class UserController {
             this.interests = interests;
             this.role = role;
         }
+    }
+
+    @GetMapping("/{email}/reserved-books")
+    public ResponseEntity<List<BookDTO>> getReservedBooksByUser(@PathVariable String email) {
+        List<BookDTO> reservedBooks = userService.getReservedBooksByUserEmail(email);
+        if (reservedBooks == null || reservedBooks.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 si no tiene libros reservados
+        }
+        return ResponseEntity.ok(reservedBooks);
     }
 }

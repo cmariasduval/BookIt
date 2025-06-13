@@ -1,6 +1,7 @@
 package com.example.bookit.Service;
 
 import com.example.bookit.Config.JwtUtil;
+import com.example.bookit.DTO.BookDTO;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.GenreRepository;
 import com.example.bookit.Repository.ReservationRepository;
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -115,5 +118,23 @@ public class UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+    }
+
+    public List<BookDTO> getReservedBooksByUserEmail(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        User user = userOpt.get();
+        // Suponiendo que User tiene un Set<Book> reservedBooks o algo similar
+        return user.getReservations()
+                .stream()
+                .map(reservation -> {
+                    Book book = reservation.getCopy().getBook(); // o como accedas al Book desde Reservation
+                    return new BookDTO(book);
+                })
+                .collect(Collectors.toList());
+
     }
 }

@@ -3,14 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 import BookCalendar from "./BookCalendar";
 
-import bookthief from '../Assets/books/bookthief.png';
-import emma from '../Assets/books/emma.png';
-import annafrank from '../Assets/books/annafrank.png';
-import belljar from '../Assets/books/belljar.png';
-import hungergames from '../Assets/books/hungergames.png';
-import mazerunner from '../Assets/books/mazerunner.png';
-import rebecca from '../Assets/books/rebecca.png';
-
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("activity");
     const [userReviews, setUserReviews] = useState([]);

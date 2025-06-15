@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Library.css';
+import ReservationModal from './ReservationModal';
 
 const Library = () => {
     const [allBooks, setAllBooks] = useState([]);
@@ -8,6 +9,14 @@ const Library = () => {
     const [favoriteBooks, setFavoriteBooks] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showReservationModal, setShowReservationModal] = useState(false);
+    const [selectedBook, setSelectedBook] = useState(null);
+
+    const openReservationModal = (book) => {
+        setSelectedBook(book);
+        setShowReservationModal(true);
+    };
+
 
     const fetchBooks = async () => {
         const token = localStorage.getItem('authToken');
@@ -110,6 +119,71 @@ const Library = () => {
     if (!token) {
         return <p className="error">Token o usuario no encontrado</p>;
     }
+
+    const handleReserveConfirmed = async (bookId, reservationDate, period) => {
+    // Verificar que el usuario no tenga más de 3 reservas
+    if (reservedBooks.length >= 3) {
+        setError('No podés reservar más de 3 libros');
+        return;
+    }
+
+    // Buscar el libro en la lista general
+    const book = allBooks.find((b) => b.id === bookId);
+    if (!book || reservedBooks.some((b) => b.book.id === bookId)) return;
+
+    // Obtener la primera copia del libro
+    const copy = book.copies?.[0];
+    if (!copy) {
+        setError('No hay copias disponibles');
+        return;
+    }
+
+    // Obtener el token (asegurate de que la key sea la misma que en el resto de la app)
+    const token = localStorage.getItem('authToken');
+    
+    try {
+        const res = await fetch(`http://localhost:8080/api/reservations/create`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                copyId: copy.id,
+                period: parseInt(period),
+                reservationDate: reservationDate,
+            }),
+        });
+
+        if (!res.ok) {
+            if (res.status === 403) {
+                setError('No puede hacer reserva porque se encuentra bloqueado por haber cometido 3 infracciones.');
+            } else if (res.status === 409) {
+                setError('Este libro ya está reservado');
+            } else {
+                setError(`Error ${res.status}: ${res.statusText}`);
+            }
+            return;
+        }
+
+        // Actualizar el estado: marcar el libro como reservado y agregarlo a la lista de reservados.
+        const updatedBook = { ...book, status: 'reserved' };
+        setAllBooks((prev) =>
+            prev.map((b) => (b.id === bookId ? updatedBook : b))
+        );
+        setReservedBooks((prev) => [...prev, { book: updatedBook, id: 'temp' }]); // Ajustá según la estructura real de reserva
+        setError(null);
+
+        // (Opcional) Recargar la lista de libros si lo necesitás
+        fetchBooks();
+
+    } catch (err) {
+        console.error(err);
+        setError('Error al reservar el libro');
+    }
+};
+
+
 
     const handleReserveBook = async (bookId) => {
         if (reservedBooks.length >= 3) {
@@ -254,9 +328,8 @@ const Library = () => {
                                 <h3 className="book-title">{book.title}</h3>
                                 <div className="book-actions">
                                     {book.status !== 'reserved' && (
-                                        <button onClick={() => handleReserveBook(book.id)}>
-                                            Reservar
-                                        </button>
+                                        <button onClick={() => openReservationModal(book)}>Reservar</button>
+
                                     )}
                                     <button
                                         className="favorito"
@@ -336,7 +409,16 @@ const Library = () => {
                     )}
                 </ul>
             </div>
+            {showReservationModal && selectedBook && (
+                <ReservationModal
+                    book={selectedBook}
+                    onClose={() => setShowReservationModal(false)}
+                    onConfirm={handleReserveConfirmed}
+                />
+                )}
+
         </div>
+    
     );
 };
 

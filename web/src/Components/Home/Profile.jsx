@@ -10,11 +10,49 @@ const Profile = () => {
     const [editRating, setEditRating] = useState(0);
     const [editComment, setEditComment] = useState("");
     const [reservedBooks, setReservedBooks] = useState([]);
-    const [userData, setUserData] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [allBooks, setAllBooks] = useState([]);
+    const [readBooks, setReadBooks] = useState([]);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const authToken = localStorage.getItem("authToken");
     const navigate = useNavigate();
+
+    const fetchBooks = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError('Token o usuario no encontrado');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:8080/api/books', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+            const data = await res.json();
+            setAllBooks(data);
+            setReadBooks(data.filter((b) => b.status === 'read'));
+            setReservedBooks(data.filter((b) => b.status === 'reserved'));
+        } catch (err) {
+            console.error(err);
+            setError('Error al obtener los libros.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchBooks();
+    }, []);
+
 
     // Load user reviews when "Reviews & Ratings" tab is active
     useEffect(() => {
@@ -84,41 +122,45 @@ const Profile = () => {
             })
             .catch(console.error);
     };
-    console.log("storedUser:", storedUser);
-  const userEmail = storedUser.email;
-  const userId = storedUser.id
+  
 
-  useEffect(() => {
   const fetchReservedBooks = async () => {
-    try {
-      const userEmail = localStorage.getItem("userEmail");
-      const authToken = localStorage.getItem("authToken");
+        setLoading(true);
+        setError(null);
 
-      const reservedBooksUrl = `http://localhost:8080/api/users/${userEmail}/active-reservations`;
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError('No se encontró el token de autenticación.');
+            setLoading(false);
+            return;
+        }
 
-      const response = await fetch(reservedBooksUrl, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+        try {
+            const res = await fetch('http://localhost:8080/api/reservations/get', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch reserved books");
-      }
+            if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
-      const data = await response.json();
+            const data = await res.json();
+            setReservedBooks(data);
+        } catch (err) {
+            console.error(err);
+            setError('Error al obtener los libros reservados.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      // ⬇️ Acá va el log
-      console.log("Reserved books data:", data);
-
-      setReservedBooks(data);
-    } catch (error) {
-      console.error("Error fetching reserved books:", error);
-    }
-  };
-
-  fetchReservedBooks();
-}, []);
+    useEffect(() => {
+            if (allBooks.length > 0) {
+                fetchReservedBooks();
+            }
+        }, [allBooks]);
 
 
   useEffect(() => {
@@ -144,6 +186,11 @@ const Profile = () => {
         .catch(err => console.error("Error fetching reviews:", err));
     }
   }, []);
+
+  useEffect(() => {
+    console.log("Reserved books:", reservedBooks);
+}, [reservedBooks]);
+
 
     return (
         <div className="profile-container">
@@ -220,7 +267,13 @@ const Profile = () => {
                                         onClick={() => navigate(`/bookDetails/${book.id}`)}
                                         style={{ cursor: "pointer" }}
                                         >
-                                        <img src={book.imageUrl} alt={book.title} />
+                                        <img
+                                            src={book.imageUrl}
+                                            alt={book.title}
+                                            onError={(e) => {
+                                                console.error("Error loading image for book:", book.title);
+                                            }}
+                                        />
                                         <p>{book.title}</p>
                                         </div>
                                     ))

@@ -1,5 +1,6 @@
 package com.example.bookit.Controllers;
 
+import com.example.bookit.DTO.ReviewDTO;
 import com.example.bookit.DTO.ReviewRequest;
 import com.example.bookit.Entities.Book;
 import com.example.bookit.Entities.Review;
@@ -38,10 +39,12 @@ public class ReviewController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<Review>> getMyReviews() {
+    public ResponseEntity<List<ReviewDTO>> getMyReviews() {
         User user = userService.findByUsername(getAuthenticatedUsername());
-        return ResponseEntity.ok(reviewService.getReviewsByUser(user));
+        List<ReviewDTO> reviewDTOs = reviewService.getReviewsByUser(user);
+        return ResponseEntity.ok(reviewDTOs);
     }
+
 
     @GetMapping("/book/{bookId}")
     public ResponseEntity<List<Review>> getReviewsForBook(@PathVariable Long bookId) {

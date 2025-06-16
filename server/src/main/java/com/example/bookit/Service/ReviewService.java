@@ -1,5 +1,6 @@
 package com.example.bookit.Service;
 
+import com.example.bookit.DTO.ReviewDTO;
 import com.example.bookit.Entities.Book;
 import com.example.bookit.Entities.Review;
 import com.example.bookit.Entities.User;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
@@ -39,8 +41,11 @@ public class ReviewService {
     }
 
 
-    public List<Review> getReviewsByUser(User user) {
-        return reviewRepository.findByUser(user);
+    public List<ReviewDTO> getReviewsByUser(User user) {
+        List<Review> reviews = reviewRepository.findByUser(user);
+        return reviews.stream()
+                .map(ReviewDTO::new)
+                .collect(Collectors.toList());
     }
 
     public List<Review> getReviewsByBook(Book book) {

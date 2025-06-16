@@ -87,7 +87,7 @@ public class UserService {
             Reservation reservation = new Reservation();
             reservation.setUser(user);
             reservation.setCopy(copy);
-            reservation.setReservationDate(reservationDate);
+            reservation.setPickupDate(reservationDate);
             reservation.setPickupDate(pickupDate);
             reservation.setPeriod(period);
             reservation.setStatus(ReservationStatus.PENDING);  // Estado de la reserva

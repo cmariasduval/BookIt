@@ -21,11 +21,11 @@ public class Reservation {
     @JoinColumn(name = "copy_id", nullable = false)
     private BookCopy copy;
 
-    @Column(name = "reservation_date", nullable = false)
-    private LocalDate reservationDate;
-
     @Column(name = "pickup_date", nullable = false)
     private LocalDate pickupDate;
+
+    @Column(name = "return_date", nullable = false)
+    private LocalDate returnDate;
 
     @Column(name = "period", nullable = false)
     private int period;
@@ -44,7 +44,7 @@ public class Reservation {
     public Reservation(User user, BookCopy copy, LocalDate reservationDate, LocalDate pickupDate, int period, ReservationStatus status) {
         this.user = user;
         this.copy = copy;
-        this.reservationDate = reservationDate;
+        this.pickupDate = reservationDate;
         this.pickupDate = pickupDate;
         this.period = period;
         this.status = status;
@@ -75,20 +75,19 @@ public class Reservation {
         this.copy = copy;
     }
 
-    public LocalDate getReservationDate() {
-        return reservationDate;
-    }
-
-    public void setReservationDate(LocalDate reservationDate) {
-        this.reservationDate = reservationDate;
-    }
-
     public LocalDate getPickupDate() {
         return pickupDate;
     }
 
     public void setPickupDate(LocalDate pickupDate) {
         this.pickupDate = pickupDate;
+    }
+
+    public LocalDate getReturnDate(){
+        return returnDate;
+    }
+    public void setReturnDate(LocalDate returnDate){
+        this.returnDate = returnDate;
     }
 
     public int getPeriod() {

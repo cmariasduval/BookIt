@@ -3,14 +3,14 @@ package com.example.bookit.DTO;
 public class ReservationRequest {
 
     public Long copyId;
-    public String reservationDate;
+    public String pickupDate;
     public int period;
 
     public ReservationRequest() {}  // Constructor por defecto para deserialización
 
     public ReservationRequest(Long copyId, String reservationDate, int period) {
         this.copyId = copyId;
-        this.reservationDate = reservationDate;
+        this.pickupDate = reservationDate;
         this.period = period;
     }
 
@@ -23,12 +23,12 @@ public class ReservationRequest {
         this.copyId = copyId;
     }
 
-    public String getReservationDate() {
-        return reservationDate;
+    public String getPickupDate() {
+        return pickupDate;
     }
 
-    public void setReservationDate(String reservationDate) {
-        this.reservationDate = reservationDate;
+    public void setPickupDate(String pickupDate) {
+        this.pickupDate = pickupDate;
     }
 
     public int getPeriod() {

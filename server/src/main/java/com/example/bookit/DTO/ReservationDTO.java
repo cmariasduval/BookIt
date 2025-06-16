@@ -63,7 +63,7 @@ public class ReservationDTO {
                 reservation.getId(),
                 reservation.getCopy().getBook().getTitle(),   // título del libro
                 reservation.getUser().getUsername(),              // nombre de usuario
-                reservation.getReservationDate().toString(),      // fecha en formato yyyy-MM-dd
+                reservation.getPickupDate().toString(),      // fecha en formato yyyy-MM-dd
                 reservation.getPeriod(),                          // período
                 reservation.getStatus().name());
     }

@@ -1,13 +1,13 @@
 package com.example.bookit.Service;
 
 import com.example.bookit.DTO.ReservationDTO;
-import com.example.bookit.DTO.ReservationRequest;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.BookCopyRepository;
 import com.example.bookit.Repository.ReservationRepository;
 import com.example.bookit.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -45,11 +45,11 @@ public class ReservationService {
     }
 
     // Verificar si la copia del libro está disponible en las fechas solicitadas
-    public boolean isCopyAvailable(BookCopy bookCopy, LocalDate startDate, int period) {
-        LocalDate endDate = startDate.plusDays(period);
+    public boolean isCopyAvailable(BookCopy bookCopy, LocalDate startDate, LocalDate endDate) {
+        //LocalDate endDate = startDate.plusDays(period);
         List<Reservation> reservations = reservationRepository.findByCopy(bookCopy);
         for (Reservation reservation : reservations) {
-            if ((startDate.isBefore(reservation.getPickupDate()) && endDate.isAfter(reservation.getReservationDate()))
+            if ((startDate.isBefore(reservation.getPickupDate()) && endDate.isAfter(reservation.getPickupDate()))
                     && reservation.getStatus() != ReservationStatus.COMPLETED
                     && reservation.getStatus() != ReservationStatus.CANCELLED) {
                 return false; // Si hay una superposición de fechas y la reserva no está completada ni cancelada, no está disponible
@@ -59,7 +59,8 @@ public class ReservationService {
     }
 
     // Crear una nueva reserva
-    public Reservation createReservation(User user, BookCopy bookCopy, LocalDate reservationDate, int period) {
+    public Reservation createReservation(User user, BookCopy bookCopy, LocalDate pickupDate, LocalDate returnDate)
+    {
         if (!infractionService.puedeOperar(user)) {
             throw new RuntimeException("Usuario bloqueado. No puede realizar nuevas reservas.");
         }
@@ -68,7 +69,7 @@ public class ReservationService {
             throw new RuntimeException("No puedes tener más de 3 reservas activas.");
         }
 
-        if (!isCopyAvailable(bookCopy, reservationDate, period)) {
+        if (!isCopyAvailable(bookCopy, pickupDate, returnDate)) {
             throw new RuntimeException("La copia del libro no está disponible para las fechas seleccionadas.");
         }
 
@@ -77,9 +78,9 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setCopy(bookCopy);
-        reservation.setReservationDate(reservationDate);
-        reservation.setPickupDate(reservationDate.plusDays(period));
-        reservation.setPeriod(period);
+        reservation.setPickupDate(pickupDate);
+        //reservation.setPickupDate(reservationDate.plusDays(period));
+        reservation.setReturnDate(returnDate);
         reservation.setStatus(ReservationStatus.PENDING); // Estado inicial
 
         return reservationRepository.save(reservation);

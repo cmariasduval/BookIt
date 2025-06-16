@@ -64,7 +64,15 @@ public class ReservationController {
                         .body("No podés reservar libros porque estás bloqueado hasta " + user.getBlockedUntil());
             }
 
-            Reservation reservation = reservationService.createReservation(user, bookCopy, LocalDate.parse(request.reservationDate), request.period);
+            LocalDate pickupDate = LocalDate.parse(request.pickupDate);
+            LocalDate returnDate = pickupDate.plusDays(request.period);
+
+            Reservation reservation = reservationService.createReservation(
+                    user,
+                    bookCopy,
+                    pickupDate,
+                    returnDate
+            );
             return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
 
         } catch (RuntimeException e) {
@@ -125,8 +133,10 @@ public class ReservationController {
 
     @GetMapping("/returns-today")
     public List<ReservationDTO> getReturnsToday() {
+        System.out.println("🔁 Entró al endpoint /returns-today");
         return reservationService.getReturnsToday();
     }
+
 
     @GetMapping("/user")
     public List<ReservationDTO> getReservationsForCurrentUser(Authentication authentication) {

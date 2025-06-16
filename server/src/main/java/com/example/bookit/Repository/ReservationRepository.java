@@ -25,17 +25,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByUserUsername(String authenticatedUser);
 
-    @Query("SELECT r FROM Reservation r WHERE r.pickupDate = :today AND r.status = 'ACTIVE'")
+    @Query("SELECT r FROM Reservation r WHERE r.returnDate = :today AND r.status = 'ACTIVE'")
     List<Reservation> findReservationsToHandInToday(@Param("today") LocalDate today);
 
-    @Query("SELECT r FROM Reservation r WHERE r.pickupDate < :date AND r.status = com.example.bookit.Entities.ReservationStatus.PENDING")
+    @Query("SELECT r FROM Reservation r WHERE r.returnDate < :date AND r.status = com.example.bookit.Entities.ReservationStatus.PENDING")
     List<Reservation> findLatePickups(@Param("date") LocalDate date);
 
 
     List<Reservation> findByPickupDateAndStatus(LocalDate today, ReservationStatus reservationStatus);
 
-    @Query(value = "SELECT * FROM reservation r WHERE DATEADD('DAY', r.period, r.reservation_date) = ?1", nativeQuery = true)
-    List<Reservation> findByReturnDate(LocalDate now);
+    @Query("SELECT r FROM Reservation r WHERE r.returnDate = :today AND r.status = 'ACTIVE'")
+    List<Reservation> findByReturnDate(@Param("today") LocalDate today);
+
 
     //devuelve todas las reservas de un usuarios que esten en el estado que le pases
     @Query("SELECT r FROM Reservation r WHERE r.user.email = :email AND r.status IN :statuses")

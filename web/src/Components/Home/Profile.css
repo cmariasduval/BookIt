@@ -182,20 +182,6 @@
     cursor: pointer;
   }
 
-.tab-content {
-  display: block;
-  width: 100%;
-  position: relative;
-  min-height: 500px; /* o más si tenés mucho contenido */
-  margin-top: 40px;
-}
-
-.activity-section,
-.fixed-user-info,
-.reviews-section {
-  overflow-y: auto;
-}
-
 .reviews-section {
   position: relative; /* asegura que el z-index funcione si se necesitara */
   display: block; /* asegura que tome su lugar */

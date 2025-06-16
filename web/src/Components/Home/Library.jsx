@@ -120,7 +120,7 @@ const Library = () => {
         return <p className="error">Token o usuario no encontrado</p>;
     }
 
-    const handleReserveConfirmed = async (bookId, reservationDate, period) => {
+    const handleReserveConfirmed = async (bookId, pickupDate, period) => {
     // Verificar que el usuario no tenga más de 3 reservas
     if (reservedBooks.length >= 3) {
         setError('No podés reservar más de 3 libros');
@@ -150,8 +150,9 @@ const Library = () => {
             },
             body: JSON.stringify({
                 copyId: copy.id,
+                pickupDate: pickupDate,
                 period: parseInt(period),
-                reservationDate: reservationDate,
+                
             }),
         });
 

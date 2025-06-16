@@ -48,6 +48,8 @@ function ManageReservations() {
         loadData();
     }, []);
 
+
+
     // Handler genérico para marcar acciones
     const handleAction = async (id, action) => {
         try {

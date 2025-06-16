@@ -184,8 +184,6 @@ const Library = () => {
     }
 };
 
-
-
     const handleReserveBook = async (bookId) => {
         if (reservedBooks.length >= 3) {
             setError('No podés reservar más de 3 libros');

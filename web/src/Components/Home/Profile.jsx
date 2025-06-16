@@ -28,6 +28,9 @@ const Profile = () => {
     }
     }, [location]);
 
+    const [calendarEvents, setCalendarEvents] = useState([]);
+
+
 
     const fetchBooks = async () => {
         const token = localStorage.getItem('authToken');
@@ -213,6 +216,39 @@ const Profile = () => {
     console.log("Reserved books:", reservedBooks);
 }, [reservedBooks]);
 
+useEffect(() => {
+  if (reservedBooks.length > 0) {
+    console.log("Preparando eventos para el calendario con estas reservas:", reservedBooks);
+
+    // Log detallado de cada reserva
+    reservedBooks.forEach((r, i) => {
+      console.log(`Reserva ${i + 1}:`, r);
+      console.log("  copy:", r.copy);
+      console.log("  book:", r.copy?.book);
+      console.log("  título:", r.copy?.book?.title);
+    });
+
+    const events = reservedBooks.map(r => {
+      const start = new Date(r.pickupDate[0], r.pickupDate[1] - 1, r.pickupDate[2]);
+      const endDate = new Date(r.returnDate[0], r.returnDate[1] - 1, r.returnDate[2]);
+
+      endDate.setDate(endDate.getDate() + 1);
+
+      return {
+        title: r.copy?.book?.title,
+        start,
+        end: endDate,
+        allDay: true,
+      };
+    });
+
+    console.log("Eventos generados para el calendario:", events);
+    setCalendarEvents(events);
+  } else {
+    setCalendarEvents([]);
+  }
+}, [reservedBooks]);
+
 
     return (
         <div className="profile-container">
@@ -305,7 +341,7 @@ const Profile = () => {
 
                         <div className="lower-activity-section">
                             <div className="calendario">
-                                <BookCalendar />
+                                <BookCalendar events={calendarEvents} />
                             </div>
                             <div className="infracciones-container">
                                 <div className="infracciones">

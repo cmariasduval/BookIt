@@ -9,6 +9,7 @@ const BookDetails = () => {
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const [isFavorite, setIsFavorite] = useState(false);
     const [isRead, setIsRead] = useState(false);
@@ -35,7 +36,6 @@ const BookDetails = () => {
         }
     }, []);
 
-    const navigate = useNavigate();
 
     // Carga inicial: libro y estados desde localStorage
     useEffect(() => {

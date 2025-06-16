@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "./Profile.css";
 import BookCalendar from "./BookCalendar";
+
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("activity");
@@ -18,6 +20,14 @@ const Profile = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const authToken = localStorage.getItem("authToken");
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+    if (location.state?.openReviews) {
+        setActiveTab("reviews");
+    }
+    }, [location]);
+
 
     const fetchBooks = async () => {
         const token = localStorage.getItem('authToken');
@@ -62,18 +72,26 @@ const Profile = () => {
     }, [activeTab]);
 
     const fetchUserReviews = () => {
-        fetch("http://localhost:8080/api/reviews/me", {
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
+    fetch("http://localhost:8080/api/reviews/me", {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    })
+        .then((res) => {
+            if (!res.ok) throw new Error("Error al obtener reviews");
+            return res.json();
         })
-            .then((res) => {
-                if (!res.ok) throw new Error("Error al obtener reviews");
-                return res.json();
-            })
-            .then(setUserReviews)
-            .catch(console.error);
-    };
+        .then(data => {
+            console.log("Reviews data:", data);
+            const validReviews = data.filter(r => r.bookTitle);
+            setUserReviews(validReviews);
+        })
+
+
+
+        .catch(console.error);
+};
+
 
     // Edit handlers
     const startEditing = (review) => {
@@ -180,9 +198,13 @@ const Profile = () => {
           return res.json();
         })
         .then(data => {
-          console.log("Reviews data:", data); // LOG
-          setUserReviews(data);
+            console.log("Reviews data:", data);
+            const validReviews = data.filter(r => r.bookTitle);
+            setUserReviews(validReviews);
         })
+
+
+
         .catch(err => console.error("Error fetching reviews:", err));
     }
   }, []);
@@ -309,7 +331,7 @@ const Profile = () => {
                                 <div className="review" key={review.id}>
                                     {editingReviewId === review.id ? (
                                         <div className="review-content">
-                                            <strong>{review.book.title}</strong>
+                                            <strong>{review.bookTitle}</strong>
                                             <label>
                                                 Rating:{" "}
                                                 <select
@@ -339,7 +361,7 @@ const Profile = () => {
                                     ) : (
                                         <>
                                             <div className="review-content">
-                                                <strong>{review.book.title}</strong>
+                                                <strong>{review.bookTitle}</strong>
                                                 <p>
                                                     {"⭐".repeat(review.rating)} – {review.comment}
                                                 </p>

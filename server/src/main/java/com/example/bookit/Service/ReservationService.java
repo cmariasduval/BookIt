@@ -202,5 +202,19 @@ public class ReservationService {
         return lateReturns.stream().map(ReservationDTO::fromEntity).toList();
     }
 
+    public void markAsReturned(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+        reservation.setStatus(ReservationStatus.COMPLETED);
+        reservationRepository.save(reservation);
+    }
+
+    public void markAsNotReturned(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+        reservation.setStatus(ReservationStatus.PENDING);
+        reservationRepository.save(reservation);
+    }
+
 
 }

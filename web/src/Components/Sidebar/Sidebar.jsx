@@ -128,16 +128,16 @@ const Sidebar = () => {
                                 </li>
 
                                 <li>
-                                    <NavLink
-                                        to="/editbook"
-                                        state={{ background: location }}
-                                        className={({ isActive }) =>
-                                            `sidebar-link ${isActive ? "active" : ""}`
-                                        }
-                                    >
-                                        <RiPencilFill size={24} />
-                                        <span className="editbook-item">Edit Book</span>
-                                    </NavLink>
+                                    {/*<NavLink*/}
+                                    {/*    to="/editbook"*/}
+                                    {/*    state={{ background: location }}*/}
+                                    {/*    className={({ isActive }) =>*/}
+                                    {/*        `sidebar-link ${isActive ? "active" : ""}`*/}
+                                    {/*    }*/}
+                                    {/*>*/}
+                                    {/*    <RiPencilFill size={24} />*/}
+                                    {/*    <span className="editbook-item">Edit Book</span>*/}
+                                    {/*</NavLink>*/}
                                 </li>
 
                                 <li>

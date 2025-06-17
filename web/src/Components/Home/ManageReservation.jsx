@@ -8,6 +8,7 @@ function ManageReservations() {
     const [lateReturns, setLateReturns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     const token = localStorage.getItem('authToken');
     const headers = {
@@ -29,15 +30,10 @@ function ManageReservations() {
                 throw new Error('Error al obtener los datos');
             }
 
-            const pickupsData = await pickupsRes.json();
-            const latePickupsData = await latePickupsRes.json();
-            const returnsData = await returnsRes.json();
-            const lateReturnsData = await lateReturnsRes.json();
-
-            setPickupsToday(pickupsData);
-            setLatePickups(latePickupsData);
-            setReturnsToday(returnsData);
-            setLateReturns(lateReturnsData);
+            setPickupsToday(await pickupsRes.json());
+            setLatePickups(await latePickupsRes.json());
+            setReturnsToday(await returnsRes.json());
+            setLateReturns(await lateReturnsRes.json());
             setError(null);
         } catch (err) {
             setError('Error cargando las reservas.');
@@ -52,12 +48,27 @@ function ManageReservations() {
 
     const handleAction = async (id, action) => {
         try {
+            // Usar PUT para las acciones de devolución, POST para las demás
+            const method = (action === 'mark-returned' || action === 'mark-not-returned') ? 'PUT' : 'POST';
+
             const res = await fetch(`http://localhost:8080/api/reservations/${id}/${action}`, {
-                method: 'POST',
+                method,
                 headers
             });
             if (!res.ok) throw new Error('Error en la acción');
-            loadData();
+
+            // Actualiza el estado eliminando la reserva afectada
+            if (action === 'mark-returned' || action === 'mark-not-returned') {
+                setReturnsToday(prev => prev.filter(r => r.id !== id));
+                setLateReturns(prev => prev.filter(r => r.id !== id));
+            } else if (action === 'mark-picked-up' || action === 'mark-not-picked-up') {
+                setPickupsToday(prev => prev.filter(r => r.id !== id));
+                setLatePickups(prev => prev.filter(r => r.id !== id));
+            }
+
+            setSuccess('Reserva actualizada correctamente');
+            setTimeout(() => setSuccess(null), 2000);
+            setError(null);
         } catch (err) {
             setError('Error al actualizar la reserva');
         }
@@ -69,6 +80,7 @@ function ManageReservations() {
     return (
         <div>
             <h1>Manage Reservations</h1>
+            {success && <p style={{ color: 'green' }}>{success}</p>}
             <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
                 <thead>
                 <tr>

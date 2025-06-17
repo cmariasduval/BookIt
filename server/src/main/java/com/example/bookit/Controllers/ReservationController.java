@@ -149,6 +149,19 @@ public class ReservationController {
         return reservationService.getLateReturns();
     }
 
+    @PutMapping("/{id}/mark-returned")
+    public ResponseEntity<Void> markAsReturned(@PathVariable Long id) {
+        reservationService.markAsReturned(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/mark-not-returned")
+    public ResponseEntity<Void> markAsNotReturned(@PathVariable Long id) {
+        reservationService.markAsNotReturned(id);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 
 

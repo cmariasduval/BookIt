@@ -144,4 +144,12 @@ public class ReservationController {
         return reservationService.getReservationsByUserEmail(email);
     }
 
+    @GetMapping("/late-returns")
+    public List<ReservationDTO> getLateReturns() {
+        return reservationService.getLateReturns();
+    }
+
+
+
+
 }

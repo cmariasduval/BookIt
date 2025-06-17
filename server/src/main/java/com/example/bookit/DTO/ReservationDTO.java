@@ -67,5 +67,7 @@ public class ReservationDTO {
                 reservation.getPeriod(),                          // período
                 reservation.getStatus().name());
     }
+
+
 }
 

@@ -196,4 +196,11 @@ public class ReservationService {
         return reservations.stream().map(ReservationDTO::fromEntity).toList();
     }
 
+    public List<ReservationDTO> getLateReturns() {
+        LocalDate today = LocalDate.now();
+        List<Reservation> lateReturns = reservationRepository.findLateReturns(today);
+        return lateReturns.stream().map(ReservationDTO::fromEntity).toList();
+    }
+
+
 }

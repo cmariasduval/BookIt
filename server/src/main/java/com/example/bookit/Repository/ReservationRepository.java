@@ -42,4 +42,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT r FROM Reservation r WHERE r.user.email = :email AND r.status IN :statuses")
     List<Reservation> findByUserEmailAndStatuses(@Param("email") String email, @Param("statuses") List<ReservationStatus> statuses);
 
+    List<Reservation> findAllByReturnDateBeforeAndStatusNot(LocalDate today, ReservationStatus reservationStatus);
+
+    @Query("SELECT r FROM Reservation r WHERE r.returnDate < :today AND r.status = com.example.bookit.Entities.ReservationStatus.ACTIVE")
+    List<Reservation> findLateReturns(@Param("today") LocalDate today);
 }

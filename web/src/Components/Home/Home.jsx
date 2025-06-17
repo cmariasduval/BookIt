@@ -103,14 +103,14 @@ const Home = () => {
             <div className="home-header">
                 <h1 className="home-title">Discover</h1>
                 <div className="home-search-bar">
-                    <select className="home-category-select">
-                        <option>All Categories</option>
-                        <option>Fantasy</option>
-                        <option>Romance</option>
-                        <option>Sci-Fi</option>
-                        <option>Mystery</option>
-                        <option>Non-Fiction</option>
-                    </select>
+                    {/*<select className="home-category-select">*/}
+                    {/*    <option>All Categories</option>*/}
+                    {/*    <option>Fantasy</option>*/}
+                    {/*    <option>Romance</option>*/}
+                    {/*    <option>Sci-Fi</option>*/}
+                    {/*    <option>Mystery</option>*/}
+                    {/*    <option>Non-Fiction</option>*/}
+                    {/*</select>*/}
                     <input
                         type="text"
                         placeholder="Search book"
@@ -164,7 +164,7 @@ const Home = () => {
             <div className="home-section">
                 <div className="home-section-header">
                     <h2 className="home-section-title">Book Category</h2>
-                    <button className="home-view-all-btn">View All</button>
+                    {/*<button className="home-view-all-btn">View All</button>*/}
                 </div>
                 <div className="home-category-list">
                     {bookCategories.map(({ icon, label }, index) => (

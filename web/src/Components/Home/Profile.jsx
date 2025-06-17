@@ -318,23 +318,28 @@ useEffect(() => {
                                 {reservedBooks.length === 0 ? (
                                     <p>No reserved books currently.</p>
                                     ) : (
-                                    reservedBooks.map((book) => (
-                                        <div
-                                        key={book.id}
-                                        className="reserved-book-card"
-                                        onClick={() => navigate(`/bookDetails/${book.id}`)}
-                                        style={{ cursor: "pointer" }}
-                                        >
-                                        <img
-                                            src={book.imageUrl}
-                                            alt={book.title}
-                                            onError={(e) => {
-                                                console.error("Error loading image for book:", book.title);
-                                            }}
-                                        />
-                                        <p>{book.title}</p>
-                                        </div>
-                                    ))
+                                    reservedBooks.map((book) => {
+                                        console.log("Libro renderizado:", book);  // <-- Acá imprime el libro completo
+
+                                        return (
+                                            <div
+                                                key={book.id}
+                                                className="reserved-book-card"
+                                                onClick={() => navigate(`/bookDetails/${book.id}`)}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <img
+                                                    src={book.book.imageUrl}
+                                                    alt={book.book.title}
+                                                    onError={(e) => {
+                                                        console.error("Error loading image for book:", book.title);
+                                                    }}
+                                                    style={{width: "200px"}}
+                                                />
+                                                <p>{book.title}</p>
+                                            </div>
+                                        );
+                                    })
                                 )}
                             </div>
                         </div>

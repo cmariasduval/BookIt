@@ -63,9 +63,9 @@ public class InfractionController {
     }
 
     // PUT: Desbloquear manualmente (opcional, para manager)
-    @PutMapping("/unblock/{userId}")
-    public ResponseEntity<?> desbloquearUsuario(@PathVariable Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    @PutMapping("/unblock/{username}")
+    public ResponseEntity<?> desbloquearUsuario(@PathVariable String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

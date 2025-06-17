@@ -4,7 +4,7 @@ const ManageInfractions = () => {
     const [usersWithDebt, setUsersWithDebt] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [updatingUserId, setUpdatingUserId] = useState(null);
+    const [updatingUsername, setUpdatingUsername] = useState(null);
     const [modalInfo, setModalInfo] = useState({ isOpen: false, action: null, user: null });
 
     const openModal = (action, user) => {
@@ -22,7 +22,7 @@ const ManageInfractions = () => {
         if (action === 'block') {
             await handleBlockUser(user.username);
         } else if (action === 'unblock') {
-            await handleUnblockUser(user.userId);
+            await handleUnblockUser(user.username);
         }
 
         closeModal();
@@ -62,16 +62,16 @@ const ManageInfractions = () => {
         }
     };
 
-    const handlePayDebt = async (userId) => {
-        setUpdatingUserId(userId);
+    const handlePayDebt = async (username) => {
+        setUpdatingUsername(username);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('No se encontró el token de autenticación.');
-            setUpdatingUserId(null);
+            setUpdatingUsername(null);
             return;
         }
         try {
-            const res = await fetch(`http://localhost:8080/api/infractions/pay-debt/${userId}`, {
+            const res = await fetch(`http://localhost:8080/api/infractions/pay-debt/${username}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -82,13 +82,13 @@ const ManageInfractions = () => {
                 throw new Error(`Error ${res.status}: ${res.statusText}`);
             }
             setUsersWithDebt(prev =>
-                prev.map(u => u.userId === userId ? { ...u, debt: 0, infractionCount: 0 } : u)
+                prev.map(u => u.username === username ? { ...u, debt: 0, infractionCount: 0 } : u)
             );
         } catch (err) {
             console.error(err);
             setError('Error al actualizar la deuda.');
         } finally {
-            setUpdatingUserId(null);
+            setUpdatingUsername(null);
         }
     };
 
@@ -122,32 +122,34 @@ const ManageInfractions = () => {
         }
     };
 
-    const handleUnblockUser = async (userId) => {
+    const handleUnblockUser = async (username) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('No se encontró el token de autenticación.');
             return;
         }
         try {
-            const res = await fetch(`http://localhost:8080/api/infractions/unblock/${userId}`, {
+            const res = await fetch(`http://localhost:8080/api/infractions/unblock/${username}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
+
             if (!res.ok) {
-                throw new Error(`Error ${res.status}: ${res.statusText}`);
+                const errorBody = await res.text();
+                throw new Error(`Error ${res.status}: ${res.statusText} - ${errorBody}`);
             }
 
             setUsersWithDebt(prev =>
                 prev.map(user =>
-                    user.userId === userId ? { ...user, blocked: false } : user
+                    user.username === username ? { ...user, blocked: false } : user
                 )
             );
             alert(`Usuario desbloqueado.`);
         } catch (err) {
-            console.error(err);
+            console.error('Error al desbloquear:', err);
             setError('Error al desbloquear el usuario.');
         }
     };
@@ -161,14 +163,14 @@ const ManageInfractions = () => {
             {usersWithDebt.length > 0 ? (
                 <ul>
                     {usersWithDebt.map(user => (
-                        <li key={user.id}>
+                        <li key={user.username}>
                             <strong>{user.username || 'Usuario desconocido'}</strong> - Deuda: ${user.debt.toFixed(2)} - Infracciones: {user.infractionCount}
                             <button
-                                onClick={() => handlePayDebt(user.id)}
-                                disabled={updatingUserId === user.userId || user.debt === 0}
+                                onClick={() => handlePayDebt(user.username)}
+                                disabled={updatingUsername === user.username || user.debt === 0}
                                 style={{ marginLeft: '10px' }}
                             >
-                                {updatingUserId === user.userId ? 'Actualizando...' : 'Pagar deuda'}
+                                {updatingUsername === user.username ? 'Actualizando...' : 'Pagar deuda'}
                             </button>
                             {!user.blocked && (
                                 <button
@@ -188,7 +190,7 @@ const ManageInfractions = () => {
                                 </button>
                             )}
 
-                            {modalInfo.isOpen && modalInfo.user?.userId === user.userId && (
+                            {modalInfo.isOpen && modalInfo.user?.username === user.username && (
                                 <div className="modal-overlay">
                                     <div className="modal-content">
                                         <p>¿Seguro que querés {modalInfo.action === 'block' ? 'bloquear' : 'desbloquear'} a este usuario?</p>

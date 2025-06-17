@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest user) {
         try {
             String token = userService.loginUser(user.getEmail(), user.getPassword());
             User loggedUser = userService.getUserByEmail(user.getEmail());

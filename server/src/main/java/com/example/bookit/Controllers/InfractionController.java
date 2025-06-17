@@ -84,14 +84,26 @@ public class InfractionController {
         List<User> users = userRepository.findUsersWithInfractionsOrBlocked();
 
         List<UserInfractionDTO> dtos = users.stream()
-                .map(user -> new UserInfractionDTO(
-                        user.getId().longValue(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getDebt(),
-                        user.getInfractionsCount(),
-                        user.isBlocked()
-                ))
+                .map(user -> {
+                    long unpaidCount = user.getInfractions().stream()
+                            .filter(inf -> !inf.isPaid())
+                            .count();
+
+                    double totalUnpaid = user.getInfractions().stream()
+                            .filter(inf -> !inf.isPaid())
+                            .mapToDouble(Infraction::getAmount)
+                            .sum();
+
+                    return new UserInfractionDTO(
+                            user.getId().longValue(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            totalUnpaid,
+                            (int) unpaidCount,
+                            user.isBlocked()
+                    );
+                })
+                .filter(dto -> dto.getInfractionCount() > 0 || dto.isBlocked())
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
@@ -99,15 +111,32 @@ public class InfractionController {
 
 
 
-    @PutMapping("/users/{id}/pay-debt")
+
+    @PutMapping("/pay-debt/{userId}")
     public ResponseEntity<Void> payDebt(@PathVariable Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        for (Infraction inf : user.getInfractions()) {
-            inf.setDebt(0);
-            infractionRepository.save(inf); // ¡No te olvides de guardar!
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+
+        User user = optionalUser.get();
+
+        // Marcar todas las infracciones como pagadas
+        List<Infraction> infractions = user.getInfractions();
+        for (Infraction inf : infractions) {
+            inf.setPaid(true);
+            infractionRepository.save(inf);
+        }
+
+        user.setDebt(0);
+        userRepository.save(user);
+
         return ResponseEntity.ok().build();
     }
+
+
+
+
 
     @PostMapping("/return-late/{userId}/{bookId}")
     public ResponseEntity<?> procesarDevolucionTardia(

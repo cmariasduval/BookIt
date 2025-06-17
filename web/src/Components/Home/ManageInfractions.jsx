@@ -4,33 +4,29 @@ const ManageInfractions = () => {
     const [usersWithDebt, setUsersWithDebt] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [updatingUsername, setUpdatingUsername] = useState(null);
+    const [updatingUserId, setUpdatingUserId] = useState(null);
     const [modalInfo, setModalInfo] = useState({ isOpen: false, action: null, user: null });
 
     const openModal = (action, user) => {
-    setModalInfo({ isOpen: true, action, user });
-    };  
+        setModalInfo({ isOpen: true, action, user });
+    };
 
     const closeModal = () => {
-    setModalInfo({ isOpen: false, action: null, user: null });
+        setModalInfo({ isOpen: false, action: null, user: null });
     };
 
     const confirmAction = async () => {
-    const { action, user } = modalInfo;
-    if (!user) return;
+        const { action, user } = modalInfo;
+        if (!user) return;
 
-    if (action === 'block') {
-        await handleBlockUser(user.username);
-    } else if (action === 'unblock') {
-        await handleUnblockUser(user.id);
-    }
+        if (action === 'block') {
+            await handleBlockUser(user.username);
+        } else if (action === 'unblock') {
+            await handleUnblockUser(user.userId);
+        }
 
-    closeModal();
+        closeModal();
     };
-
-
-
-
 
     useEffect(() => {
         fetchUsersWithDebt();
@@ -67,15 +63,15 @@ const ManageInfractions = () => {
     };
 
     const handlePayDebt = async (userId) => {
-        setUpdatingUsername(userId);
+        setUpdatingUserId(userId);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('No se encontró el token de autenticación.');
-            setUpdatingUsername(null);
+            setUpdatingUserId(null);
             return;
         }
         try {
-            const res = await fetch(`http://localhost:8080/api/infractions/users/${userId}/pay-debt`, {
+            const res = await fetch(`http://localhost:8080/api/infractions/pay-debt/${userId}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -92,7 +88,7 @@ const ManageInfractions = () => {
             console.error(err);
             setError('Error al actualizar la deuda.');
         } finally {
-            setUpdatingUsername(null);
+            setUpdatingUserId(null);
         }
     };
 
@@ -146,7 +142,7 @@ const ManageInfractions = () => {
 
             setUsersWithDebt(prev =>
                 prev.map(user =>
-                    user.id === userId ? { ...user, blocked: false } : user
+                    user.userId === userId ? { ...user, blocked: false } : user
                 )
             );
             alert(`Usuario desbloqueado.`);
@@ -165,14 +161,14 @@ const ManageInfractions = () => {
             {usersWithDebt.length > 0 ? (
                 <ul>
                     {usersWithDebt.map(user => (
-                        <li key={user.username}>
+                        <li key={user.id}>
                             <strong>{user.username || 'Usuario desconocido'}</strong> - Deuda: ${user.debt.toFixed(2)} - Infracciones: {user.infractionCount}
                             <button
                                 onClick={() => handlePayDebt(user.id)}
-                                disabled={updatingUsername === user.username || user.debt === 0}
+                                disabled={updatingUserId === user.userId || user.debt === 0}
                                 style={{ marginLeft: '10px' }}
                             >
-                                {updatingUsername === user.username ? 'Actualizando...' : 'Pagar deuda'}
+                                {updatingUserId === user.userId ? 'Actualizando...' : 'Pagar deuda'}
                             </button>
                             {!user.blocked && (
                                 <button
@@ -192,7 +188,7 @@ const ManageInfractions = () => {
                                 </button>
                             )}
 
-                            {modalInfo.isOpen && (
+                            {modalInfo.isOpen && modalInfo.user?.userId === user.userId && (
                                 <div className="modal-overlay">
                                     <div className="modal-content">
                                         <p>¿Seguro que querés {modalInfo.action === 'block' ? 'bloquear' : 'desbloquear'} a este usuario?</p>
@@ -204,8 +200,6 @@ const ManageInfractions = () => {
                                     </div>
                                 </div>
                             )}
-
-
                         </li>
                     ))}
                 </ul>

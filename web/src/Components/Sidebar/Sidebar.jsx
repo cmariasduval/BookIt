@@ -10,6 +10,8 @@ import {
 import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
+import { FaFolder } from "react-icons/fa";
+
 
 import axios from "axios";
 import bookit from "../Assets/bookit.png";
@@ -75,24 +77,37 @@ const Sidebar = () => {
                         <li>
                             <NavLink
                                 to="/home"
-                                className={({ isActive }) =>
+                                className={({isActive}) =>
                                     `sidebar-link ${isActive ? "active" : ""}`
                                 }
                             >
-                                <FaSearch size={24} />
+                                <FaSearch size={24}/>
                                 <span className="discover-item">Discover</span>
                             </NavLink>
                         </li>
+
+                        <li>
+                            <NavLink
+                                to="/all-books"
+                                className={({isActive}) =>
+                                    `sidebar-link ${isActive ? "active" : ""}`
+                                }
+                            >
+                                <ImBooks size={24}/>
+                                <span className="allbooks-item">All Books</span>
+                            </NavLink>
+                        </li>
+
 
                         {!isAdmin && (
                             <li>
                                 <NavLink
                                     to="/library"
-                                    className={({ isActive }) =>
+                                    className={({isActive}) =>
                                         `sidebar-link ${isActive ? "active" : ""}`
                                     }
                                 >
-                                    <ImBooks size={24} />
+                                    <FaFolder size={24}/>
                                     <span className="library-item">My Library</span>
                                 </NavLink>
                             </li>
@@ -103,11 +118,11 @@ const Sidebar = () => {
                         <li>
                             <NavLink
                                 to="/profile"
-                                className={({ isActive }) =>
+                                className={({isActive}) =>
                                     `sidebar-link ${isActive ? "active" : ""}`
                                 }
                             >
-                                <FaUser size={24} />
+                                <FaUser size={24}/>
                                 <span className="profile-item">Profile</span>
                             </NavLink>
                         </li>
@@ -117,12 +132,12 @@ const Sidebar = () => {
                                 <li>
                                     <NavLink
                                         to="/addbook"
-                                        state={{ background: location }}
-                                        className={({ isActive }) =>
+                                        state={{background: location}}
+                                        className={({isActive}) =>
                                             `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
-                                        <FaPlus size={24} />
+                                        <FaPlus size={24}/>
                                         <span className="addbook-item">Add Book</span>
                                     </NavLink>
                                 </li>
@@ -140,14 +155,15 @@ const Sidebar = () => {
                                     {/*</NavLink>*/}
                                 </li>
 
+
                                 <li>
                                     <NavLink
                                         to="/manage"
-                                        className={({ isActive }) =>
+                                        className={({isActive}) =>
                                             `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
-                                        <FaCalendarCheck size={24} />
+                                        <FaCalendarCheck size={24}/>
                                         <span className="manage-item">Manage Reservation</span>
                                     </NavLink>
                                 </li>
@@ -155,11 +171,11 @@ const Sidebar = () => {
                                 <li>
                                     <NavLink
                                         to="/manage-infractions"
-                                        className={({ isActive }) =>
+                                        className={({isActive}) =>
                                             `sidebar-link ${isActive ? "active" : ""}`
                                         }
                                     >
-                                        <FaExclamationTriangle size={24} />
+                                        <FaExclamationTriangle size={24}/>
                                         <span className="manage-infractions-item">Manage Infractions</span>
                                     </NavLink>
                                 </li>
@@ -169,11 +185,11 @@ const Sidebar = () => {
                         <li onClick={handleLogout}>
                             <NavLink
                                 to="/"
-                                className={({ isActive }) =>
+                                className={({isActive}) =>
                                     `sidebar-link ${isActive ? "active" : ""}`
                                 }
                             >
-                                <MdLogout size={24} />
+                                <MdLogout size={24}/>
                                 <span className="logout-item">Log Out</span>
                             </NavLink>
                         </li>

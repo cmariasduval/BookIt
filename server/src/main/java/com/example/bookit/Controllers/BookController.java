@@ -14,6 +14,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -222,6 +227,28 @@ public class BookController {
         }
         return ResponseEntity.ok(books);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<Book>> getAllBooksPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "title") String sort
+    ) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sort));
+        Page<Book> booksPage = bookRepository.findAll(pageable);
+        return ResponseEntity.ok(booksPage);
+    }
+
+    @GetMapping("/genres")
+    public ResponseEntity<List<Genre>> getAllGenres() {
+        List<Genre> genres = genreRepository.findAll();
+        if (genres.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(genres);
+    }
+
+
 
 
 }

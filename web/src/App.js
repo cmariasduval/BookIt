@@ -15,7 +15,7 @@ import EditBook from "./Components/Home/EditBook";
 import ManageInfractions from "./Components/Home/ManageInfractions";
 import SetGoal from "./Components/Home/SetGoal";
 import BookGenres from "./Components/Home/BookGenres";
-
+import AllBooks from "./Components/Home/AllBooks";
 
 
 function AppRoutes() {
@@ -49,6 +49,8 @@ function AppRoutes() {
                     <Route path="/manage-infractions" element={<ManageInfractions />} />
                     <Route path="/set-goal" element={<SetGoal />} />
                     <Route path="/genres/:genreName" element={<BookGenres />} />
+                    <Route path="/all-books" element={<AllBooks />} />
+
 
 
                 </Route>

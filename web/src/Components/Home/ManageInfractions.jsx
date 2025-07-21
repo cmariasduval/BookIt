@@ -115,7 +115,7 @@ const ManageInfractions = () => {
                     user.username === username ? { ...user, blocked: true } : user
                 )
             );
-            alert(`Usuario ${username} bloqueado por 90 días.`);
+            /*alert(`Usuario ${username} bloqueado por 90 días.`);*/
         } catch (err) {
             console.error(err);
             setError('Error al bloquear el usuario.');
@@ -147,7 +147,7 @@ const ManageInfractions = () => {
                     user.username === username ? { ...user, blocked: false } : user
                 )
             );
-            alert(`Usuario desbloqueado.`);
+            // alert(`Usuario desbloqueado.`);
         } catch (err) {
             console.error('Error al desbloquear:', err);
             setError('Error al desbloquear el usuario.');

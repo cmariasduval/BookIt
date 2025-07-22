@@ -1,75 +1,306 @@
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.3s ease-out;
+  padding: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  padding: 1.5rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 450px; /* Reducido de 500px a 450px */
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow:
+          0 25px 50px rgba(0, 0, 0, 0.15),
+          0 0 0 1px rgba(255, 255, 255, 0.8),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: slideIn 0.4s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: auto;
+}
+
+.close-button {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: linear-gradient(145deg, #f5f5f5, #e8e8e8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-button:hover {
+  background: linear-gradient(145deg, #e8e8e8, #ddd);
+  transform: scale(1.05);
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.close-button:active {
+  transform: scale(0.95);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Contenedores para campos en línea */
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.form-row > * {
+  flex: 1;
+}
+
+form input,
+form textarea,
+form select {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.6rem;
+  padding: 0.7rem;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: 2px solid #e1e5e9;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: linear-gradient(145deg, #ffffff, #fafbfc);
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.form-row input {
+  margin-bottom: 0; /* Remover margin inferior en elementos dentro de form-row */
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+  outline: none;
+  border-color: palegoldenrod;
+  box-shadow:
+          inset 0 2px 4px rgba(0, 0, 0, 0.02),
+          0 0 0 3px rgba(238, 232, 170, 0.3),
+          0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+form input:hover,
+form textarea:hover,
+form select:hover {
+  border-color: #d1d5db;
+  box-shadow:
+          inset 0 2px 4px rgba(0, 0, 0, 0.02),
+          0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+form textarea {
+  resize: vertical;
+  min-height: 70px;
+  line-height: 1.4;
+}
+
+form input[type="file"] {
+  padding: 0.7rem;
+  background: linear-gradient(145deg, #f9fafb, #f3f4f6);
+  border: 2px dashed #d1d5db;
+  cursor: pointer;
+}
+
+form input[type="file"]:hover {
+  border-color: palegoldenrod;
+  background: linear-gradient(145deg, #fefdfb, #faf9f5);
+}
+
+form button {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(145deg, palegoldenrod, #f0e68c);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #654321;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  box-shadow:
+          0 4px 12px rgba(238, 232, 170, 0.4),
+          0 2px 4px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  min-width: 120px;
+  align-self: center;
+  width: 100%; /* Añadido para que ocupe todo el ancho */
+  max-width: 200px; /* Limitar el ancho máximo */
+  margin-top: 0.5rem;
+}
+
+form button:hover {
+  background: linear-gradient(145deg, goldenrod, #daa520);
+  transform: translateY(-2px);
+  box-shadow:
+          0 6px 20px rgba(218, 165, 32, 0.5),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+form button:active {
+  transform: translateY(-1px);
+  box-shadow:
+          0 3px 10px rgba(218, 165, 32, 0.4),
+          0 2px 4px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Estilos para tabs/botones Single y Batch */
+.mode-switcher {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  justify-content: flex-start;
+}
+
+.mode-switcher button {
+  padding: 0.7rem 1.3rem;
+  background: linear-gradient(145deg, #f5f5f5, #e8e8e8);
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow:
+          0 2px 8px rgba(0, 0, 0, 0.1),
+          0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.mode-switcher button:hover:not(:disabled) {
+  background: linear-gradient(145deg, #e8e8e8, #ddd);
+  transform: translateY(-1px);
+  color: #333;
+  border-color: #b8b8b8;
+  box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.15),
+          0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mode-switcher button.active {
+  background: linear-gradient(145deg, palegoldenrod, #f0e68c);
+  border-color: goldenrod;
+  color: #654321;
+  box-shadow:
+          inset 0 2px 4px rgba(0, 0, 0, 0.1),
+          0 2px 8px rgba(238, 232, 170, 0.4);
+}
+
+.mode-switcher button.active:hover:not(:disabled) {
+  background: linear-gradient(145deg, goldenrod, #daa520);
+  border-color: #b8860b;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
   .modal-content {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 16px;
+    max-width: 100%;
+    margin: 0;
   }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  form {
-    display: flex;
+
+  .form-row {
     flex-direction: column;
-    align-items: center;
+    gap: 0;
   }
-  
+
   form input,
-  form textarea {
-    display: block;
-    width: 100%;
-    margin-bottom: 1rem;
-    padding: 0.8rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  form textarea,
+  form select {
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
   }
-  
-  form textarea {
-    resize: vertical;
-    min-height: 100px;
-  }
-  
-  form input[type="file"] {
-    padding: 0.5rem 0;
-  }
-  
+
   form button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    background-color: palegoldenrod;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 0.7rem 1.3rem;
+    font-size: 0.95rem;
+    max-width: 100%;
   }
-  
-  form button:hover {
-    background-color: goldenrod;
-  }
-  
+}
+
+/* Estilos específicos para React Select */
+.modal-content .css-13cymwt-control {
+  width: 100% !important;
+  margin-bottom: 0.6rem !important;
+  padding: 2px !important;
+  border: 2px solid #e1e5e9 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(145deg, #ffffff, #fafbfc) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+  min-height: 44px !important;
+}
+
+.modal-content .css-13cymwt-control:hover {
+  border-color: #d1d5db !important;
+  box-shadow:
+          inset 0 2px 4px rgba(0, 0, 0, 0.02),
+          0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.modal-content .css-13cymwt-control.css-1s2u09g-control {
+  border-color: palegoldenrod !important;
+  box-shadow:
+          inset 0 2px 4px rgba(0, 0, 0, 0.02),
+          0 0 0 3px rgba(238, 232, 170, 0.3),
+          0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}

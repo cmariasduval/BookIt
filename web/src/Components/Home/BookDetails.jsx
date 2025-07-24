@@ -399,6 +399,7 @@ const BookDetails = () => {
                     <IoMdArrowBack size={24} />
                 </button>
             </div>
+
             <div className='lower-section'>
                 <div className="left-section">
                     <img
@@ -407,83 +408,126 @@ const BookDetails = () => {
                         className="book-image"
                     />
                 </div>
+
                 <div className="right-section">
-                    <h2 className="book-title">{book.title}</h2>
-                    <p><strong>Autor:</strong> {book.author}</p>
-                    <p><strong>Editorial:</strong> {book.publisher}</p>
-                    <div className="book-genres">
-                        <strong>Géneros:</strong>{' '}
-                        {book.genres.map((g, index) => (
-                            <span key={g.id} className="genre-tag">
-                                {g.genreType}
-                                {index < book.genres.length - 1 ? ', ' : ''}
-                            </span>
-                        ))}
+                    <h1 className="book-title">{book.title}</h1>
+
+                    <div className="book-info-item">
+                        <strong>Autor:</strong>
+                        <span>{book.author}</span>
                     </div>
-                    <p><strong>Sinopsis:</strong> {book.synopsis}</p>
-                    <p><strong>Copias disponibles:</strong> {copiesCount}</p>
-                    <p>
-                        <strong>Estado:</strong>{' '}
-                        <span className={book.status === 'Available' ? 'available' : 'unavailable'}>
-                            {book.status}
-                        </span>
-                    </p>
+
+                    <div className="book-info-item">
+                        <strong>Editorial:</strong>
+                        <span>{book.publisher}</span>
+                    </div>
+
+                    <div className="book-genres">
+                        <strong>Géneros:</strong>
+                        <div className="genres-container">
+                            {book.genres.map((g) => (
+                                <span key={g.id} className="genre-tag">
+                                    {g.genreType}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="copies-info">
+                        <strong>Copias disponibles:</strong>
+                        <span>{copiesCount}</span>
+                    </div>
+
+                    <div className="book-synopsis">
+                        <strong>Sinopsis:</strong>
+                        {book.description || 'No hay sinopsis disponible para este libro.'}
+                    </div>
+
                     <div className="book-actions">
                         {isReserved ? (
-                            <button onClick={handleCancelReservation}>Cancelar reserva</button>
+                            <button
+                                onClick={handleCancelReservation}
+                                className="reserved"
+                            >
+                                📅 Cancelar reserva
+                            </button>
                         ) : (
-                            <button onClick={handleReserve}>Reservar</button>
+                            <button onClick={handleReserve}>
+                                📅 Reservar
+                            </button>
                         )}
-                        <button onClick={handleToggleFavorite}>
-                            {isFavorite ? '❤️ Favorito' : '♡ Favorito'}
+
+                        <button
+                            onClick={handleToggleFavorite}
+                            className={isFavorite ? "favorite" : ""}
+                        >
+                            {isFavorite ? '❤️ Favorito' : '♡ Agregar a favoritos'}
                         </button>
+
                         {isRead ? (
-                            <button onClick={handleUnmarkAsRead}>✓ Leído</button>
+                            <button
+                                onClick={handleUnmarkAsRead}
+                                className="read"
+                            >
+                                ✓ Marcar como no leído
+                            </button>
                         ) : (
-                            <button onClick={handleMarkAsRead}>Marcar como leído</button>
+                            <button onClick={handleMarkAsRead}>
+                                📖 Marcar como leído
+                            </button>
                         )}
+
                         {isAdmin && (
-                            <button onClick={() => navigate(`/bookDetails/${book.id}/editbook`)}>
-                                Editar libro
+                            <button
+                                onClick={() => navigate(`/bookDetails/${book.id}/editbook`)}
+                                className="admin"
+                            >
+                                ✏️ Editar libro
                             </button>
                         )}
                     </div>
 
-                    {/* Comentarios y rating */}
-                    <div style={{ marginTop: "1em" }}>
-                        <button onClick={() => setCommentOpen(!commentOpen)}>
-                            {commentOpen ? "Cancelar comentario" : "Dejar comentario"}
+                    {/* Sección de comentarios */}
+                    <div className="comment-section">
+                        <button
+                            className="comment-toggle"
+                            onClick={() => setCommentOpen(!commentOpen)}
+                        >
+                            {commentOpen ? "❌ Cancelar comentario" : "💬 Dejar comentario"}
                         </button>
-                    </div>
 
-                    {commentOpen && (
-                        <div style={{ marginTop: "1em" }}>
-                            <textarea
-                                rows="4"
-                                cols="50"
-                                placeholder="Escribí tu comentario aquí..."
-                                value={commentText}
-                                onChange={(e) => setCommentText(e.target.value)}
-                            />
-                            <br />
-                            <div style={{ marginTop: "1em" }}>
-                                <label>Seleccioná estrellas: </label>
-                                <select
-                                    value={rating}
-                                    onChange={(e) => setRating(Number(e.target.value))}
+                        {commentOpen && (
+                            <div className="comment-form">
+                                <textarea
+                                    placeholder="Escribí tu comentario aquí..."
+                                    value={commentText}
+                                    onChange={(e) => setCommentText(e.target.value)}
+                                />
+
+                                <div className="rating-section">
+                                    <label>Calificación:</label>
+                                    <select
+                                        value={rating}
+                                        onChange={(e) => setRating(Number(e.target.value))}
+                                    >
+                                        <option value={0}>Sin calificación</option>
+                                        <option value={1}>⭐ (1 estrella)</option>
+                                        <option value={2}>⭐⭐ (2 estrellas)</option>
+                                        <option value={3}>⭐⭐⭐ (3 estrellas)</option>
+                                        <option value={4}>⭐⭐⭐⭐ (4 estrellas)</option>
+                                        <option value={5}>⭐⭐⭐⭐⭐ (5 estrellas)</option>
+                                    </select>
+                                </div>
+
+                                <button
+                                    onClick={submitComment}
+                                    className="submit-comment"
                                 >
-                                    <option value={0}>--</option>
-                                    <option value={1}>⭐</option>
-                                    <option value={2}>⭐⭐</option>
-                                    <option value={3}>⭐⭐⭐</option>
-                                    <option value={4}>⭐⭐⭐⭐</option>
-                                    <option value={5}>⭐⭐⭐⭐⭐</option>
-                                </select>
-                                <br />
+                                    Enviar comentario
+                                </button>
                             </div>
-                            <button onClick={submitComment}>Enviar comentario</button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
 

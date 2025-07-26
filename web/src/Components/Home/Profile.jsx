@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "./Profile.css";
 import BookCalendar from "./BookCalendar";
-
+import MonthlyGoalStats from "./MonthlyGoalStats";
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("activity");
@@ -23,14 +23,12 @@ const Profile = () => {
     const location = useLocation();
 
     useEffect(() => {
-    if (location.state?.openReviews) {
-        setActiveTab("reviews");
-    }
+        if (location.state?.openReviews) {
+            setActiveTab("reviews");
+        }
     }, [location]);
 
     const [calendarEvents, setCalendarEvents] = useState([]);
-
-
 
     const fetchBooks = async () => {
         const token = localStorage.getItem('authToken');
@@ -66,7 +64,6 @@ const Profile = () => {
         fetchBooks();
     }, []);
 
-
     // Load user reviews when "Reviews & Ratings" tab is active
     useEffect(() => {
         if (activeTab === "reviews") {
@@ -75,26 +72,22 @@ const Profile = () => {
     }, [activeTab]);
 
     const fetchUserReviews = () => {
-    fetch("http://localhost:8080/api/reviews/me", {
-        headers: {
-            Authorization: `Bearer ${authToken}`,
-        },
-    })
-        .then((res) => {
-            if (!res.ok) throw new Error("Error al obtener reviews");
-            return res.json();
+        fetch("http://localhost:8080/api/reviews/me", {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
         })
-        .then(data => {
-            console.log("Reviews data:", data);
-            const validReviews = data.filter(r => r.bookTitle);
-            setUserReviews(validReviews);
-        })
-
-
-
-        .catch(console.error);
-};
-
+            .then((res) => {
+                if (!res.ok) throw new Error("Error al obtener reviews");
+                return res.json();
+            })
+            .then(data => {
+                console.log("Reviews data:", data);
+                const validReviews = data.filter(r => r.bookTitle);
+                setUserReviews(validReviews);
+            })
+            .catch(console.error);
+    };
 
     // Edit handlers
     const startEditing = (review) => {
@@ -143,9 +136,8 @@ const Profile = () => {
             })
             .catch(console.error);
     };
-  
 
-  const fetchReservedBooks = async () => {
+    const fetchReservedBooks = async () => {
         setLoading(true);
         setError(null);
 
@@ -178,77 +170,71 @@ const Profile = () => {
     };
 
     useEffect(() => {
-            if (allBooks.length > 0) {
-                fetchReservedBooks();
-            }
-        }, [allBooks]);
-
-
-  useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    console.log("useEffect para cargar reseñas iniciado"); // LOG
-    if (authToken) {
-      fetch("http://localhost:8080/api/reviews/me", {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
+        if (allBooks.length > 0) {
+            fetchReservedBooks();
         }
-      })
-        .then(res => {
-          console.log("Respuesta reviews recibida con status:", res.status); // LOG
-          if (!res.ok) throw new Error(`Error ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-            console.log("Reviews data:", data);
-            const validReviews = data.filter(r => r.bookTitle);
-            setUserReviews(validReviews);
-        })
+    }, [allBooks]);
 
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        console.log("useEffect para cargar reseñas iniciado");
+        if (authToken) {
+            fetch("http://localhost:8080/api/reviews/me", {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => {
+                    console.log("Respuesta reviews recibida con status:", res.status);
+                    if (!res.ok) throw new Error(`Error ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Reviews data:", data);
+                    const validReviews = data.filter(r => r.bookTitle);
+                    setUserReviews(validReviews);
+                })
+                .catch(err => console.error("Error fetching reviews:", err));
+        }
+    }, []);
 
+    useEffect(() => {
+        console.log("Reserved books:", reservedBooks);
+    }, [reservedBooks]);
 
-        .catch(err => console.error("Error fetching reviews:", err));
-    }
-  }, []);
+    useEffect(() => {
+        if (reservedBooks.length > 0) {
+            console.log("Preparando eventos para el calendario con estas reservas:", reservedBooks);
 
-  useEffect(() => {
-    console.log("Reserved books:", reservedBooks);
-}, [reservedBooks]);
+            reservedBooks.forEach((r, i) => {
+                console.log(`Reserva ${i + 1}:`, r);
+                console.log("  copy:", r.copy);
+                console.log("  book:", r.copy?.book);
+                console.log("  título:", r.copy?.book?.title);
+            });
 
-useEffect(() => {
-  if (reservedBooks.length > 0) {
-    console.log("Preparando eventos para el calendario con estas reservas:", reservedBooks);
+            const events = reservedBooks.map(r => {
+                const start = new Date(r.pickupDate[0], r.pickupDate[1] - 1, r.pickupDate[2]);
+                const endDate = new Date(r.returnDate[0], r.returnDate[1] - 1, r.returnDate[2]);
 
-    // Log detallado de cada reserva
-    reservedBooks.forEach((r, i) => {
-      console.log(`Reserva ${i + 1}:`, r);
-      console.log("  copy:", r.copy);
-      console.log("  book:", r.copy?.book);
-      console.log("  título:", r.copy?.book?.title);
-    });
+                endDate.setDate(endDate.getDate() + 1);
 
-    const events = reservedBooks.map(r => {
-      const start = new Date(r.pickupDate[0], r.pickupDate[1] - 1, r.pickupDate[2]);
-      const endDate = new Date(r.returnDate[0], r.returnDate[1] - 1, r.returnDate[2]);
+                return {
+                    title: r.copy?.book?.title,
+                    start,
+                    end: endDate,
+                    allDay: true,
+                };
+            });
 
-      endDate.setDate(endDate.getDate() + 1);
-
-      return {
-        title: r.copy?.book?.title,
-        start,
-        end: endDate,
-        allDay: true,
-      };
-    });
-
-    console.log("Eventos generados para el calendario:", events);
-    setCalendarEvents(events);
-  } else {
-    setCalendarEvents([]);
-  }
-}, [reservedBooks]);
-
+            console.log("Eventos generados para el calendario:", events);
+            setCalendarEvents(events);
+        } else {
+            setCalendarEvents([]);
+        }
+    }, [reservedBooks]);
 
     return (
         <div className="profile-container">
@@ -272,6 +258,12 @@ useEffect(() => {
                         onClick={() => setActiveTab("reviews")}
                     >
                         Reviews & Ratings
+                    </button>
+                    <button
+                        className={activeTab === "goals" ? "tab active" : "tab"}
+                        onClick={() => setActiveTab("goals")}
+                    >
+                        Reading Goals
                     </button>
                 </div>
             </div>
@@ -317,9 +309,9 @@ useEffect(() => {
                             <div className="reservados-carousel">
                                 {reservedBooks.length === 0 ? (
                                     <p>No reserved books currently.</p>
-                                    ) : (
+                                ) : (
                                     reservedBooks.map((book) => {
-                                        console.log("Libro renderizado:", book);  // <-- Acá imprime el libro completo
+                                        console.log("Libro renderizado:", book);
 
                                         return (
                                             <div
@@ -430,6 +422,12 @@ useEffect(() => {
                                 </div>
                             ))
                         )}
+                    </div>
+                )}
+
+                {activeTab === "goals" && (
+                    <div className="goals-section">
+                        <MonthlyGoalStats />
                     </div>
                 )}
             </div>

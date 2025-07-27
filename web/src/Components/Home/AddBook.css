@@ -159,7 +159,7 @@ form input[type="file"]:hover {
   background: linear-gradient(145deg, #fefdfb, #faf9f5);
 }
 
-form button {
+.modal-content form button {
   padding: 0.9rem 2rem;
   font-size: 1rem;
   font-weight: 600;
@@ -170,33 +170,34 @@ form button {
   transition: all 0.3s ease;
   color: #654321;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-  box-shadow:
-          0 4px 12px rgba(238, 232, 170, 0.4),
-          0 2px 4px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 4px 12px rgba(238, 232, 170, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   min-width: 120px;
   align-self: center;
-  width: 100%; /* Añadido para que ocupe todo el ancho */
-  max-width: 200px; /* Limitar el ancho máximo */
+  width: 100%;
+  max-width: 200px;
   margin-top: 0.5rem;
 }
 
-form button:hover {
+.modal-content form button:hover {
   background: linear-gradient(145deg, goldenrod, #daa520);
   transform: translateY(-2px);
-  box-shadow:
-          0 6px 20px rgba(218, 165, 32, 0.5),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 6px 20px rgba(218, 165, 32, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-form button:active {
+.modal-content form button:active {
   transform: translateY(-1px);
-  box-shadow:
-          0 3px 10px rgba(218, 165, 32, 0.4),
-          0 2px 4px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 3px 10px rgba(218, 165, 32, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
+
 
 /* Estilos para tabs/botones Single y Batch */
 .mode-switcher {

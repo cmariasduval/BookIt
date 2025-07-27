@@ -1,5 +1,6 @@
 .login-container{
     display: flex;
+    justify-content: center;
     flex-direction: column;
     margin: auto;
     margin-top: 200px;
@@ -71,7 +72,7 @@
     margin-top: 10px;
 }
 
-.to-signup button{
+.to-signup .to-signup-button{
     border: transparent;
     border-radius: 30px;
     height: 30px;
@@ -83,18 +84,17 @@
     cursor: pointer;
 }
 
-.to-signup button:hover{
+.to-signup .to-signup-button:hover{
     text-decoration: underline;
 }
 
 .login-submit-container{
-    display: flex;
-    gap: 30px;
+    gap: 50px;
     margin: 25px auto;
     justify-content: center;
     align-items: center;
 }
-.login-submit-container button{
+.login-submit-container .submit-login-button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -108,13 +108,36 @@
     cursor: pointer;
     border:none;
     outline: none;
+    margin-bottom: 10px;
 }
 
-.login-submit-container button:hover {
+/* .login-submit-container .google-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 380px;
+    height: 50px;
+    color: black;
+    background: transparent;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid black;
+    outline: none;
+    margin-bottom: 10px;
+} */
+
+.login-submit-container .submit-login-button:hover {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
     background-color: #086EE3;
 }
+
+/* .login-submit-container .google-button:hover {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+} */
 
 .logo{
     width: 200px;
@@ -123,10 +146,46 @@
     margin: 0 auto 0;
 }
 
+.google-login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 380px;
+    height: 50px;
+    color: black;
+    background: transparent;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid black;
+    outline: none;
+    margin-bottom: 10px;
+}
+.google-login-container:hover {
+    box-shadow: 0px 4px 12px;
+    transform: scale(1.05);
+}
+
+.google-login-container > div {
+    display: flex !important;
+    justify-content: center;
+    width: 380px;
+}
+
+.google-login-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50px !important;
+    pointer-events: auto !important;
+}
+
+
+
 .divider{
-    width: 70%;
+    width: 95%;
     height: 1px;
-    margin-left: 90px;
+    margin-left: 250px;
     background-color: #ccc;
     border-radius: 9px;
 }

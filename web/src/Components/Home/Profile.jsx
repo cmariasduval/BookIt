@@ -4,7 +4,8 @@ import { useLocation } from "react-router-dom";
 import "./Profile.css";
 import BookCalendar from "./BookCalendar";
 import AdminReports from "./AdminReports";
-import "./AdminReports.css"; // si no lo importaste antes
+import "./AdminReports.css"; 
+import MonthlyGoalStats from "./MonthlyGoalStats";
 
 
 
@@ -331,24 +332,28 @@ useEffect(() => {
                                 {reservedBooks.length === 0 ? (
                                 <p>No reserved books currently.</p>
                                 ) : (
-                                reservedBooks.map((book) => (
-                                    <div
-                                    key={book.id}
-                                    className="reserved-book-card"
-                                    onClick={() => navigate(`/bookDetails/${book.id}`)}
-                                    style={{ cursor: "pointer" }}
-                                    >
-                                    <img
-                                        src={book.book.imageUrl}
-                                        alt={book.book.title}
-                                        onError={(e) =>
-                                        console.error("Error loading image for book:", book.title)
-                                        }
-                                        style={{ width: "200px" }}
-                                    />
-                                    <p>{book.title}</p>
-                                    </div>
-                                ))
+                                    reservedBooks.map((book) => {
+                                        console.log("Libro renderizado:", book);
+
+                                        return (
+                                            <div
+                                                key={book.id}
+                                                className="reserved-book-card"
+                                                onClick={() => navigate(`/bookDetails/${book.id}`)}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <img
+                                                    src={book.book.imageUrl}
+                                                    alt={book.book.title}
+                                                    onError={(e) => {
+                                                        console.error("Error loading image for book:", book.title);
+                                                    }}
+                                                    style={{width: "200px"}}
+                                                />
+                                                <p>{book.title}</p>
+                                            </div>
+                                        );
+                                    })
                                 )}
                             </div>
                             </div>

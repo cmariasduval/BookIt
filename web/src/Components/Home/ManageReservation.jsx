@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { CheckCircle, XCircle, Clock, AlertTriangle, BookOpen, User, RefreshCw } from 'lucide-react';
 import './ManageReservation.css';
 
 function ManageReservations() {
@@ -67,100 +68,185 @@ function ManageReservations() {
             }
 
             setSuccess('Reserva actualizada correctamente');
-            setTimeout(() => setSuccess(null), 2000);
+            setTimeout(() => setSuccess(null), 3000);
             setError(null);
         } catch (err) {
             setError('Error al actualizar la reserva');
         }
     };
 
-    if (loading) return <p>Cargando reservas...</p>;
-    if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+    const ReservationCard = ({ reservation, actions, type }) => {
+        if (!reservation) {
+            return (
+                <div className="reservation-card empty">
+                    <div className="empty-state">
+                        <BookOpen className="empty-icon" />
+                        <span>No hay {type === 'pickup' ? 'reservas' : 'devoluciones'}</span>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="reservation-card">
+                <div className="book-info">
+                    <div className="book-title">
+                        <BookOpen size={16} />
+                        {reservation.bookTitle}
+                    </div>
+                    <div className="user-info">
+                        <User size={14} />
+                        {reservation.userName}
+                    </div>
+                </div>
+                <div className="action-buttons">
+                    <button
+                        onClick={() => handleAction(reservation.id, actions.confirm)}
+                        className="btn-success"
+                        title="Confirmar"
+                    >
+                        <CheckCircle size={18} />
+                    </button>
+                    <button
+                        onClick={() => handleAction(reservation.id, actions.decline)}
+                        className="btn-danger"
+                        title="Rechazar"
+                    >
+                        <XCircle size={18} />
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+    if (loading) {
+        return (
+            <div className="container">
+                <div className="loading-state">
+                    <RefreshCw className="loading-icon" />
+                    <p>Cargando reservas...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div>
-            <h1>Manage Reservations</h1>
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
-                <thead>
-                <tr>
-                    <th>Pick-up (Retirar hoy)</th>
-                    <th>Late Pick-ups (Retrasadas)</th>
-                    <th>Returns (Devolver hoy)</th>
-                    <th>Late Returns (Devoluciones tardías)</th>
-                </tr>
-                </thead>
-                <tbody>
-                {Array.from({
-                    length: Math.max(
-                        pickupsToday.length,
-                        latePickups.length,
-                        returnsToday.length,
-                        lateReturns.length
-                    ),
-                }).map((_, i) => {
-                    const pickup = pickupsToday[i];
-                    const late = latePickups[i];
-                    const ret = returnsToday[i];
-                    const lateRet = lateReturns[i];
-                    return (
-                        <tr key={i}>
-                            <td style={{ verticalAlign: 'top' }}>
-                                {pickup ? (
-                                    <>
-                                        <div><b>{pickup.bookTitle}</b></div>
-                                        <div>Usuario: {pickup.userName}</div>
-                                        <button onClick={() => handleAction(pickup.id, 'mark-picked-up')}>✅</button>{' '}
-                                        <button onClick={() => handleAction(pickup.id, 'mark-not-picked-up')}>❌</button>
-                                    </>
-                                ) : (
-                                    <em>No hay reservas</em>
-                                )}
-                            </td>
+        <div className="container">
+            <div className="header">
+                <h1>Gestión de Reservas</h1>
+                <button onClick={loadData} className="refresh-btn" disabled={loading}>
+                    <RefreshCw size={20} />
+                    Actualizar
+                </button>
+            </div>
 
-                            <td style={{ verticalAlign: 'top' }}>
-                                {late ? (
-                                    <>
-                                        <div><b>{late.bookTitle}</b></div>
-                                        <div>Usuario: {late.userName}</div>
-                                        <button onClick={() => handleAction(late.id, 'mark-picked-up')}>✅</button>{' '}
-                                        <button onClick={() => handleAction(late.id, 'mark-not-picked-up')}>❌</button>
-                                    </>
-                                ) : (
-                                    <em>No hay reservas</em>
-                                )}
-                            </td>
+            {success && (
+                <div className="alert alert-success">
+                    <CheckCircle size={20} />
+                    {success}
+                </div>
+            )}
 
-                            <td style={{ verticalAlign: 'top' }}>
-                                {ret ? (
-                                    <>
-                                        <div><b>{ret.bookTitle}</b></div>
-                                        <div>Usuario: {ret.userName}</div>
-                                        <button onClick={() => handleAction(ret.id, 'mark-returned')}>✅</button>{' '}
-                                        <button onClick={() => handleAction(ret.id, 'mark-not-returned')}>❌</button>
-                                    </>
-                                ) : (
-                                    <em>No hay devoluciones</em>
-                                )}
-                            </td>
+            {error && (
+                <div className="alert alert-error">
+                    <AlertTriangle size={20} />
+                    {error}
+                </div>
+            )}
 
-                            <td style={{ verticalAlign: 'top' }}>
-                                {lateRet ? (
-                                    <>
-                                        <div><b>{lateRet.bookTitle}</b></div>
-                                        <div>Usuario: {lateRet.userName}</div>
-                                        <button onClick={() => handleAction(lateRet.id, 'mark-returned')}>✅</button>{' '}
-                                        <button onClick={() => handleAction(lateRet.id, 'mark-not-returned')}>❌</button>
-                                    </>
-                                ) : (
-                                    <em>No hay devoluciones tardías</em>
-                                )}
-                            </td>
-                        </tr>
-                    );
-                })}
-                </tbody>
-            </table>
+            <div className="reservation-grid">
+                <div className="column">
+                    <div className="column-header pickup-today">
+                        <Clock size={20} />
+                        <span>Recoger Hoy</span>
+                        <div className="badge">{pickupsToday.length}</div>
+                    </div>
+                    <div className="column-content">
+                        {Math.max(1, pickupsToday.length) &&
+                            Array.from({ length: Math.max(1, pickupsToday.length) }).map((_, i) => (
+                                <ReservationCard
+                                    key={i}
+                                    reservation={pickupsToday[i]}
+                                    actions={{
+                                        confirm: 'mark-picked-up',
+                                        decline: 'mark-not-picked-up'
+                                    }}
+                                    type="pickup"
+                                />
+                            ))
+                        }
+                    </div>
+                </div>
+
+                <div className="column">
+                    <div className="column-header pickup-late">
+                        <AlertTriangle size={20} />
+                        <span>Recoger Atrasado</span>
+                        <div className="badge">{latePickups.length}</div>
+                    </div>
+                    <div className="column-content">
+                        {Math.max(1, latePickups.length) &&
+                            Array.from({ length: Math.max(1, latePickups.length) }).map((_, i) => (
+                                <ReservationCard
+                                    key={i}
+                                    reservation={latePickups[i]}
+                                    actions={{
+                                        confirm: 'mark-picked-up',
+                                        decline: 'mark-not-picked-up'
+                                    }}
+                                    type="pickup"
+                                />
+                            ))
+                        }
+                    </div>
+                </div>
+
+                <div className="column">
+                    <div className="column-header return-today">
+                        <CheckCircle size={20} />
+                        <span>Devolver Hoy</span>
+                        <div className="badge">{returnsToday.length}</div>
+                    </div>
+                    <div className="column-content">
+                        {Math.max(1, returnsToday.length) &&
+                            Array.from({ length: Math.max(1, returnsToday.length) }).map((_, i) => (
+                                <ReservationCard
+                                    key={i}
+                                    reservation={returnsToday[i]}
+                                    actions={{
+                                        confirm: 'mark-returned',
+                                        decline: 'mark-not-returned'
+                                    }}
+                                    type="return"
+                                />
+                            ))
+                        }
+                    </div>
+                </div>
+
+                <div className="column">
+                    <div className="column-header return-late">
+                        <XCircle size={20} />
+                        <span>Devolver Atrasado</span>
+                        <div className="badge">{lateReturns.length}</div>
+                    </div>
+                    <div className="column-content">
+                        {Math.max(1, lateReturns.length) &&
+                            Array.from({ length: Math.max(1, lateReturns.length) }).map((_, i) => (
+                                <ReservationCard
+                                    key={i}
+                                    reservation={lateReturns[i]}
+                                    actions={{
+                                        confirm: 'mark-returned',
+                                        decline: 'mark-not-returned'
+                                    }}
+                                    type="return"
+                                />
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

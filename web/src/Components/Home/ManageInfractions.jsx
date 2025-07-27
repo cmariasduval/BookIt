@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './ManageInfractions.css';
 
 const ManageInfractions = () => {
     const [usersWithDebt, setUsersWithDebt] = useState([]);
@@ -115,7 +116,6 @@ const ManageInfractions = () => {
                     user.username === username ? { ...user, blocked: true } : user
                 )
             );
-            /*alert(`Usuario ${username} bloqueado por 90 días.`);*/
         } catch (err) {
             console.error(err);
             setError('Error al bloquear el usuario.');
@@ -147,66 +147,122 @@ const ManageInfractions = () => {
                     user.username === username ? { ...user, blocked: false } : user
                 )
             );
-            // alert(`Usuario desbloqueado.`);
         } catch (err) {
             console.error('Error al desbloquear:', err);
             setError('Error al desbloquear el usuario.');
         }
     };
 
-    if (loading) return <p>Cargando infracciones...</p>;
-    if (error) return <p className="error">{error}</p>;
+    if (loading) return <div className="infractions-container"><p className="loading-text">Cargando infracciones...</p></div>;
+    if (error) return <div className="infractions-container"><p className="error-text">{error}</p></div>;
 
     return (
         <div className="infractions-container">
-            <h1>Gestión de Infracciones</h1>
+            <h1 className="title">Gestión de Infracciones</h1>
+
             {usersWithDebt.length > 0 ? (
-                <ul>
-                    {usersWithDebt.map(user => (
-                        <li key={user.username}>
-                            <strong>{user.username || 'Usuario desconocido'}</strong> - Deuda: ${user.debt.toFixed(2)} - Infracciones: {user.infractionCount}
-                            <button
-                                onClick={() => handlePayDebt(user.username)}
-                                disabled={updatingUsername === user.username || user.debt === 0}
-                                style={{ marginLeft: '10px' }}
-                            >
-                                {updatingUsername === user.username ? 'Actualizando...' : 'Pagar deuda'}
-                            </button>
-                            {!user.blocked && (
-                                <button
-                                    onClick={() => openModal('block', user)}
-                                    style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
-                                >
-                                    Bloquear
-                                </button>
-                            )}
-
-                            {user.blocked && (
-                                <button
-                                    onClick={() => openModal('unblock', user)}
-                                    style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}
-                                >
-                                    Desbloquear
-                                </button>
-                            )}
-
-                            {modalInfo.isOpen && modalInfo.user?.username === user.username && (
-                                <div className="modal-overlay">
-                                    <div className="modal-content">
-                                        <p>¿Seguro que querés {modalInfo.action === 'block' ? 'bloquear' : 'desbloquear'} a este usuario?</p>
-                                        <strong>{modalInfo.user?.username || 'Usuario'}</strong>
-                                        <div style={{ marginTop: '10px' }}>
-                                            <button onClick={confirmAction} style={{ marginRight: '10px' }}>Sí</button>
-                                            <button onClick={closeModal}>Cancelar</button>
-                                        </div>
+                <div className="card">
+                    <table className="infractions-table">
+                        <thead className="table-header">
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Deuda</th>
+                            <th>Infracciones</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {usersWithDebt.map(user => (
+                            <tr key={user.username} className="table-row">
+                                <td>
+                                    <div className="user-info">
+                                            <span className="username">
+                                                {user.username || 'Usuario desconocido'}
+                                            </span>
                                     </div>
-                                </div>
-                            )}
-                        </li>
-                    ))}
-                </ul>
+                                </td>
+                                <td>
+                                        <span className={`status-badge ${user.blocked ? 'blocked' : 'active'}`}>
+                                            {user.blocked ? 'Bloqueado' : 'Activo'}
+                                        </span>
+                                </td>
+                                <td>
+                                        <span className={`debt-info ${user.debt > 0 ? 'has-debt' : ''}`}>
+                                            ${user.debt.toFixed(2)}
+                                        </span>
+                                </td>
+                                <td>
+                                        <span className="debt-info">
+                                            {user.infractionCount}
+                                        </span>
+                                </td>
+                                <td>
+                                    <div className="button-group">
+                                        <button
+                                            onClick={() => handlePayDebt(user.username)}
+                                            disabled={updatingUsername === user.username || user.debt === 0}
+                                            className={`btn btn-primary ${(updatingUsername === user.username || user.debt === 0) ? 'disabled' : ''}`}
+                                        >
+                                            {updatingUsername === user.username ? 'Actualizando...' : 'Pagar deuda'}
+                                        </button>
+
+                                        {!user.blocked && (
+                                            <button
+                                                onClick={() => openModal('block', user)}
+                                                className="btn btn-danger"
+                                            >
+                                                Bloquear
+                                            </button>
+                                        )}
+
+                                        {user.blocked && (
+                                            <button
+                                                onClick={() => openModal('unblock', user)}
+                                                className="btn btn-success"
+                                            >
+                                                Desbloquear
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
             ) : (
-                <p>No hay infracciones registradas.</p>
+                <div className="empty-state">
+                    <p>No hay infracciones registradas.</p>
+                </div>
+            )}
+
+            {modalInfo.isOpen && (
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3 className="modal-title">Confirmar Acción</h3>
+                        <p className="modal-text">
+                            ¿Seguro que querés {modalInfo.action === 'block' ? 'bloquear' : 'desbloquear'} a este usuario?
+                        </p>
+                        <p className="modal-user">
+                            {modalInfo.user?.username || 'Usuario'}
+                        </p>
+                        <div className="modal-buttons">
+                            <button
+                                onClick={confirmAction}
+                                className={`btn ${modalInfo.action === 'block' ? 'btn-danger' : 'btn-success'}`}
+                            >
+                                Sí, confirmar
+                            </button>
+                            <button
+                                onClick={closeModal}
+                                className="btn btn-primary"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

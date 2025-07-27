@@ -3,14 +3,14 @@ import './Login.css';
 import { useNavigate } from "react-router-dom";
 import logo from '../Assets/logo.png';
 import useAuth from "../../useAuth";
-import {jwtDecode} from "jwt-decode";  // Hook para manejar el token
-
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { saveToken } = useAuth();  // Hook para manejar el token
+    const { saveToken } = useAuth();
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -21,23 +21,20 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         try {
             const response = await fetch("http://localhost:8080/user/login", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("Datos del usuario recibidos:", data);
-                //const decoded = jwtDecode(data.token)
-                //console.log("Decoded token:", decoded);
-                //const isAdmin = decoded.sub === "admin" se guardaban los datos con el username que se usa para generar el token, y cuando el usuario se cambia el user, se cambiaba el rol a user 
-                const isAdmin = data.email.endsWith("@admin.com")
+                const isAdmin = data.email.endsWith("@admin.com");
 
                 const user = {
                     email: data.email,
@@ -46,22 +43,72 @@ const Login = () => {
                     birthDate: data.birthDate,
                     interests: data.interests,
                     username: data.username,
-
                 };
                 localStorage.setItem("authToken", data.token);
                 localStorage.setItem("user", JSON.stringify(user));
-                //saveToken(data.token);
-
-                console.log("Usuario guardado en localStorage:", localStorage.getItem("user"));
+                
+                // Usar saveToken del hook useAuth si está disponible
+                if (saveToken) {
+                    saveToken(data.token);
+                }
+                
                 navigate("/Home");
             } else {
-                const errorMsg = await response.text();
-                alert(`Error: ${errorMsg}`);
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message || 'Error en el login'}`);
             }
         } catch (error) {
             console.error("Error en el login:", error);
             alert("Hubo un problema al intentar iniciar sesión.");
+        } finally {
+            setIsLoading(false);
         }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        setIsLoading(true);
+        try {
+            const response = await fetch("http://localhost:8080/user/login/google", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ credential: credentialResponse.credential })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                localStorage.setItem("authToken", data.token);
+                localStorage.setItem("user", JSON.stringify({
+                    email: data.email,
+                    username: data.username,
+                    role: data.role,
+                    birthDate: data.birthDate,
+                    interests: data.interests
+                }));
+
+                // Usar saveToken del hook useAuth si está disponible
+                if (saveToken) {
+                    saveToken(data.token);
+                }
+
+                navigate("/Home");
+            } else {
+                const errorData = await response.json();
+                alert(`Error al iniciar sesión con Google: ${errorData.message || 'Error desconocido'}`);
+            }
+        } catch (error) {
+            console.error("Error al hacer login con Google:", error);
+            alert("Error al iniciar sesión con Google.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGoogleError = () => {
+        console.error("Google login failed");
+        alert("Fallo el login con Google. Intentá de nuevo.");
     };
 
     return (
@@ -80,6 +127,7 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
                     <div className="login-input">
@@ -89,14 +137,33 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
                 <div className="to-signup">Do not have an account?{" "}
-                    <button type="button" onClick={() => navigate("/SignUp")}>Sign Up</button>
+                    <button 
+                        type="button" 
+                        className="signup-button" 
+                        onClick={() => navigate("/SignUp")}
+                        disabled={isLoading}
+                    >
+                        Sign Up
+                    </button>
                 </div>
                 <div className="login-submit-container">
-                    <button type="submit">Log In</button>
+                    <button 
+                        type="submit" 
+                        className="submit-login-button"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Cargando..." : "Log In"}
+                    </button>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={handleGoogleError}
+                            disabled={isLoading}
+                        />
                 </div>
             </form>
             <div className="divider"></div>

@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google'; 
+
 import PrivateRoute from "./PrivateRoute.js";
 import Login from "./Components/Login-Signup/Login";
 import Signup from "./Components/Login-Signup/Signup";
@@ -16,7 +18,6 @@ import ManageInfractions from "./Components/Home/ManageInfractions";
 import SetGoal from "./Components/Home/SetGoal";
 import BookGenres from "./Components/Home/BookGenres";
 import AllBooks from "./Components/Home/AllBooks";
-
 
 function AppRoutes() {
     const location = useLocation();
@@ -50,9 +51,6 @@ function AppRoutes() {
                     <Route path="/set-goal" element={<SetGoal />} />
                     <Route path="/genres/:genreName" element={<BookGenres />} />
                     <Route path="/all-books" element={<AllBooks />} />
-
-
-
                 </Route>
             </Routes>
 
@@ -74,10 +72,14 @@ function AppRoutes() {
 }
 
 function App() {
+    const clientId = "953778916856-hjh2cjl084s8578rpu0lmhcm5dp3jv6n.apps.googleusercontent.com"; // 🔁 Reemplazá esto con tu Client ID real
+
     return (
-        <Router>
-            <AppRoutes />
-        </Router>
+        <GoogleOAuthProvider clientId={clientId}>
+            <Router>
+                <AppRoutes />
+            </Router>
+        </GoogleOAuthProvider>
     );
 }
 

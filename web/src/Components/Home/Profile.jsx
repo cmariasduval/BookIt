@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "./Profile.css";
 import BookCalendar from "./BookCalendar";
+
+import AdminReports from "./AdminReports";
+import "./AdminReports.css"; 
+import MonthlyGoalStats from "./MonthlyGoalStats";
 import MonthlyGoalStats from "./MonthlyGoalStats";
 
 const Profile = () => {
@@ -21,6 +25,7 @@ const Profile = () => {
     const authToken = localStorage.getItem("authToken");
     const navigate = useNavigate();
     const location = useLocation();
+    const isAdmin = storedUser?.role?.toLowerCase() === "admin";
 
     useEffect(() => {
         if (location.state?.openReviews) {
@@ -304,11 +309,20 @@ const Profile = () => {
 
                 {activeTab === "activity" && (
                     <div className="activity-section">
-                        <div className="reservados">
+                        {isAdmin ? (
+                        <>
+                            <div className="calendario">
+                            <BookCalendar events={calendarEvents} />
+                            </div>
+                            <AdminReports />
+                        </>
+                        ) : (
+                        <>
+                            <div className="reservados">
                             <h2 className="reservados-title">Reserved Books</h2>
                             <div className="reservados-carousel">
                                 {reservedBooks.length === 0 ? (
-                                    <p>No reserved books currently.</p>
+                                <p>No reserved books currently.</p>
                                 ) : (
                                     reservedBooks.map((book) => {
                                         console.log("Libro renderizado:", book);
@@ -334,25 +348,28 @@ const Profile = () => {
                                     })
                                 )}
                             </div>
-                        </div>
+                            </div>
 
-                        <div className="lower-activity-section">
+                            <div className="lower-activity-section">
                             <div className="calendario">
                                 <BookCalendar events={calendarEvents} />
                             </div>
                             <div className="infracciones-container">
                                 <div className="infracciones">
-                                    <h2>Deuda</h2>
-                                    <p>$2000</p>
+                                <h2>Deuda</h2>
+                                <p>$2000</p>
                                 </div>
                                 <div className="infracciones">
-                                    <h2>Infracciones</h2>
-                                    <p>2</p>
+                                <h2>Infracciones</h2>
+                                <p>2</p>
                                 </div>
                             </div>
-                        </div>
+                            </div>
+                        </>
+                        )}
                     </div>
-                )}
+                    )}
+
 
                 {activeTab === "reviews" && (
                     <div className="reviews-section">

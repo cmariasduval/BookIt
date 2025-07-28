@@ -46,4 +46,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r WHERE r.returnDate < :today AND r.status = com.example.bookit.Entities.ReservationStatus.ACTIVE")
     List<Reservation> findLateReturns(@Param("today") LocalDate today);
+
+    @Query("SELECT r FROM Reservation r WHERE r.pickupDate BETWEEN :startDate AND :endDate")
+    List<Reservation> findReservationsBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT r FROM Reservation r WHERE r.returnDate BETWEEN :startDate AND :endDate AND r.status = com.example.bookit.Entities.ReservationStatus.ACTIVE")
+    List<Reservation> findReturnsBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

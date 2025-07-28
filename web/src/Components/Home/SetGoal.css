@@ -92,14 +92,14 @@
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #7187E9;
+    border-color: #E6E09A;
 }
 
 .submit-button {
     padding: 14px 20px;
     font-size: 16px;
     font-weight: 500;
-    background-color: #7187E9;
+    background-color: #E6E09A;
     color: white;
     border: none;
     border-radius: 8px;
@@ -109,7 +109,7 @@
 }
 
 .submit-button:hover:not(:disabled) {
-    background-color: #5c6bc0;
+    background-color: #E6E09A;
     transform: translateY(-1px);
 }
 

@@ -6,12 +6,12 @@ import {
     FaPlus,
     FaCalendarCheck,
     FaExclamationTriangle,
+    FaEnvelope, // Importar ícono de email
 } from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
 import { FaFolder } from "react-icons/fa";
-
 
 import axios from "axios";
 import bookit from "../Assets/bookit.png";
@@ -98,7 +98,6 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
 
-
                         {!isAdmin && (
                             <li>
                                 <NavLink
@@ -155,7 +154,6 @@ const Sidebar = () => {
                                     {/*</NavLink>*/}
                                 </li>
 
-
                                 <li>
                                     <NavLink
                                         to="/manage"
@@ -179,6 +177,19 @@ const Sidebar = () => {
                                         <span className="manage-infractions-item">Manage Infractions</span>
                                     </NavLink>
                                 </li>
+
+                                {/* Nueva ruta para gestión de emails */}
+                                <li>
+                                    <NavLink
+                                        to="/email-management"
+                                        className={({isActive}) =>
+                                            `sidebar-link ${isActive ? "active" : ""}`
+                                        }
+                                    >
+                                        <FaEnvelope size={24}/>
+                                        <span className="email-management-item">Email Management</span>
+                                    </NavLink>
+                                </li>
                             </>
                         )}
 
@@ -198,9 +209,9 @@ const Sidebar = () => {
                     <div className="goal">
                         <h2 className="goal-title">Monthly Goal</h2>
                         <div className="goal-progress">
-              <span className="goal-progress-text">
-                {goal?.booksRead ?? 0} / {goal?.bookCount ?? "—"}
-              </span>
+                            <span className="goal-progress-text">
+                                {goal?.booksRead ?? 0} / {goal?.bookCount ?? "—"}
+                            </span>
                             <button onClick={incrementBooksRead} className="increment-button">
                                 +
                             </button>

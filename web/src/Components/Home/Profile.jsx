@@ -7,7 +7,6 @@ import BookCalendar from "./BookCalendar";
 import AdminReports from "./AdminReports";
 import "./AdminReports.css"; 
 import MonthlyGoalStats from "./MonthlyGoalStats";
-import MonthlyGoalStats from "./MonthlyGoalStats";
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("activity");

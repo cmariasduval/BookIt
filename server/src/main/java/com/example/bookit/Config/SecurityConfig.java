@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/signup", "/user/login").permitAll()
+                        .requestMatchers("/files/**").permitAll()      // <-- Permitimos acceso público a PDFs
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -63,6 +64,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 
 

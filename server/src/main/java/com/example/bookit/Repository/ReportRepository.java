@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
@@ -23,5 +24,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query("SELECT i FROM Infraction i WHERE i.date BETWEEN :startDate AND :endDate")
     List<Infraction> findInfractionsBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    Optional<Report> findByWeekStartAndWeekEnd(LocalDate weekStart, LocalDate weekEnd);
 }
 

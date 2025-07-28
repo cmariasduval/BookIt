@@ -14,6 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.example.bookit.Entities.Role;
+import com.example.bookit.DTO.UserProfileData;
+import com.example.bookit.Entities.Infraction;
+
+
 
 
 import java.util.ArrayList;
@@ -169,6 +173,49 @@ public class UserController {
     public ResponseEntity<List<BookDTO>> getActiveReservations(@PathVariable String email) {
         List<BookDTO> activeBooks = userService.getActiveReservedBooksByUserEmail(email);
         return ResponseEntity.ok(activeBooks);
+    }
+
+    @GetMapping("/profile-data")
+    public ResponseEntity<?> getUserProfileData(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replaceFirst("Bearer ", "");
+            String usernameFromToken = jwtUtil.extractUsername(token);
+            Optional<User> userOptional = userRepository.findByUsername(usernameFromToken);
+
+            if (userOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+            }
+
+            User user = userOptional.get();
+
+            // Contar infracciones no pagadas
+            long unpaidInfractions = user.getInfractions() != null ?
+                    user.getInfractions().stream()
+                            .filter(inf -> !inf.isPaid())
+                            .count() : 0;
+
+            // Calcular deuda total
+            double totalDebt = user.getInfractions() != null ?
+                    user.getInfractions().stream()
+                            .filter(inf -> !inf.isPaid())
+                            .mapToDouble(Infraction::getAmount)
+                            .sum() : 0.0;
+
+            // Crear respuesta con los datos necesarios
+            UserProfileData profileData = new UserProfileData(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    totalDebt,
+                    (int) unpaidInfractions,
+                    user.isBlocked(),
+                    user.getBlockedUntil()
+            );
+
+            return ResponseEntity.ok(profileData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener datos del perfil: " + e.getMessage());
+        }
     }
 
 }

@@ -5,7 +5,7 @@ import "./Profile.css";
 import BookCalendar from "./BookCalendar";
 
 import AdminReports from "./AdminReports";
-import "./AdminReports.css"; 
+import "./AdminReports.css";
 import MonthlyGoalStats from "./MonthlyGoalStats";
 
 const Profile = () => {
@@ -20,6 +20,11 @@ const Profile = () => {
     const [allBooks, setAllBooks] = useState([]);
     const [readBooks, setReadBooks] = useState([]);
 
+    // Nuevos estados para infracciones y deuda
+    const [userDebt, setUserDebt] = useState(0);
+    const [userInfractions, setUserInfractions] = useState(0);
+    const [loadingInfractions, setLoadingInfractions] = useState(false);
+
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const authToken = localStorage.getItem("authToken");
     const navigate = useNavigate();
@@ -33,6 +38,36 @@ const Profile = () => {
     }, [location]);
 
     const [calendarEvents, setCalendarEvents] = useState([]);
+
+    // Función para obtener información de infracciones y deuda del usuario
+    const fetchUserInfractionData = async () => {
+        if (!authToken) return;
+
+        setLoadingInfractions(true);
+        try {
+            // Usar el nuevo endpoint específico para datos del perfil
+            const res = await fetch(`http://localhost:8080/user/profile-data`, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (res.ok) {
+                const profileData = await res.json();
+                setUserDebt(profileData.debt || 0);
+                setUserInfractions(profileData.infractionCount || 0);
+                console.log("Profile data loaded:", profileData);
+            } else {
+                console.error("Error fetching profile data:", res.status);
+            }
+
+        } catch (err) {
+            console.error('Error fetching user infraction data:', err);
+        } finally {
+            setLoadingInfractions(false);
+        }
+    };
 
     const fetchBooks = async () => {
         const token = localStorage.getItem('authToken');
@@ -66,6 +101,8 @@ const Profile = () => {
 
     useEffect(() => {
         fetchBooks();
+        // Cargar datos de infracciones cuando el componente se monta
+        fetchUserInfractionData();
     }, []);
 
     // Load user reviews when "Reviews & Ratings" tab is active
@@ -309,65 +346,73 @@ const Profile = () => {
                 {activeTab === "activity" && (
                     <div className="activity-section">
                         {isAdmin ? (
-                        <>
-                            <div className="calendario">
-                            <BookCalendar events={calendarEvents} />
-                            </div>
-                            <AdminReports />
-                        </>
+                            <>
+                                <div className="calendario">
+                                    <BookCalendar events={calendarEvents} />
+                                </div>
+                                <AdminReports />
+                            </>
                         ) : (
-                        <>
-                            <div className="reservados">
-                            <h2 className="reservados-title">Reserved Books</h2>
-                            <div className="reservados-carousel">
-                                {reservedBooks.length === 0 ? (
-                                <p>No reserved books currently.</p>
-                                ) : (
-                                    reservedBooks.map((book) => {
-                                        console.log("Libro renderizado:", book);
+                            <>
+                                <div className="reservados">
+                                    <h2 className="reservados-title">Reserved Books</h2>
+                                    <div className="reservados-carousel">
+                                        {reservedBooks.length === 0 ? (
+                                            <p>No reserved books currently.</p>
+                                        ) : (
+                                            reservedBooks.map((book) => {
+                                                console.log("Libro renderizado:", book);
 
-                                        return (
-                                            <div
-                                                key={book.id}
-                                                className="reserved-book-card"
-                                                onClick={() => navigate(`/bookDetails/${book.id}`)}
-                                                style={{ cursor: "pointer" }}
-                                            >
-                                                <img
-                                                    src={book.book.imageUrl}
-                                                    alt={book.book.title}
-                                                    onError={(e) => {
-                                                        console.error("Error loading image for book:", book.title);
-                                                    }}
-                                                    style={{width: "200px"}}
-                                                />
-                                                <p>{book.title}</p>
-                                            </div>
-                                        );
-                                    })
-                                )}
-                            </div>
-                            </div>
+                                                return (
+                                                    <div
+                                                        key={book.id}
+                                                        className="reserved-book-card"
+                                                        onClick={() => navigate(`/bookDetails/${book.id}`)}
+                                                        style={{ cursor: "pointer" }}
+                                                    >
+                                                        <img
+                                                            src={book.book.imageUrl}
+                                                            alt={book.book.title}
+                                                            onError={(e) => {
+                                                                console.error("Error loading image for book:", book.title);
+                                                            }}
+                                                            style={{width: "200px"}}
+                                                        />
+                                                        <p>{book.title}</p>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </div>
 
-                            <div className="lower-activity-section">
-                            <div className="calendario">
-                                <BookCalendar events={calendarEvents} />
-                            </div>
-                            <div className="infracciones-container">
-                                <div className="infracciones">
-                                <h2>Deuda</h2>
-                                <p>$2000</p>
+                                <div className="lower-activity-section">
+                                    <div className="calendario">
+                                        <BookCalendar events={calendarEvents} />
+                                    </div>
+                                    <div className="infracciones-container">
+                                        <div className="infracciones">
+                                            <h2>Deuda</h2>
+                                            {loadingInfractions ? (
+                                                <p>Cargando...</p>
+                                            ) : (
+                                                <p>${userDebt}</p>
+                                            )}
+                                        </div>
+                                        <div className="infracciones">
+                                            <h2>Infracciones</h2>
+                                            {loadingInfractions ? (
+                                                <p>Cargando...</p>
+                                            ) : (
+                                                <p>{userInfractions}</p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="infracciones">
-                                <h2>Infracciones</h2>
-                                <p>2</p>
-                                </div>
-                            </div>
-                            </div>
-                        </>
+                            </>
                         )}
                     </div>
-                    )}
+                )}
 
 
                 {activeTab === "reviews" && (

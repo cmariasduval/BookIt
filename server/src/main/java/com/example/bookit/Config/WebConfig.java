@@ -17,10 +17,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/*")
+        registry.addMapping("/**")
                 .allowedOrigins("")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("Authorization", "Content-Type", "X-Requested-With")
+                .maxAge(3600);
+
+        registry.addMapping("/files/**") // para los recursos estáticos (PDFs)
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "OPTIONS")
+                .allowedHeaders("*")
                 .maxAge(3600);
     }
 
@@ -28,6 +34,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path reportPath = Paths.get("generated-reports");
         String reportAbsolutePath = reportPath.toFile().getAbsolutePath();
+
+        System.out.println("Serving PDFs from: " + reportAbsolutePath);
 
         registry.addResourceHandler("/files/**")
                 .addResourceLocations("file:" + reportAbsolutePath + "/");

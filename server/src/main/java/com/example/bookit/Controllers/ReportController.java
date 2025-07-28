@@ -38,16 +38,29 @@ import java.util.List;
 
     @PostMapping("/generate")
     public ResponseEntity<Report> generateReport() {
-        LocalDate weekStart = LocalDate.of(2025, 7, 20);
-        LocalDate weekEnd = LocalDate.of(2025, 7, 27);
-
         try {
-            Report report = reportService.generateWeeklyReport(weekStart, weekEnd);
+            Report report = reportService.generateLastWeekReport();
             return ResponseEntity.ok(report);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
     }
+
+
+//    @PostMapping("/generate")
+//    public ResponseEntity<Report> generateReport() {
+//        LocalDate weekStart = LocalDate.of(2025, 7, 20);
+//        LocalDate weekEnd = LocalDate.of(2025, 7, 27);
+//
+//        try {
+//            Report report = reportService.generateWeeklyRep
+//            ort(weekStart, weekEnd);
+//            return ResponseEntity.ok(report);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).build();
+//        }
+//    }
 
 
     @GetMapping

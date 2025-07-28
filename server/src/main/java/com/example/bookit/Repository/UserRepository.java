@@ -27,4 +27,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT r.copy.book FROM Reservation r WHERE r.user.email = :email")
     List<BookDTO> findReservedBooksByUserEmail(@Param("email") String email);
 
+    @Query("SELECT DISTINCT u FROM User u JOIN u.infractions i WHERE i.paid = false")
+    List<User> findUsersWithUnpaidInfractions();
+
+    /**
+     * Busca usuarios bloqueados
+     */
+    @Query("SELECT u FROM User u WHERE u.blocked = true")
+    List<User> findBlockedUsers();
+
 }

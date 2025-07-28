@@ -18,6 +18,8 @@ import ManageInfractions from "./Components/Home/ManageInfractions";
 import SetGoal from "./Components/Home/SetGoal";
 import BookGenres from "./Components/Home/BookGenres";
 import AllBooks from "./Components/Home/AllBooks";
+import AdminEmailPanel from './Components/Home/AdminEmailPanel'; // Ajusta la ruta según tu estructura
+
 
 function AppRoutes() {
     const location = useLocation();
@@ -51,6 +53,8 @@ function AppRoutes() {
                     <Route path="/set-goal" element={<SetGoal />} />
                     <Route path="/genres/:genreName" element={<BookGenres />} />
                     <Route path="/all-books" element={<AllBooks />} />
+
+                    <Route path="/email-management" element={<AdminEmailPanel />} />
                 </Route>
             </Routes>
 

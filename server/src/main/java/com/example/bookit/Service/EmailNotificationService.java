@@ -146,9 +146,10 @@ public class EmailNotificationService {
                             "Te recordamos que mañana tenés que devolver el libro:\n\n" +
                             "📖 %s\n\n" +
                             "Horarios de devolución: Lunes a Viernes de 9:00 a 18:00\n\n" +
-                            "⚠️ Recordá que las devoluciones tardías generan multas:\n" +
-                            "• $100 por día de retraso\n" +
-                            "• Después de 7 días: suspensión temporal\n\n" +
+                            "⚠️ Recordá que las devoluciones tardías generan multas e infracciones:\n" +
+                            "• $2000 por libro\n" +
+                            "• Cada libro devuelto tarde genera una infracción\n" +
+                            "• Al acumular 3 infracciones, tu cuenta será bloqueada\n\n" +
                             "¡Gracias por usar BookIt responsablemente!\n" +
                             "El equipo de BookIt",
                     reservation.getUserName(),
@@ -182,8 +183,10 @@ public class EmailNotificationService {
                             "El siguiente libro debía ser devuelto y está atrasado:\n\n" +
                             "📖 %s\n\n" +
                             "⚠️ IMPORTANTE:\n" +
-                            "• Devolvé el libro inmediatamente\n" +
-                            "• Las multas siguen aumentando $100 por día\n" +
+                            "• Este atraso ya generó una infracción en tu cuenta\n" +
+                            "• Cada libro devuelto tarde suma una infracción\n" +
+                            "• Al acumular 3 infracciones, tu cuenta será bloqueada\n" +
+                            "• La multa a pagar es de $2000\n" +
                             "• Después de 7 días de retraso serás suspendido\n\n" +
                             "Horarios de devolución: Lunes a Viernes de 9:00 a 18:00\n\n" +
                             "Por favor, contactanos si tenés algún problema.\n\n" +
@@ -285,4 +288,7 @@ public class EmailNotificationService {
             System.err.println("Error enviando email manual: " + e.getMessage());
         }
     }
+
+
+
 }

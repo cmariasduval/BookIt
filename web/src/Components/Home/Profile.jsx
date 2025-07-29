@@ -347,41 +347,48 @@ const Profile = () => {
                     <div className="activity-section">
                         {isAdmin ? (
                             <>
-                                <div className="calendario">
-                                    <BookCalendar events={calendarEvents} />
-                                </div>
                                 <AdminReports />
                             </>
                         ) : (
                             <>
                                 <div className="reservados">
                                     <h2 className="reservados-title">Reserved Books</h2>
-                                    <div className="reservados-carousel">
-                                        {reservedBooks.length === 0 ? (
-                                            <p>No reserved books currently.</p>
-                                        ) : (
-                                            reservedBooks.map((book) => {
-                                                console.log("Libro renderizado:", book);
+                                    <div className="carousel-container">
+                                        <div className="reservados-carousel">
+                                            {reservedBooks.length === 0 ? (
+                                                <div className="empty-state">
+                                                    <div className="empty-state-icon">📚</div>
+                                                    <p className="empty-state-text">No reserved books currently.</p>
+                                                    <p style={{ fontSize: '0.9rem', color: '#999', margin: 0 }}>
+                                                        Browse our catalog to reserve your next great read!
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                reservedBooks.map((book) => {
+                                                    console.log("Libro renderizado:", book);
 
-                                                return (
-                                                    <div
-                                                        key={book.id}
-                                                        className="reserved-book-card"
-                                                        onClick={() => navigate(`/bookDetails/${book.id}`)}
-                                                        style={{ cursor: "pointer" }}
-                                                    >
-                                                        <img
-                                                            src={book.book.imageUrl}
-                                                            alt={book.book.title}
-                                                            onError={(e) => {
-                                                                console.error("Error loading image for book:", book.title);
-                                                            }}
-                                                            style={{width: "200px"}}
-                                                        />
-                                                        <p>{book.title}</p>
-                                                    </div>
-                                                );
-                                            })
+                                                    return (
+                                                        <div
+                                                            key={book.id}
+                                                            className="reserved-book-card"
+                                                            onClick={() => navigate(`/bookDetails/${book.id}`)}
+                                                        >
+                                                            <img
+                                                                src={book.book.imageUrl}
+                                                                alt={book.book.title}
+                                                                onError={(e) => {
+                                                                    console.error("Error loading image for book:", book.title);
+                                                                    e.target.src = '/placeholder-book.png'; // Imagen de fallback
+                                                                }}
+                                                            />
+                                                            <p>{book.book.title}</p>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                        {reservedBooks.length > 3 && (
+                                            <div className="scroll-indicator">→</div>
                                         )}
                                     </div>
                                 </div>
@@ -390,22 +397,50 @@ const Profile = () => {
                                     <div className="calendario">
                                         <BookCalendar events={calendarEvents} />
                                     </div>
-                                    <div className="infracciones-container">
-                                        <div className="infracciones">
-                                            <h2>Deuda</h2>
-                                            {loadingInfractions ? (
-                                                <p>Cargando...</p>
-                                            ) : (
-                                                <p>${userDebt}</p>
-                                            )}
-                                        </div>
-                                        <div className="infracciones">
-                                            <h2>Infracciones</h2>
-                                            {loadingInfractions ? (
-                                                <p>Cargando...</p>
-                                            ) : (
-                                                <p>{userInfractions}</p>
-                                            )}
+                                    <div className="account-status-container">
+                                        <h2 className="status-section-title">Account Status</h2>
+                                        <div className="status-cards">
+                                            <div className={`status-card debt-card ${userDebt > 0 ? 'has-debt' : 'no-debt'}`}>
+                                                <div className="status-icon">
+                                                    {userDebt > 0 ? '💳' : '✅'}
+                                                </div>
+                                                <div className="status-content">
+                                                    <h3>Outstanding Debt</h3>
+                                                    {loadingInfractions ? (
+                                                        <div className="loading-spinner">Loading...</div>
+                                                    ) : (
+                                                        <div className="status-value">
+                                                            <span className="currency">$</span>
+                                                            <span className="amount">{userDebt}</span>
+                                                        </div>
+                                                    )}
+                                                    <p className="status-description">
+                                                        {userDebt > 0 ? 'Please settle your outstanding balance' : 'All clear!'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className={`status-card infractions-card ${userInfractions > 0 ? 'has-infractions' : 'no-infractions'}`}>
+                                                <div className="status-icon">
+                                                    {userInfractions > 0 ? '⚠️' : '🛡️'}
+                                                </div>
+                                                <div className="status-content">
+                                                    <h3>Infractions</h3>
+                                                    {loadingInfractions ? (
+                                                        <div className="loading-spinner">Loading...</div>
+                                                    ) : (
+                                                        <div className="status-value">
+                                                            <span className="count">{userInfractions}</span>
+                                                            <span className="unit">{userInfractions === 1 ? 'infraction' : 'infractions'}</span>
+                                                        </div>
+                                                    )}
+                                                    <p className="status-description">
+                                                        {userInfractions === 0 ? 'Perfect record!' :
+                                                            userInfractions === 1 ? 'Minor issue recorded' :
+                                                                'Multiple issues recorded'}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

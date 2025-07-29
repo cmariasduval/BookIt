@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
     FaSearch,
@@ -6,7 +6,7 @@ import {
     FaPlus,
     FaCalendarCheck,
     FaExclamationTriangle,
-    FaEnvelope, // Importar ícono de email
+    FaEnvelope,
 } from "react-icons/fa";
 import { ImBooks } from "react-icons/im";
 import { RiPencilFill } from "react-icons/ri";
@@ -17,36 +17,114 @@ import axios from "axios";
 import bookit from "../Assets/bookit.png";
 import "./Sidebar.css";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
+
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("authToken");
-    const isAdmin = user?.role?.toLowerCase() === "admin";
 
+    // Estados
     const [goal, setGoal] = useState(null);
+    const [isExpanded, setIsExpanded] = useState(window.innerWidth >= 768);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchGoal = async () => {
-            try {
-                const response = await axios.get("http://localhost:8080/api/goals/monthly", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setGoal(response.data);
-            } catch (error) {
-                console.error("Error fetching monthly goal:", error);
-            }
+    // Memoización de datos del usuario
+    const { user, token, isAdmin } = useMemo(() => {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const authToken = localStorage.getItem("authToken");
+        return {
+            user: userData,
+            token: authToken,
+            isAdmin: userData?.role?.toLowerCase() === "admin"
         };
+    }, []);
 
-        fetchGoal();
+    // Configuración de navegación
+    const navigationItems = useMemo(() => [
+        {
+            path: "/home",
+            icon: FaSearch,
+            label: "Discover",
+            className: "discover-item",
+            showForAll: true
+        },
+        {
+            path: "/all-books",
+            icon: ImBooks,
+            label: "All Books",
+            className: "allbooks-item",
+            showForAll: true
+        },
+        {
+            path: "/library",
+            icon: FaFolder,
+            label: "My Library",
+            className: "library-item",
+            showForAll: !isAdmin
+        }
+    ], [isAdmin]);
+
+    const adminItems = useMemo(() => [
+        {
+            path: "/addbook",
+            icon: FaPlus,
+            label: "Add Book",
+            className: "addbook-item",
+            state: { background: location }
+        },
+        {
+            path: "/manage",
+            icon: FaCalendarCheck,
+            label: "Manage Reservation",
+            className: "manage-item"
+        },
+        {
+            path: "/manage-infractions",
+            icon: FaExclamationTriangle,
+            label: "Manage Infractions",
+            className: "manage-infractions-item"
+        },
+        {
+            path: "/email-management",
+            icon: FaEnvelope,
+            label: "Email Management",
+            className: "email-management-item"
+        }
+    ], [location]);
+
+    // Función para obtener el goal mensual
+    const fetchGoal = useCallback(async () => {
+        if (!token) return;
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get(`${API_BASE_URL}/goals/monthly`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setGoal(response.data);
+        } catch (error) {
+            console.error("Error fetching monthly goal:", error);
+            setError("Error loading monthly goal");
+        } finally {
+            setIsLoading(false);
+        }
     }, [token]);
 
-    const incrementBooksRead = async () => {
+    // Función para incrementar libros leídos
+    const incrementBooksRead = useCallback(async () => {
+        if (!token || isLoading) return;
+
+        setIsLoading(true);
+        setError(null);
+
         try {
             const response = await axios.post(
-                "http://localhost:8080/api/goals/monthly/increment",
+                `${API_BASE_URL}/goals/monthly/increment`,
                 {},
                 {
                     headers: {
@@ -57,169 +135,160 @@ const Sidebar = () => {
             setGoal(response.data);
         } catch (error) {
             console.error("Error incrementing books read:", error);
+            setError("Error updating progress");
+        } finally {
+            setIsLoading(false);
         }
-    };
+    }, [token, isLoading]);
 
-    const handleLogout = () => {
-        localStorage.clear();
-        navigate("/");
-    };
+    // Manejo de logout mejorado
+    const handleLogout = useCallback(() => {
+        if (window.confirm("Are you sure you want to log out?")) {
+            localStorage.clear();
+            navigate("/");
+        }
+    }, [navigate]);
+
+    // Toggle sidebar expansion
+    const toggleExpanded = useCallback(() => {
+        setIsExpanded(prev => !prev);
+    }, []);
+
+    // Manejo de redimensionamiento de ventana
+    useEffect(() => {
+        const handleResize = () => {
+            setIsExpanded(window.innerWidth >= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Cargar goal al montar el componente
+    useEffect(() => {
+        fetchGoal();
+    }, [fetchGoal]);
+
+    // Componente para elementos de navegación
+    const NavigationItem = ({ item, isLast = false }) => (
+        <li key={item.path}>
+            <NavLink
+                to={item.path}
+                state={item.state}
+                className={({ isActive }) =>
+                    `sidebar-link ${isActive ? "active" : ""}`
+                }
+                title={!isExpanded ? item.label : ""}
+            >
+                <item.icon size={24} />
+                <span className={`${item.className} nav-text`}>
+                    {item.label}
+                </span>
+            </NavLink>
+            {isLast && <div className="divider" />}
+        </li>
+    );
+
+    // Componente para el botón de toggle (removido para mantener diseño original)
+
+    // Componente para la sección de goal
+    const GoalSection = () => (
+        <div className={`goal ${!isExpanded ? 'goal-collapsed' : ''}`}>
+            {isExpanded && (
+                <>
+                    <h2 className="goal-title">Monthly Goal</h2>
+                    <div className="goal-progress">
+                        <span className="goal-progress-text">
+                            {goal?.booksRead ?? 0} / {goal?.bookCount ?? "—"}
+                        </span>
+                        <button
+                            onClick={incrementBooksRead}
+                            className="increment-button"
+                            disabled={isLoading}
+                            title="Mark book as read"
+                        >
+                            +
+                        </button>
+                    </div>
+                    <button
+                        onClick={() => navigate("/set-goal")}
+                        className="goal-button"
+                        disabled={isLoading}
+                    >
+                        Set Goal
+                    </button>
+                    {error && <span className="goal-error">{error}</span>}
+                </>
+            )}
+        </div>
+    );
+
+    if (!user || !token) {
+        return null; // No mostrar sidebar si no hay usuario autenticado
+    }
 
     return (
-        <div className="sidebar-container">
-            <div className="bookit">
-                <div className="logo">
-                    <img src={bookit} alt="bookit" className="bookit" />
+        <div className={`sidebar-container ${isExpanded ? 'expanded' : ''}`}>
+            <div className="sidebar-content">
+                <div className="sidebar-header">
+                    <div className="logo">
+                        <img src={bookit} alt="BookIt Logo" className="logo-image" />
+                    </div>
                 </div>
 
-                <nav className="bar-items">
-                    <ul>
-                        <li>
-                            <NavLink
-                                to="/home"
-                                className={({isActive}) =>
-                                    `sidebar-link ${isActive ? "active" : ""}`
-                                }
-                            >
-                                <FaSearch size={24}/>
-                                <span className="discover-item">Discover</span>
-                            </NavLink>
-                        </li>
+                <nav className="sidebar-nav">
+                    <ul className="nav-list">
+                        {/* Elementos principales de navegación */}
+                        {navigationItems
+                            .filter(item => item.showForAll)
+                            .map((item, index, arr) => (
+                                <NavigationItem
+                                    key={item.path}
+                                    item={item}
+                                    isLast={index === arr.length - 1}
+                                />
+                            ))
+                        }
 
-                        <li>
-                            <NavLink
-                                to="/all-books"
-                                className={({isActive}) =>
-                                    `sidebar-link ${isActive ? "active" : ""}`
-                                }
-                            >
-                                <ImBooks size={24}/>
-                                <span className="allbooks-item">All Books</span>
-                            </NavLink>
-                        </li>
-
-                        {!isAdmin && (
-                            <li>
-                                <NavLink
-                                    to="/library"
-                                    className={({isActive}) =>
-                                        `sidebar-link ${isActive ? "active" : ""}`
-                                    }
-                                >
-                                    <FaFolder size={24}/>
-                                    <span className="library-item">My Library</span>
-                                </NavLink>
-                            </li>
-                        )}
-
-                        <div className="divider"></div>
-
+                        {/* Elemento de perfil */}
                         <li>
                             <NavLink
                                 to="/profile"
-                                className={({isActive}) =>
+                                className={({ isActive }) =>
                                     `sidebar-link ${isActive ? "active" : ""}`
                                 }
+                                title={!isExpanded ? "Profile" : ""}
                             >
-                                <FaUser size={24}/>
-                                <span className="profile-item">Profile</span>
+                                <FaUser size={24} />
+                                <span className="profile-item nav-text">Profile</span>
                             </NavLink>
                         </li>
 
+                        {/* Elementos de administrador */}
                         {isAdmin && (
                             <>
-                                <li>
-                                    <NavLink
-                                        to="/addbook"
-                                        state={{background: location}}
-                                        className={({isActive}) =>
-                                            `sidebar-link ${isActive ? "active" : ""}`
-                                        }
-                                    >
-                                        <FaPlus size={24}/>
-                                        <span className="addbook-item">Add Book</span>
-                                    </NavLink>
+                                <div className="divider" />
+                                <li className="admin-section-title">
+                                    {isExpanded && <span className="nav-text">Admin Panel</span>}
                                 </li>
-
-                                <li>
-                                    {/*<NavLink*/}
-                                    {/*    to="/editbook"*/}
-                                    {/*    state={{ background: location }}*/}
-                                    {/*    className={({ isActive }) =>*/}
-                                    {/*        `sidebar-link ${isActive ? "active" : ""}`*/}
-                                    {/*    }*/}
-                                    {/*>*/}
-                                    {/*    <RiPencilFill size={24} />*/}
-                                    {/*    <span className="editbook-item">Edit Book</span>*/}
-                                    {/*</NavLink>*/}
-                                </li>
-
-                                <li>
-                                    <NavLink
-                                        to="/manage"
-                                        className={({isActive}) =>
-                                            `sidebar-link ${isActive ? "active" : ""}`
-                                        }
-                                    >
-                                        <FaCalendarCheck size={24}/>
-                                        <span className="manage-item">Manage Reservation</span>
-                                    </NavLink>
-                                </li>
-
-                                <li>
-                                    <NavLink
-                                        to="/manage-infractions"
-                                        className={({isActive}) =>
-                                            `sidebar-link ${isActive ? "active" : ""}`
-                                        }
-                                    >
-                                        <FaExclamationTriangle size={24}/>
-                                        <span className="manage-infractions-item">Manage Infractions</span>
-                                    </NavLink>
-                                </li>
-
-                                {/* Nueva ruta para gestión de emails */}
-                                <li>
-                                    <NavLink
-                                        to="/email-management"
-                                        className={({isActive}) =>
-                                            `sidebar-link ${isActive ? "active" : ""}`
-                                        }
-                                    >
-                                        <FaEnvelope size={24}/>
-                                        <span className="email-management-item">Email Management</span>
-                                    </NavLink>
-                                </li>
+                                {adminItems.map((item) => (
+                                    <NavigationItem key={item.path} item={item} />
+                                ))}
                             </>
                         )}
 
-                        <li onClick={handleLogout}>
-                            <NavLink
-                                to="/"
-                                className={({isActive}) =>
-                                    `sidebar-link ${isActive ? "active" : ""}`
-                                }
-                            >
-                                <MdLogout size={24}/>
-                                <span className="logout-item">Log Out</span>
-                            </NavLink>
+                        {/* Logout */}
+                        <div className="divider" />
+                        <li onClick={handleLogout} className="logout-item">
+                            <div className="sidebar-link logout-link">
+                                <MdLogout size={24} />
+                                <span className="nav-text">Log Out</span>
+                            </div>
                         </li>
                     </ul>
 
-                    <div className="goal">
-                        <h2 className="goal-title">Monthly Goal</h2>
-                        <div className="goal-progress">
-                            <span className="goal-progress-text">
-                                {goal?.booksRead ?? 0} / {goal?.bookCount ?? "—"}
-                            </span>
-                            <button onClick={incrementBooksRead} className="increment-button">
-                                +
-                            </button>
-                        </div>
-                        <button onClick={() => navigate("/set-goal")} className="goal-button">
-                            Set Goal
-                        </button>
-                    </div>
+                    {/* Sección de goal */}
+                    {!isAdmin && <GoalSection />}
                 </nav>
             </div>
         </div>

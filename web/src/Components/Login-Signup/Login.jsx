@@ -73,7 +73,7 @@ const Login = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ credential: credentialResponse.credential })
+                body: JSON.stringify({ idToken: credentialResponse.credential })
             });
 
             if (response.ok) {

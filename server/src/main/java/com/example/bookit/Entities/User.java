@@ -15,19 +15,23 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "full_name", nullable = false)
+    // Lo hacés opcional, porque podés pedir que el usuario lo complete luego
+    @Column(name = "full_name", nullable = true)
     private String fullName;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "username", nullable = false, unique = true)
+    // Username opcional para Google login, podés generarlo o pedirlo luego
+    @Column(name = "username", nullable = true, unique = true)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    // Password opcional para login Google (si usás OAuth no necesitás password)
+    @Column(name = "password", nullable = true)
     private String password;
 
-    @Column(name = "birthDate", nullable = false)
+    // Fecha de nacimiento opcional
+    @Column(name = "birthDate", nullable = true)
     private LocalDate birthDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -36,7 +40,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -44,7 +48,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> interests;
+    private List<Genre> interests = new ArrayList<>();
 
     @Column(name = "blocked", nullable = false)
     private boolean blocked;
@@ -52,39 +56,28 @@ public class User {
     @Column(name = "blocked_until", nullable = true)
     private LocalDate blockedUntil;
 
-    // Nueva relación para favoritos
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
-    private List<Book> favorites;
+    private List<Book> favorites = new ArrayList<>();
 
-    // Nueva relación para libros leídos
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_read_books",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
-    private List<Book> readBooks;
+    private List<Book> readBooks = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "user_infractions",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "book_id")
-//    )
-//    @JsonManagedReference
-    private List<Infraction> infractions;
+    private List<Infraction> infractions = new ArrayList<>();
 
-
-
-    // Nueva relación para reservas
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<Reservation> reservations;
+    private List<Reservation> reservations = new ArrayList<>();
 
     public User() {}
 
@@ -170,6 +163,10 @@ public class User {
 
     public void setFavorites(List<Book> favorites) {
         this.favorites = favorites;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public List<Book> getReadBooks() {

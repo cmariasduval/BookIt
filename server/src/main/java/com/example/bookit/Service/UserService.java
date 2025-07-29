@@ -5,7 +5,9 @@ import com.example.bookit.DTO.BookDTO;
 import com.example.bookit.Entities.*;
 import com.example.bookit.Repository.GenreRepository;
 import com.example.bookit.Repository.ReservationRepository;
+import com.example.bookit.Repository.RoleRepository;
 import com.example.bookit.Repository.UserRepository;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,24 +28,43 @@ public class UserService {
     private GenreRepository genreRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private ReservationRepository reservationRepository;  // Se inyecta el repositorio de Reservas
 
     @Autowired
     private JwtUtil jwtUtil;
 
-    public User registerUser(String username, String password, String email, String fullName, LocalDate birthdate, List<String> interestNames, List<Role> role) {
+    public User registerUser(
+            String username,
+            String password,
+            String email,
+            String fullName,
+            LocalDate birthdate,
+            List<String> interestNames) {  // quitar List<Role> role de parámetros
+
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("El mail ya esta registrado");
+            throw new RuntimeException("El mail ya está registrado");
         }
+
+        // Obtener el rol USER desde la base
+        Role userRole = roleRepository.findByRoleName("USER")
+                .orElseThrow(() -> new RuntimeException("Role USER no encontrado"));
+
         // Convertimos los nombres de intereses en entidades Genre reales
         List<Genre> interests = interestNames.stream().map(name -> {
             return genreRepository.findByGenreType(name)
                     .orElseThrow(() -> new RuntimeException("Género no encontrado: " + name));
         }).toList();
 
-        User user = new User(username, password, email, birthdate, interests, role, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        // Creamos el usuario con el rol USER asignado
+        User user = new User(username, password, email, birthdate, interests, List.of(userRole),
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+
         return userRepository.save(user);
     }
+
 
     public String loginUser(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
@@ -153,4 +174,33 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public User registerUserFromGooglePayload(GoogleIdToken.Payload payload) {
+        String email = payload.getEmail();
+        String name = (String) payload.get("name");
+
+        User newUser = new User();
+        newUser.setUsername(email.split("@")[0]);
+        newUser.setEmail(email);
+        newUser.setPassword(""); // o algún valor por defecto
+        newUser.setRoles(List.of(new Role("USER"))); // o lo que uses
+
+        return userRepository.save(newUser);
+    }
+
+
+    public User completeUserProfile(String email, LocalDate birthdate, List<String> interestNames) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con el email: " + email));
+
+        user.setBirthDate(birthdate);
+
+        List<Genre> interests = interestNames.stream()
+                .map(name -> genreRepository.findByGenreType(name)
+                        .orElseThrow(() -> new RuntimeException("Género no encontrado: " + name)))
+                .collect(Collectors.toList());
+
+        user.setInterests(interests);
+
+        return userRepository.save(user);
+    }
 }

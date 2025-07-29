@@ -7,6 +7,8 @@ import com.example.bookit.Entities.User;
 import com.example.bookit.Repository.GenreRepository;
 import com.example.bookit.Repository.UserRepository;
 import com.example.bookit.Service.UserService;
+import com.example.bookit.Service.GoogleAuthService;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,10 @@ import com.example.bookit.DTO.UserProfileData;
 import com.example.bookit.Entities.Infraction;
 
 
-
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,8 +39,13 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     private final UserRepository userRepository;
+
     @Autowired
     private GenreRepository genreRepository;
+
+    @Autowired
+    private GoogleAuthService googleAuthService;
+
 
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -53,8 +60,7 @@ public class UserController {
                     userRequest.getEmail(),
                     userRequest.getFullName(),
                     userRequest.getBirthDate(),
-                    userRequest.getInterests(),
-                    userRequest.getRole()
+                    userRequest.getInterests()
             );
             return ResponseEntity.ok(newUser);
         } catch (Exception e) {
@@ -217,5 +223,61 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener datos del perfil: " + e.getMessage());
         }
     }
+
+    @PostMapping("/login/google")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
+        try {
+            System.out.println("ID Token recibido: " + request.getIdToken());
+
+            GoogleIdToken.Payload payload = googleAuthService.verifyToken(request.getIdToken());
+
+            if (payload == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Token de Google inválido."));
+            }
+
+            String email = payload.getEmail();
+
+            // Intentar buscar el usuario por email
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            User user = optionalUser.orElse(null);
+
+
+            // Si no existe, crear uno nuevo con datos mínimos
+            if (user == null) {
+                user = new User();
+                user.setEmail(email);
+                user.setUsername(email.split("@")[0]); // podés mejorar esto
+                user.setPassword(""); // dejar vacío si no vas a usarlo
+                user.setInterests(List.of()); // o null si preferís
+                user.setBirthDate(LocalDate.of(1999, 5, 19));
+                user.setFullName(email.split("@")[0]);
+                userRepository.save(user);
+            }
+
+            String token = jwtUtil.generateToken(user.getUsername());
+
+            return ResponseEntity.ok(new LoginResponse(token, user));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error al procesar login con Google: " + e.getMessage()));
+        }
+    }
+
+
+
+
+    @PostMapping("/complete-profile")
+    public ResponseEntity<?> completeProfile(@RequestBody CompleteProfileRequest request) {
+        try {
+            User updatedUser = userService.completeUserProfile(request.getEmail(), request.getBirthdate(), request.getInterests());
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 
 }

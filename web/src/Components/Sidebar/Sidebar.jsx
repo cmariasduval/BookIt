@@ -143,10 +143,8 @@ const Sidebar = () => {
 
     // Manejo de logout mejorado
     const handleLogout = useCallback(() => {
-        if (window.confirm("Are you sure you want to log out?")) {
-            localStorage.clear();
+        localStorage.clear();
             navigate("/");
-        }
     }, [navigate]);
 
     // Toggle sidebar expansion

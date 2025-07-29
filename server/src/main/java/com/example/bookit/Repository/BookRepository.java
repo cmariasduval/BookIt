@@ -1,6 +1,7 @@
 package com.example.bookit.Repository;
 
 import com.example.bookit.Entities.Book;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,13 +16,13 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByTitleContainingIgnoreCase(String title);
 
+    @EntityGraph(attributePaths = {"imageUrl"})
     @Query("SELECT DISTINCT b FROM Book b " +
             "LEFT JOIN b.genres g " +
             "WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(g.genreType) LIKE LOWER(CONCAT('%', :query, '%'))")
+            "LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Book> searchBooks(@Param("query") String query);
+
 
     @Query("SELECT DISTINCT b FROM Book b JOIN b.genres g WHERE g.genreType IN :genres")
     List<Book> findBooksByGenres(@Param("genres") List<String> genres);

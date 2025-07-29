@@ -372,7 +372,6 @@ const BookDetails = () => {
                 throw new Error(`Error al enviar comentario: ${res.statusText}`);
             }
 
-            alert("Comentario enviado correctamente");
             setCommentText("");
             setCommentOpen(false);
             // Opcional: recargar comentarios

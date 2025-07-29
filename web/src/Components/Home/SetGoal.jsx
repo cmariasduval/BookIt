@@ -43,7 +43,6 @@ function SetGoal() {
                 }
             );
 
-            alert("¡Objetivo guardado!");
             navigate("/home");
 
         } catch (err) {
